@@ -1,0 +1,161 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.bg::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  right: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 80%;
+  background: url("/greenArrow.png") no-repeat left;
+  background-size: cover;
+  opacity: 0.15;
+  z-index: -1;
+}
+
+.global-container {
+  @apply w-[70%] mx-auto gap-3 font-outfit;
+}
+
+.formik {
+  @apply gap-4 flex flex-col;
+}
+
+.option-wizard {
+  @apply flex items-center text-center justify-center font-semibold text-3xl self-center p-4 z-20;
+}
+
+.first-section,
+.section2 {
+  @apply flex items-center justify-between gap-10;
+}
+
+select,
+.day-picker {
+  @apply p-2 rounded-md px-4 min-w-[19rem] border border-gray-400 font-light bg-white;
+}
+.day-picker {
+  @apply p-0 border-0;
+}
+button {
+  @apply px-4 py-2 border-[#7983e8] w-full border rounded text-[#7983e8] transition-colors duration-300 font-bold;
+}
+
+button:hover {
+  @apply bg-[#7983e8] text-white;
+}
+
+.first-section > div {
+  @apply w-[19rem];
+}
+
+hr {
+  @apply self-center w-[100%] mx-auto border-black pt-14 mt-10;
+}
+
+/* .section2{
+  @apply flex items-center justify-between gap-10;
+} */
+
+.segment {
+  @apply min-w-32;
+}
+.capitalfield.disabled {
+  @apply text-stone-400;
+}
+.bs,.target,.sl {
+  @apply min-w-10;
+}
+
+.strike-selection,
+.value,
+.expiry,
+.lots {
+  @apply min-w-24;
+}
+
+input {
+  -webkit-appearance: none;
+  @apply border py-1 rounded-md;
+}
+.delete-position-btn {
+  @apply text-rose-600;
+}
+
+.delete-position-btn:hover {
+  @apply cursor-pointer;
+}
+.titles {
+  @apply font-semibold text-xl py-4;
+}
+
+.exit-section {
+  @apply shadow-md p-4 rounded;
+}
+
+.positions-section,
+.entry-section,
+.exit-section {
+  @apply shadow-md p-4 rounded border border-gray-600;
+}
+
+.position-section-dropdowns {
+  @apply flex items-end justify-between gap-10;
+}
+
+.hour,
+.minutes {
+  @apply min-w-24;
+}
+
+.entry-section-dropdowns {
+  @apply flex items-center gap-10;
+}
+
+.add-remove {
+  @apply min-w-10;
+}
+
+.exit-section-dropdowns-1,
+.exit-section-dropdowns-2,
+.exit-section-dropdowns-3 {
+  @apply flex items-end justify-start gap-10 py-5;
+}
+
+.save-btn-div {
+  @apply flex justify-center items-center p-4;
+}
+
+.save-btn {
+  @apply px-4 py-2 border border-[#7983e8] text-[#7983e8] cursor-pointer;
+}
+
+.time-div,
+.dropdown-container {
+  @apply flex flex-col min-w-24;
+}
+
+/* select.disable{
+  @apply bg-[#CCCCCC];
+} */
+
+input:disabled {
+  @apply bg-[#CCCCCC];
+}
+
+.position-line {
+  @apply self-center w-[100%] mx-auto border-black pt-0;
+}
+
+.redField {
+  @apply border-red-600;
+}
+.error {
+  @apply text-red-600;
+}
+

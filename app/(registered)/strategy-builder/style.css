@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.dropdown{
+  @apply p-2 rounded-md px-4 min-w-64;
+}
+
+.section1{
+  @apply flex items-center gap-[25rem];
+}
+
+.date-picker{
+  @apply border p-1 ml-96;
+}
+
+.header-container {
+  @apply flex items-center justify-center bg-[rgb(255_255_255_/_var(--tw-bg-opacity))] sticky z-10 overflow-hidden border-b top-0;
+  --tw-bg-opacity: 1;
+}
+.nav-container {
+  @apply flex h-20 w-full flex-nowrap items-center justify-center bg-[rgb(0_150_169_/_var(--tw-bg-opacity))] text-lg leading-7;
+  --tw-bg-opacity: 1;
+}
+.nav-items {
+  @apply flex items-center justify-center font-semibold text-[rgb(255_255_255_/_var(--tw-text-opacity))];
+  --tw-text-opacity: 1;
+}
+.btn-div {
+  @apply flex max-w-[10rem] flex-col gap-2;
+}
+.btn {
+  @apply text-sm leading-5 px-4 py-1;
+}
+.bullish {
+  @apply text-[rgb(22_163_74_/_var(--tw-text-opacity))] border border-[rgb(22_163_74_/_var(--tw-border-opacity))];
+  --tw-border-opacity: 1;
+  --tw-text-opacity: 1;
+}
+.bullish.selected {
+  @apply bg-[rgb(22_163_74_/_var(--tw-bg-opacity))] text-[rgb(255_255_255_/_var(--tw-text-opacity))] shadow-[var(--tw-ring-offset-shadow,0_0_#0000),var(--tw-ring-shadow,0_0_#0000),var(--tw-shadow)];
+  --tw-bg-opacity: 1;
+  --tw-text-opacity: 1;
+  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color),
+    0 4px 6px -4px var(--tw-shadow-color);
+}
+.bearish {
+  @apply text-[rgb(220_38_38_/_var(--tw-text-opacity))] border border-[rgb(220_38_38_/_var(--tw-border-opacity))];
+  --tw-border-opacity: 1;
+  --tw-text-opacity: 1;
+}
+.bearish.selected {
+  @apply bg-[rgb(220_38_38_/_var(--tw-bg-opacity))] text-[rgb(255_255_255_/_var(--tw-text-opacity))] shadow-[var(--tw-ring-offset-shadow,0_0_#0000),var(--tw-ring-shadow,0_0_#0000),var(--tw-shadow)];
+  --tw-bg-opacity: 1;
+  --tw-text-opacity: 1;
+  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color),
+    0 4px 6px -4px var(--tw-shadow-color);
+}
+.non-directional {
+  @apply bg-[rgb(243_244_246_/_var(--tw-bg-opacity))] text-[rgb(75_85_99_/_var(--tw-text-opacity))] border;
+  --tw-bg-opacity: 1;
+  --tw-text-opacity: 1;
+}
+
+.non-directional.selected {
+  @apply bg-[rgb(205,206,208)] text-[rgb(255_255_255_/_var(--tw-text-opacity))] shadow-[var(--tw-ring-offset-shadow,0_0_#0000),var(--tw-ring-shadow,0_0_#0000),var(--tw-shadow)];
+  --tw-bg-opacity: 1;
+  --tw-text-opacity: 1;
+  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color),
+    0 4px 6px -4px var(--tw-shadow-color);
+}
+
+
+.dropdown-flexes{
+  @apply flex flex-col items-start;
+}
+
+.dropdown-flexes>p{
+  @apply text-xs font-medium text-slate-800 ;
+}
+
+
+.expiry-and-product-dropdowns {
+  @apply flex gap-28 py-10;
+}
+
+.order-type-div{
+  @apply flex items-center;
+}
+
+.optionchain-icon{
+  @apply float-right;
+}
+
