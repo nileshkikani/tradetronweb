@@ -40,6 +40,12 @@ const Entrysection = () => {
       ? Array.from({ length: 15 }, (_, i) => i + 9)
       : Array.from({ length: 7 }, (_, i) => i + 9);
 
+  const minuteOptions =
+    values.entry_HH == 15 && 
+    !(values.index_name === 'CRUDEOIL' || values.index_name === 'CRUDEOILM')
+      ? Array.from({ length: 30 }, (_, i) => i) 
+      : Array.from({ length: 60 }, (_, i) => i); 
+
   return (
     <section className="entry-section">
       <h1 className="titles">Entry Settings</h1>
@@ -78,7 +84,7 @@ const Entrysection = () => {
               <option value="" disabled>
                 minutes
               </option>
-              {Array.from({ length: 60 }, (_, i) => i).map((minute) => (
+              {minuteOptions.map((minute) => (
                 <option key={minute} value={minute}>
                   {minute}
                 </option>

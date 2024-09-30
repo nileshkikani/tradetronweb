@@ -65,8 +65,15 @@ const Exitsection = () => {
 
   const hourOptions =
     values.index_name === 'CRUDEOIL' || values.index_name === 'CRUDEOILM'
-      ? Array.from({ length: 15 }, (_, i) => i + 9) 
-      : Array.from({ length: 7 }, (_, i) => i + 9); 
+      ? Array.from({ length: 15 }, (_, i) => i + 9)
+      : Array.from({ length: 7 }, (_, i) => i + 9);
+
+  const minuteOptions =
+    values.exit_HH == 15 && 
+    !(values.index_name === 'CRUDEOIL' || values.index_name === 'CRUDEOILM')
+      ? Array.from({ length: 30 }, (_, i) => i) 
+      : Array.from({ length: 60 }, (_, i) => i); 
+    
 
   return (
     <section className="exit-section">
@@ -199,7 +206,7 @@ const Exitsection = () => {
               <option value="" disabled>
                 minutes
               </option>
-              {Array.from({ length: 60 }, (_, i) => i).map((minute) => (
+              {minuteOptions.map((minute) => (
                 <option key={minute} value={minute}>
                   {minute}
                 </option>
