@@ -78,8 +78,6 @@ const Page = () => {
         }
     };
 
-
-
     return (
         <div className='bg'>
             <div className="global-container">

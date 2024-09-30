@@ -5,7 +5,7 @@ import { Field, ErrorMessage, useFormikContext } from "formik";
 import { toast } from "react-hot-toast";
 
 const Exitsection = () => {
-  const { setFieldValue, values,errors, touched } = useFormikContext();
+  const { setFieldValue, values, errors, touched } = useFormikContext();
 
   const handleProfitMTMChange = (e) => {
     const value = e.target.value;
@@ -27,12 +27,10 @@ const Exitsection = () => {
       setFieldValue("stop_loss_value", null);
     }
   };
-  
 
   const handleStoplossMTMInputChange = (e) => {
     const value = e.target.value;
     const stopLossType = values.stop_loss_type;
-
     if (
       (stopLossType === "percentage_capital" ||
         stopLossType === "percentage_margin") &&
@@ -64,6 +62,11 @@ const Exitsection = () => {
       setFieldValue("exit_time", exitTime);
     }
   };
+
+  const hourOptions =
+    values.index_name === 'CRUDEOIL' || values.index_name === 'CRUDEOILM'
+      ? Array.from({ length: 15 }, (_, i) => i + 9) 
+      : Array.from({ length: 7 }, (_, i) => i + 9); 
 
   return (
     <section className="exit-section">
@@ -169,9 +172,7 @@ const Exitsection = () => {
               as="select"
               name="exit_HH"
               className={`hour ${
-                touched.exit_HH && errors.exit_HH
-                  ? "redField"
-                  : ""
+                touched.exit_HH && errors.exit_HH ? "redField" : ""
               }`}
               value={values.exit_HH || ""}
               onChange={handleTimeChange}
@@ -179,7 +180,7 @@ const Exitsection = () => {
               <option value="" disabled>
                 hours
               </option>
-              {[9, 10, 11, 12, 13, 14, 15].map((hour) => (
+              {hourOptions.map((hour) => (
                 <option key={hour} value={hour}>
                   {hour}
                 </option>
@@ -190,9 +191,7 @@ const Exitsection = () => {
               as="select"
               name="exit_MM"
               className={`minutes ${
-                touched.exit_MM && errors.exit_MM
-                  ? "redField"
-                  : ""
+                touched.exit_MM && errors.exit_MM ? "redField" : ""
               }`}
               value={values.exit_MM || ""}
               onChange={handleTimeChange}

@@ -4,7 +4,7 @@ import { useFormikContext, Field, ErrorMessage } from "formik";
 import Select from "react-select";
 
 const Entrysection = () => {
-  const { setFieldValue, values,errors, touched } = useFormikContext();
+  const { setFieldValue, values, errors, touched } = useFormikContext();
 
   const options = [
     { value: "MON", label: "Mon" },
@@ -17,14 +17,14 @@ const Entrysection = () => {
   const handleTimeChange = (e) => {
     const { name, value } = e.target;
 
-    setFieldValue(name, value); 
+    setFieldValue(name, value);
 
     const entry_HH = name === "entry_HH" ? value : values.entry_HH;
     const entry_MM = name === "entry_MM" ? value : values.entry_MM;
 
     if (entry_HH && entry_MM) {
       const entryTime = `${entry_HH}:${entry_MM}`;
-      setFieldValue("start_time", entryTime);  
+      setFieldValue("start_time", entryTime);
     }
   };
 
@@ -34,6 +34,11 @@ const Entrysection = () => {
       : [];
     setFieldValue("days", selectedDays);
   };
+
+  const hourOptions =
+    values.index_name === 'CRUDEOIL' || values.index_name === 'CRUDEOILM'
+      ? Array.from({ length: 15 }, (_, i) => i + 9)
+      : Array.from({ length: 7 }, (_, i) => i + 9);
 
   return (
     <section className="entry-section">
@@ -46,9 +51,7 @@ const Entrysection = () => {
               as="select"
               name="entry_HH"
               className={`hour ${
-                touched.entry_HH && errors.entry_HH
-                  ? "redField"
-                  : ""
+                touched.entry_HH && errors.entry_HH ? "redField" : ""
               }`}
               value={values.entry_HH || ""}
               onChange={handleTimeChange}
@@ -56,7 +59,7 @@ const Entrysection = () => {
               <option value="" disabled>
                 hours
               </option>
-              {[9, 10, 11, 12, 13, 14, 15].map((hour) => (
+              {hourOptions.map((hour) => (
                 <option key={hour} value={hour}>
                   {hour}
                 </option>
@@ -67,9 +70,7 @@ const Entrysection = () => {
               as="select"
               name="entry_MM"
               className={`minutes ${
-                touched.entry_MM && errors.entry_MM
-                  ? "redField"
-                  : ""
+                touched.entry_MM && errors.entry_MM ? "redField" : ""
               }`}
               value={values.entry_MM || ""}
               onChange={handleTimeChange}
@@ -94,9 +95,7 @@ const Entrysection = () => {
             name="days"
             isMulti
             className={`day-picker ${
-              touched.days && errors.days
-                ? "redField"
-                : ""
+              touched.days && errors.days ? "redField" : ""
             }`}
             onChange={handleDayChange}
             value={options.filter((option) =>
