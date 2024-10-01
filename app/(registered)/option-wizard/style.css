@@ -140,6 +140,10 @@ input {
   @apply flex flex-col min-w-24;
 }
 
+.individual{
+  @apply flex ;
+}
+
 /* select.disable{
   @apply bg-[#CCCCCC];
 } */

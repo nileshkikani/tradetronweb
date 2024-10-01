@@ -45,8 +45,8 @@ const Page = () => {
             index_name: values.index_name || null,
             capital: values.capital || null,
             strategy_type: values.strategy_type || null,
-            order_take_profit_type:values.order_take_profit_type || null,
-            order_stop_loss_type:values.order_stop_loss_type || null,
+            order_take_profit_type: values.order_take_profit_type || null,
+            order_stop_loss_type: values.order_stop_loss_type || null,
             positions: values.positions.map(position => ({
                 ...position,
                 order_take_profit_value: position.order_take_profit_value || null,
@@ -58,8 +58,8 @@ const Page = () => {
             exit_time: values.exit_time || null,
             take_profit_type: values.take_profit_type === 'none' ? null : values.take_profit_type,
             stop_loss_type: values.stop_loss_type === 'none' ? null : values.stop_loss_type,
-            take_profit_value:values.take_profit_value || null,
-            stop_loss_value:values.stop_loss_value || null
+            take_profit_value: values.take_profit_value || null,
+            stop_loss_value: values.stop_loss_value || null
         };
 
         console.log('final', formData);
@@ -147,18 +147,32 @@ const Page = () => {
                                             <>
                                                 <PositionSection push={push} />
                                                 <hr className='position-line' />
-                                                <label>Target</label>
-                                                <Field className='target' as="select" name="order_take_profit_type" onChange={handleChange} >
-                                                    <option value="" disable>select</option>
-                                                    <option value="percentage_entry">% Entry Price</option>
-                                                    <option value="amount">Points</option>
-                                                </Field>
-                                                <label>SL</label>
-                                                <Field className='sl' as="select" name="order_stop_loss_type" onChange={handleChange} >
-                                                    <option value="" disable>select</option>
-                                                    <option value="percentage_entry">% Entry Price</option>
-                                                    <option value="amount">Points</option>
-                                                </Field>
+                                                <div className='individual '>
+                                                    <div className='dropdown-container'>
+                                                    <label>Target</label>
+                                                    <Field className='target' as="select" name="order_take_profit_type" onChange={handleChange} >
+                                                        <option value="" disable>select</option>
+                                                        <option value="percentage_entry">% Entry Price</option>
+                                                        <option value="amount">Points</option>
+                                                    </Field>
+                                                    </div>
+                                                    <div className='dropdown-container'>
+                                                    <label>SL</label>
+                                                    <Field className='sl' as="select" name="order_stop_loss_type" onChange={handleChange} >
+                                                        <option value="" disable>select</option>
+                                                        <option value="percentage_entry">% Entry Price</option>
+                                                        <option value="amount">Points</option>
+                                                    </Field>
+                                                    </div>
+                                                </div>
+                                                <div className='dropdown-container'>
+                                                    {/* <label>SL</label>
+                                                    <Field className='sl' as="select" name="order_stop_loss_type" onChange={handleChange} >
+                                                        <option value="" disable>select</option>
+                                                        <option value="percentage_entry">% Entry Price</option>
+                                                        <option value="amount">Points</option>
+                                                    </Field> */}
+                                                </div>
                                                 {values.positions.map((position, index) => (
                                                     <AddedPositions key={index} position={position} index={index} remove={remove} />
                                                 ))}
