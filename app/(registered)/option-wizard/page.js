@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import './style.css';
@@ -14,8 +14,8 @@ import { API_ROUTER } from '@/services/routes';
 
 const Page = () => {
     const [showForm, setShowForm] = useState(false);
-
-    const initialStates = {
+    const [strategyId, setStrategyId] = useState(null);
+    const [initialValues, setInitialValues] = useState({
         strategy_name: '',
         index_name: '',
         capital: 100000,
@@ -23,23 +23,25 @@ const Page = () => {
         order_take_profit_type: '',
         order_stop_loss_type: '',
         positions: [],
-        order_take_profit_value: '',
-        order_stop_loss_value: '',
-        entry_HH: '',
-        entry_MM: '',
         start_time: '',
-        exit_HH: '',
-        exit_MM: '',
-        stop_loss_type: 'none',
-        stop_loss_value: '',
         days: [],
-        do_repeat: false,
         exit_time: '',
         take_profit_type: 'none',
-        take_profit_value: ''
-    }
+        take_profit_value: '',
+        stop_loss_value: '',
+        stop_loss_type: 'none',
+        do_repeat: false,
+    });
 
     const handleOnSubmit = async (values) => {
+        const start_time = values.entry_HH && values.entry_MM 
+            ? `${values.entry_HH}:${values.entry_MM}`
+            : null;
+    
+        const exit_time = values.exit_HH && values.exit_MM 
+            ? `${values.exit_HH}:${values.exit_MM}`
+            : null;
+    
         const formData = {
             strategy_name: values.strategy_name || null,
             index_name: values.index_name || null,
@@ -52,23 +54,28 @@ const Page = () => {
                 order_take_profit_value: position.order_take_profit_value || null,
                 order_stop_loss_value: position.order_stop_loss_value || null,
             })),
-            start_time: values.start_time || null,
+            start_time: start_time || null,
             days: values.days || null,
             do_repeat: values.do_repeat || false,
-            exit_time: values.exit_time || null,
+            exit_time: exit_time || null,
             take_profit_type: values.take_profit_type === 'none' ? null : values.take_profit_type,
             stop_loss_type: values.stop_loss_type === 'none' ? null : values.stop_loss_type,
-            take_profit_value: values.take_profit_value || null,
+            take_profit_value: values.take_profit_value === 'none' ? null : values.take_profit_value,
             stop_loss_value: values.stop_loss_value || null
         };
-
+    
         console.log('final', formData);
+        
         try {
+            const apiCall = strategyId 
+                ? axiosInstance.patch(`${API_ROUTER.STRATEGY_UPDATE}${strategyId}/`, formData) 
+                : axiosInstance.post(API_ROUTER.CREATE_STRATEGY, formData);
+    
             await toast.promise(
-                axiosInstance.post(API_ROUTER.CREATE_STRATEGY, formData),
+                apiCall,
                 {
-                    pending: 'Saving Strategy...',
-                    success: <b>Saved Successfully!</b>,
+                    pending: strategyId ? 'Updating Strategy...' : 'Saving Strategy...',
+                    success: <b>{strategyId ? 'Updated Successfully!' : 'Saved Successfully!'}</b>,
                     error: <b>Failed to save. Please try again.</b>,
                 }
             );
@@ -81,12 +88,13 @@ const Page = () => {
     return (
         <div className='bg'>
             <div className="global-container">
-                <Titlesection setShowForm={setShowForm} />
+                <Titlesection setShowForm={setShowForm} setInitialValues={setInitialValues} setStrategyId={setStrategyId} />
                 {showForm && (
                     <Formik
-                        initialValues={initialStates}
+                        initialValues={initialValues}
                         validationSchema={combinedSchema}
                         onSubmit={handleOnSubmit}
+                        enableReinitialize
                     >
                         {({ values, handleChange, touched, errors }) => (
                             <Form method="post" className='formik'>
@@ -98,8 +106,7 @@ const Page = () => {
                                                 touched.strategy_name && errors.strategy_name ? 'redField' : 'border-gray-500'
                                             }
                                         />
-                                        <ErrorMessage name="strategy_name" component="span" className="error"
-                                        />
+                                        <ErrorMessage name="strategy_name" component="span" className="error" />
                                     </div>
                                     <div className='dropdown-container'>
                                         <label>Underlying</label>
@@ -130,7 +137,7 @@ const Page = () => {
                                         <label>Type</label>
                                         <Field as="select" name="strategy_type" onChange={handleChange} className={
                                             touched.strategy_type && errors.strategy_type ? 'redField' : 'border-gray-500'
-                                        } >
+                                        }>
                                             <option value="" disabled>Select Type</option>
                                             <option value="INTRADAY">Intraday</option>
                                             <option value="positional" disabled>Positional</option>
@@ -147,31 +154,23 @@ const Page = () => {
                                             <>
                                                 <PositionSection push={push} />
                                                 <hr className='position-line' />
-                                                <div className='individual '>
+                                                <div className='individual'>
                                                     <div className='dropdown-container'>
-                                                    <label>Target</label>
-                                                    <Field className='target' as="select" name="order_take_profit_type" onChange={handleChange} >
-                                                        <option value="" disable>select</option>
-                                                        <option value="percentage_entry">% Entry Price</option>
-                                                        <option value="amount">Points</option>
-                                                    </Field>
+                                                        <label>Target</label>
+                                                        <Field className='target' as="select" name="order_take_profit_type" onChange={handleChange}>
+                                                            <option value="" disable>select</option>
+                                                            <option value="percentage_entry">% Entry Price</option>
+                                                            <option value="amount">Points</option>
+                                                        </Field>
                                                     </div>
                                                     <div className='dropdown-container'>
-                                                    <label>SL</label>
-                                                    <Field className='sl' as="select" name="order_stop_loss_type" onChange={handleChange} >
-                                                        <option value="" disable>select</option>
-                                                        <option value="percentage_entry">% Entry Price</option>
-                                                        <option value="amount">Points</option>
-                                                    </Field>
+                                                        <label>SL</label>
+                                                        <Field className='sl' as="select" name="order_stop_loss_type" onChange={handleChange}>
+                                                            <option value="" disable>select</option>
+                                                            <option value="percentage_entry">% Entry Price</option>
+                                                            <option value="amount">Points</option>
+                                                        </Field>
                                                     </div>
-                                                </div>
-                                                <div className='dropdown-container'>
-                                                    {/* <label>SL</label>
-                                                    <Field className='sl' as="select" name="order_stop_loss_type" onChange={handleChange} >
-                                                        <option value="" disable>select</option>
-                                                        <option value="percentage_entry">% Entry Price</option>
-                                                        <option value="amount">Points</option>
-                                                    </Field> */}
                                                 </div>
                                                 {values.positions.map((position, index) => (
                                                     <AddedPositions key={index} position={position} index={index} remove={remove} />

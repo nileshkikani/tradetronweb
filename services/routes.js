@@ -3,7 +3,9 @@ export const API_ROUTER = {
     LOG_IN:'',
     LOG_OUT:'',
 
-    CREATE_STRATEGY:'strategy/create/',
     SYMBOLS: 'stocks/get-symbols/',
-    OPTIONS_OR_FUTURES:'stocks/'
+    OPTIONS_OR_FUTURES:'stocks/',
+    STRATEGY_LIST :'strategy/',
+    CREATE_STRATEGY:'strategy/create/',
+    STRATEGY_UPDATE :'strategy/update/'//pass id
 };
