@@ -1,18 +1,20 @@
-import { API_ROUTER } from '@/services/routes';
-import axiosInstance from '@/utils/axios';
-import React, { useState } from 'react';
+"use client";
+
+import { API_ROUTER } from "@/services/routes";
+import axiosInstance from "@/utils/axios";
+import React, { useState } from "react";
 
 const SignUp = ({ onClose }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [full_name, setFullName] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [full_name, setFullName] = useState("");
   const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleSignUp = async (e) => {
     e.preventDefault();
     setError(null);
-    setSuccessMessage('');
+    setSuccessMessage("");
 
     try {
       const response = await axiosInstance.post(API_ROUTER.REGISTER, {
@@ -22,10 +24,12 @@ const SignUp = ({ onClose }) => {
       });
 
       if (response.status !== 201) {
-        throw new Error('Sign Up failed');
+        throw new Error("Sign Up failed");
       }
 
-      setSuccessMessage('Registration successful! Please check your email for further instructions.');
+      setSuccessMessage(
+        "Registration successful! Please check your email for further instructions."
+      );
     } catch (err) {
       setError(err.response?.data?.message || err.message);
     }
@@ -35,8 +39,10 @@ const SignUp = ({ onClose }) => {
     <div className="bg-white rounded-lg p-6 w-1/3">
       <h2 className="text-lg font-semibold mb-4">Sign Up</h2>
       {error && <div className="text-red-500 mb-4">{error}</div>}
-      {successMessage && <div className="text-green-500 mb-4">{successMessage}</div>}
-      
+      {successMessage && (
+        <div className="text-green-500 mb-4">{successMessage}</div>
+      )}
+
       <form onSubmit={handleSignUp}>
         <div className="mb-4">
           <label className="block text-gray-700">Name</label>

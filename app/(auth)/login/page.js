@@ -1,3 +1,5 @@
+"use client";
+
 import { API_ROUTER } from "@/services/routes";
 import axiosInstance from "@/utils/axios";
 import React, { useState } from "react";
