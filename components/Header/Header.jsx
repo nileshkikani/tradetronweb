@@ -59,6 +59,7 @@ const Header = () => {
                       <Link
                         href="/option-wizard"
                         className="block px-4 py-2  text-slate-800 transition-colors duration-300 "
+                        onClick={toggleDropdown}
                       >
                         Option Wizard
                       </Link>
@@ -67,6 +68,7 @@ const Header = () => {
                       <Link
                         href="/deployed"
                         className="block px-4 py-2  text-slate-800 transition-colors duration-300 "
+                        onClick={toggleDropdown}
                       >
                         Deployed
                       </Link>

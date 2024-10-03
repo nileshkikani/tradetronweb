@@ -11,9 +11,13 @@ import { Formik, Form, Field, ErrorMessage, FieldArray } from 'formik';
 import axiosInstance from '@/utils/axios';
 import { combinedSchema } from '@/schemas/strategySchema';
 import { API_ROUTER } from '@/services/routes';
+import { useSelector } from 'react-redux';
+import { useAppDispatch } from "@/redux/store/store";
+import { setSelectedStrategyId } from "@/redux/reducers/strategySlice";
 
 const Page = () => {
     const [showForm, setShowForm] = useState(false);
+    const [strategyNames, setStrategyName] = useState([]);
     const [strategyId, setStrategyId] = useState(null);
     const [initialValues, setInitialValues] = useState({
         strategy_name: '',
@@ -32,16 +36,19 @@ const Page = () => {
         stop_loss_type: 'none',
         do_repeat: false,
     });
+    const dispatch = useAppDispatch();
+
+    const selectedStrategyId = useSelector((state) => state.strategy.selectedStrategyId);
 
     const handleOnSubmit = async (values) => {
-        const start_time = values.entry_HH && values.entry_MM 
+        const start_time = values.entry_HH && values.entry_MM
             ? `${values.entry_HH}:${values.entry_MM}`
             : null;
-    
-        const exit_time = values.exit_HH && values.exit_MM 
+
+        const exit_time = values.exit_HH && values.exit_MM
             ? `${values.exit_HH}:${values.exit_MM}`
             : null;
-    
+
         const formData = {
             strategy_name: values.strategy_name || null,
             index_name: values.index_name || null,
@@ -63,32 +70,61 @@ const Page = () => {
             take_profit_value: values.take_profit_value === 'none' ? null : values.take_profit_value,
             stop_loss_value: values.stop_loss_value || null
         };
-    
+
         console.log('final', formData);
-        
+
         try {
-            const apiCall = strategyId 
-                ? axiosInstance.patch(`${API_ROUTER.STRATEGY_UPDATE}${strategyId}/`, formData) 
-                : axiosInstance.post(API_ROUTER.CREATE_STRATEGY, formData);
-    
+            const apiCall = selectedStrategyId
+                ? axiosInstance.patch(API_ROUTER.STRATEGY_UPDATE(selectedStrategyId), formData)
+                : axiosInstance.post(API_ROUTER.STRATEGY_CREATE, formData);
+
             await toast.promise(
                 apiCall,
                 {
-                    pending: strategyId ? 'Updating Strategy...' : 'Saving Strategy...',
-                    success: <b>{strategyId ? 'Updated Successfully!' : 'Saved Successfully!'}</b>,
+                    pending: selectedStrategyId ? 'Updating Strategy...' : 'Saving Strategy...',
+                    success: <b>{selectedStrategyId ? 'Updated Successfully!' : 'Saved Successfully!'}</b>,
                     error: <b>Failed to save. Please try again.</b>,
                 }
             );
+            location.reload();
         } catch (error) {
             toast.error('Error occurred while saving strategy');
             console.error('Error in API call:', error);
         }
     };
 
+
+    const handleDeleteStrategy = async (id) => {
+        try {
+            await axiosInstance.delete(API_ROUTER.STRATEGY_UPDATE(id));
+            toast.success("Strategy deleted");
+            location.reload();
+            // getStrategyList();
+        } catch (error) {
+            console.error("Error deleting strategy", error);
+            toast.error("Failed to delete strategy");
+        }
+    };
+
+    const getStrategyList = async () => {
+        try {
+          const { data } = await axiosInstance.get(API_ROUTER.STRATEGY_LIST);
+          const strategies = data?.map((e) => ({
+            id: e.id,
+            strategy_name: e.strategy_name,
+          }));
+          setStrategyName(strategies);
+        //   console.log('asdsdsd',strategies.map((e)=>e.id))
+          dispatch(setAllStrategyIds(strategies.map((e)=>e.id)))
+        } catch (error) {
+          console.error("Error getting strategy list", error);
+        }
+      };
+
     return (
         <div className='bg'>
             <div className="global-container">
-                <Titlesection setShowForm={setShowForm} setInitialValues={setInitialValues} setStrategyId={setStrategyId} />
+                <Titlesection strategyNames={strategyNames} getStrategyList={getStrategyList} setShowForm={setShowForm} setInitialValues={setInitialValues} setStrategyId={setStrategyId} />
                 {showForm && (
                     <Formik
                         initialValues={initialValues}
@@ -185,6 +221,21 @@ const Page = () => {
                                 <div className='save-btn-div'>
                                     <input type='submit' className='save-btn' value='Save' />
                                 </div>
+                                {selectedStrategyId && (
+
+                                    <div className='save-btn-div'>
+                                    <button
+                                        type='button'
+                                        className='delete-btn'
+                                        onClick={() => {
+                                            handleDeleteStrategy(selectedStrategyId); // pass id here
+                                        }}
+                                        >
+                                        Delete Strategy
+                                    </button>
+                                </div>
+                                    )}
+
                             </Form>
                         )}
                     </Formik>
