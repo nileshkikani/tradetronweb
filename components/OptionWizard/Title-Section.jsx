@@ -91,7 +91,7 @@ const Titlesection = ({ setShowForm, setInitialValues, setStrategyId,getStrategy
       setInitialValues(initialValues);
       setStrategyId(id);
       // console.log('sID',id)
-      // dispatch(setSelectedStrategyId(id));
+      dispatch(setSelectedStrategyId(id));
       setShowForm(true);
     } catch (error) {
       console.error("Error getting specific strategy", error);

@@ -1,4 +1,4 @@
-// 'use client';
+'use client';
 // import React, { createContext } from 'react';
 // import { useRouter } from 'next/navigation';
 // import { useDispatch, useAppSelector } from 'react-redux';

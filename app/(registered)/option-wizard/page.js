@@ -13,7 +13,7 @@ import { combinedSchema } from '@/schemas/strategySchema';
 import { API_ROUTER } from '@/services/routes';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from "@/redux/store/store";
-import { setSelectedStrategyId } from "@/redux/reducers/strategySlice";
+import { setAllStrategyIds, setSelectedStrategyId } from "@/redux/reducers/strategySlice";
 
 const Page = () => {
     const [showForm, setShowForm] = useState(false);
@@ -114,8 +114,7 @@ const Page = () => {
             strategy_name: e.strategy_name,
           }));
           setStrategyName(strategies);
-        //   console.log('asdsdsd',strategies.map((e)=>e.id))
-          dispatch(setAllStrategyIds(strategies.map((e)=>e.id)))
+        //   dispatch(setAllStrategyIds(strategies.map((e)=>e.id)))
         } catch (error) {
           console.error("Error getting strategy list", error);
         }
