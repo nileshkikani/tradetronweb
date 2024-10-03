@@ -1,0 +1,16 @@
+/* In global.css */
+
+.animate-bar {
+    animation: stockBarAnimation 2s infinite ease-in-out;
+    transform-origin: bottom;
+}
+
+@keyframes stockBarAnimation {
+    0%,
+    100% {
+        transform: scaleY(1);
+    }
+    50% {
+        transform: scaleY(1.2);
+    }
+}
