@@ -4,6 +4,8 @@ import { API_ROUTER } from '@/services/routes';
 import axiosInstance from '@/utils/axios';
 import CustomModal from '@/components/Deployed/DeployedModal';
 import './modalStyles.css';
+import useToaster from '@/hooks/useToaster';
+import { TOAST_ALERTS, TOAST_TYPES } from '@/constants/keywords';
 
 const Page = () => {
   const [datas, setDatas] = useState([]);
@@ -12,14 +14,17 @@ const Page = () => {
   const [selectedDate, setSelectedDate] = useState('');
   const [orderList, setOrderList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState(null); 
+  const [selectedOrder, setSelectedOrder] = useState(null);
+
+  const { toaster } = useToaster()
 
   const getData = async (id) => {
     try {
       const { data } = await axiosInstance.get(API_ROUTER.ORDER_DATE_LIST(id));
       setDatas(data);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      toaster(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR)
+      // console.error('Error fetching data:', error);
     }
   };
 
@@ -32,7 +37,7 @@ const Page = () => {
       }));
       setStrategyNames(strategies);
     } catch (error) {
-      console.error("Error getting strategy list", error);
+      toaster(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR)
     }
   };
 
@@ -41,9 +46,9 @@ const Page = () => {
     setSelectedStrategyId(selectedId);
     setOrderList([]);
     if (selectedId) {
-      getData(selectedId); 
+      getData(selectedId);
     } else {
-      setDatas([]); 
+      setDatas([]);
     }
   };
 
@@ -55,7 +60,7 @@ const Page = () => {
         const { data } = await axiosInstance.get(API_ROUTER.ORDER_LIST(selectedStrategyId, selectedParam));
         setOrderList(data);
       } catch (error) {
-        console.error('Error fetching order list:', error);
+        toaster(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR)
       }
     }
   };
@@ -65,17 +70,17 @@ const Page = () => {
     if (selectedStrategyId && selectedDate) {
       try {
         const { data } = await axiosInstance.get(API_ROUTER.ORDER_LIST(selectedStrategyId, selectedDate, positionType));
-        setSelectedOrder(data); 
+        setSelectedOrder(data);
         setIsModalOpen(true);
       } catch (error) {
-        console.error('Error fetching order details:', error);
+        toaster(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR)
       }
     }
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setSelectedOrder(null); 
+    setSelectedOrder(null);
   };
 
   useEffect(() => {
@@ -83,13 +88,13 @@ const Page = () => {
   }, []);
 
   return (
-    <section>
+    <section className='min-h-screen'>
       <select onChange={handleStrategyChange} value={selectedStrategyId}>
         <option value="">Select a strategy</option>
         {strategyNames.map((item) => (
           <option key={item.id} value={item.id}>
             {item.strategy_name}
-          </option> 
+          </option>
         ))}
       </select>
 
@@ -142,10 +147,10 @@ const Page = () => {
         </table>
       )}
 
-      <CustomModal 
-        isOpen={isModalOpen} 
-        onClose={closeModal} 
-        order={selectedOrder} 
+      <CustomModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        order={selectedOrder}
       />
     </section>
   );

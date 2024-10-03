@@ -47,7 +47,7 @@ const Header = () => {
     <>
       <nav className="bg-[#ff7781] sticky top-0 z-10">
         <div className="max-w-screen-xl flex items-center justify-between mx-auto p-4">
-          <Link href="#" className="flex items-center space-x-3">
+          <Link href="/" className="flex items-center space-x-3">
             <Image src="/logo_brain.png" width={45} height={45} alt="logo" />
             <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">
               TradeTron

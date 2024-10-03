@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
+import useToaster from '@/hooks/useToaster';
 import './style.css';
 import Entrysection from '@/components/OptionWizard/Entry-Section';
 import Exitsection from '@/components/OptionWizard/Exit-Section';
@@ -13,6 +14,7 @@ import { combinedSchema } from '@/schemas/strategySchema';
 import { API_ROUTER } from '@/services/routes';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from "@/redux/store/store";
+import { TOAST_ALERTS, TOAST_TYPES } from "@/constants/keywords";
 import { setAllStrategyIds, setSelectedStrategyId } from "@/redux/reducers/strategySlice";
 
 const Page = () => {
@@ -37,6 +39,7 @@ const Page = () => {
         do_repeat: false,
     });
     const dispatch = useAppDispatch();
+    const { toaster } = useToaster();
 
     const selectedStrategyId = useSelector((state) => state.strategy.selectedStrategyId);
 
@@ -77,19 +80,17 @@ const Page = () => {
             const apiCall = selectedStrategyId
                 ? axiosInstance.patch(API_ROUTER.STRATEGY_UPDATE(selectedStrategyId), formData)
                 : axiosInstance.post(API_ROUTER.STRATEGY_CREATE, formData);
-
             await toast.promise(
                 apiCall,
                 {
-                    pending: selectedStrategyId ? 'Updating Strategy...' : 'Saving Strategy...',
-                    success: <b>{selectedStrategyId ? 'Updated Successfully!' : 'Saved Successfully!'}</b>,
-                    error: <b>Failed to save. Please try again.</b>,
+                    pending: selectedStrategyId ? TOAST_ALERTS.STRATEGY_UPDATING : TOAST_ALERTS.STRATEGY_SAVING,
+                    success: <b>{selectedStrategyId ? TOAST_ALERTS.STRATEGY_UPDATED : TOAST_ALERTS.STRATEGY_SAVED}</b>,
+                    error: <b>{TOAST_ALERTS.GENERAL_ERROR}</b>,
                 }
             );
             location.reload();
         } catch (error) {
-            toast.error('Error occurred while saving strategy');
-            console.error('Error in API call:', error);
+            toaster(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
         }
     };
 
@@ -97,31 +98,28 @@ const Page = () => {
     const handleDeleteStrategy = async (id) => {
         try {
             await axiosInstance.delete(API_ROUTER.STRATEGY_UPDATE(id));
-            toast.success("Strategy deleted");
+            toaster(TOAST_ALERTS.STRATEGY_DELETED_SUCCESS, TOAST_TYPES.SUCCESS)
             location.reload();
-            // getStrategyList();
         } catch (error) {
-            console.error("Error deleting strategy", error);
-            toast.error("Failed to delete strategy");
+            toaster(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR)
         }
     };
 
     const getStrategyList = async () => {
         try {
-          const { data } = await axiosInstance.get(API_ROUTER.STRATEGY_LIST);
-          const strategies = data?.map((e) => ({
-            id: e.id,
-            strategy_name: e.strategy_name,
-          }));
-          setStrategyName(strategies);
-        //   dispatch(setAllStrategyIds(strategies.map((e)=>e.id)))
+            const { data } = await axiosInstance.get(API_ROUTER.STRATEGY_LIST);
+            const strategies = data?.map((e) => ({
+                id: e.id,
+                strategy_name: e.strategy_name,
+            }));
+            setStrategyName(strategies);
         } catch (error) {
-          console.error("Error getting strategy list", error);
+            toaster(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR)
         }
-      };
+    };
 
     return (
-        <div className='bg'>
+        <div className='bg min-h-screen'>
             <div className="global-container">
                 <Titlesection strategyNames={strategyNames} getStrategyList={getStrategyList} setShowForm={setShowForm} setInitialValues={setInitialValues} setStrategyId={setStrategyId} />
                 {showForm && (
@@ -223,18 +221,17 @@ const Page = () => {
                                 {selectedStrategyId && (
 
                                     <div className='save-btn-div'>
-                                    <button
-                                        type='button'
-                                        className='delete-btn'
-                                        onClick={() => {
-                                            handleDeleteStrategy(selectedStrategyId); // pass id here
-                                        }}
+                                        <button
+                                            type='button'
+                                            className='delete-btn'
+                                            onClick={() => {
+                                                handleDeleteStrategy(selectedStrategyId); // pass id here
+                                            }}
                                         >
-                                        Delete Strategy
-                                    </button>
-                                </div>
-                                    )}
-
+                                            Delete Strategy
+                                        </button>
+                                    </div>
+                                )}
                             </Form>
                         )}
                     </Formik>

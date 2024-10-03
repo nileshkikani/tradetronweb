@@ -15,6 +15,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import './style.css';
 import { API_ROUTER } from '@/services/routes';
 import axiosInstance from '@/utils/axios';
+import { TOAST_ALERTS, TOAST_TYPES } from "@/constants/keywords";
+import useToaster from '@/hooks/useToaster';
 
 const StyledButton = styled(Button)(({ theme }) => ({
   padding: 0,
@@ -60,6 +62,7 @@ const Page = () => {
   const [orderType, setOrderType] = useState('buy');
   const [lotQuantity, setLotQuantity] = useState(1);
   const [isOptionChainOpen, setIsOptionChainOpen] = useState(false);
+  const { toaster } = useToaster();
 
 
   // -------------EXPIRY DROPDOWN STATES---------
@@ -117,10 +120,10 @@ const Page = () => {
       };
 
       const { data } = await axiosInstance.get(endpoint, { params });
-      setAllExpiries(data?.expiry_dates)
+      setAllExpiries(data?.expiry_dates);
 
     } catch (error) {
-      console.log('error calling FnO API', error);
+      toaster(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
     }
   };
 
@@ -136,7 +139,7 @@ const Page = () => {
   return (
     <>
       <div>
-        <div className='section1'>
+        <div className='section1 '>
           <div className='dropdown-flexes'>
             <select
               value={selectedSymbol}
@@ -207,7 +210,7 @@ const Page = () => {
               className='dropdown'
               onChange={(e) => setSelectedExpiry(e.target.value)}
             >
-              {allExpiries && allExpiries.map((index,e) => (
+              {allExpiries && allExpiries.map((index, e) => (
                 <option key={index} value={e}>{e}</option>)
               )}
             </select>
