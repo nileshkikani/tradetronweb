@@ -42,7 +42,10 @@ select,
 .day-picker {
   @apply p-0 border-0;
 }
-button {
+/* button {
+  @apply px-4 py-2 border-[#7983e8] w-full border rounded text-[#7983e8] transition-colors duration-300 font-bold;
+} */
+.create-own-strategy-btn{
   @apply px-4 py-2 border-[#7983e8] w-full border rounded text-[#7983e8] transition-colors duration-300 font-bold;
 }
 
@@ -132,7 +135,11 @@ input {
 }
 
 .save-btn {
-  @apply px-4 py-2 border border-[#7983e8] text-[#7983e8] cursor-pointer;
+  @apply px-4 p-2 border border-[#7983e8] text-[#7983e8] cursor-pointer;
+}
+
+.delete-btn{
+  @apply px-4 p-2 border border-red-300 text-red-400 rounded cursor-pointer;
 }
 
 .time-div,
@@ -162,4 +169,7 @@ input:disabled {
 .error {
   @apply text-red-600;
 }
+
+
+
 

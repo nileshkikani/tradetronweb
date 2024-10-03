@@ -95,6 +95,7 @@ const Exitsection = () => {
             <option value="none">None</option>
             <option value="percentage_capital">% of Capital</option>
             <option value="percentage_margin">% of Margin</option>
+            <option value="percentage_entry">% of Entry</option>
             <option value="amount">Amount</option>
           </Field>
           <ErrorMessage
@@ -140,6 +141,7 @@ const Exitsection = () => {
             <option value="none">None</option>
             <option value="percentage_capital">% of Capital</option>
             <option value="percentage_margin">% of Margin</option>
+            <option value="percentage_entry">% of Entry</option>
             <option value="amount">Amount</option>
           </Field>
           <ErrorMessage

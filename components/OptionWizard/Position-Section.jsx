@@ -1,3 +1,4 @@
+'use client';
 import React from "react";
 import { Field, ErrorMessage, useFormikContext } from "formik";
 import { positionSchema } from "@/schemas/strategySchema";
@@ -245,7 +246,7 @@ const PositionSection = ({ push }) => {
       </div>
 
       <div className="add-remove">
-        <button type="button" onClick={handleAddPosition}>
+        <button type="button" onClick={handleAddPosition} className="create-own-strategy-btn">
           Add
         </button>
       </div>
