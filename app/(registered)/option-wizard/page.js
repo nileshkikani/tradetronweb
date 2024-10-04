@@ -13,14 +13,14 @@ import axiosInstance from '@/utils/axios';
 import { combinedSchema } from '@/schemas/strategySchema';
 import { API_ROUTER } from '@/services/routes';
 import { useSelector } from 'react-redux';
-import { useAppDispatch } from "@/redux/store/store";
+import { useAppDispatch, useAppSelector } from "@/redux/store/store";
 import { TOAST_ALERTS, TOAST_TYPES } from "@/constants/keywords";
 import { setAllStrategyIds, setSelectedStrategyId } from "@/redux/reducers/strategySlice";
 
 const Page = () => {
     const [showForm, setShowForm] = useState(false);
     const [strategyNames, setStrategyName] = useState([]);
-    const [strategyId, setStrategyId] = useState(null);
+    const [selectedStrategy, setSelectedStrategy] = useState("");
     const [initialValues, setInitialValues] = useState({
         strategy_name: '',
         index_name: '',
@@ -42,6 +42,7 @@ const Page = () => {
     const { toaster } = useToaster();
 
     const selectedStrategyId = useSelector((state) => state.strategy.selectedStrategyId);
+    const authState = useAppSelector((state) => state.auth.authState);
 
     const handleOnSubmit = async (values) => {
         const start_time = values.entry_HH && values.entry_MM
@@ -70,7 +71,7 @@ const Page = () => {
             exit_time: exit_time || null,
             take_profit_type: values.take_profit_type === 'none' ? null : values.take_profit_type,
             stop_loss_type: values.stop_loss_type === 'none' ? null : values.stop_loss_type,
-            take_profit_value: values.take_profit_value === 'none' ? null : values.take_profit_value,
+            take_profit_value: values.take_profit_value === 'none' ?null : values.take_profit_value,
             stop_loss_value: values.stop_loss_value || null
         };
 
@@ -78,8 +79,12 @@ const Page = () => {
 
         try {
             const apiCall = selectedStrategyId
-                ? axiosInstance.patch(API_ROUTER.STRATEGY_UPDATE(selectedStrategyId), formData)
-                : axiosInstance.post(API_ROUTER.STRATEGY_CREATE, formData);
+                ? axiosInstance.patch(API_ROUTER.STRATEGY_UPDATE(selectedStrategyId), formData,{
+                    headers: { Authorization: `Bearer ${authState}` }
+                })
+                : axiosInstance.post(API_ROUTER.STRATEGY_CREATE, formData,{
+                    headers: { Authorization: `Bearer ${authState}` }
+                });
             await toast.promise(
                 apiCall,
                 {
@@ -88,7 +93,14 @@ const Page = () => {
                     error: <b>{TOAST_ALERTS.GENERAL_ERROR}</b>,
                 }
             );
-            location.reload();
+            // location.reload();
+            getStrategyList();
+
+            if (selectedStrategyId) {
+                setShowForm(false);
+                setSelectedStrategy('')
+            }
+            
         } catch (error) {
             toaster(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
         }
@@ -97,9 +109,11 @@ const Page = () => {
 
     const handleDeleteStrategy = async (id) => {
         try {
-            await axiosInstance.delete(API_ROUTER.STRATEGY_UPDATE(id));
+            await axiosInstance.delete(API_ROUTER.STRATEGY_UPDATE(id),{
+                headers: { Authorization: `Bearer ${authState}` }
+            });
             toaster(TOAST_ALERTS.STRATEGY_DELETED_SUCCESS, TOAST_TYPES.SUCCESS)
-            location.reload();
+            // location.reload();
         } catch (error) {
             toaster(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR)
         }
@@ -107,7 +121,9 @@ const Page = () => {
 
     const getStrategyList = async () => {
         try {
-            const { data } = await axiosInstance.get(API_ROUTER.STRATEGY_LIST);
+            const { data } = await axiosInstance.get(API_ROUTER.STRATEGY_LIST,{
+                headers: { Authorization: `Bearer ${authState}` }
+            });
             const strategies = data?.map((e) => ({
                 id: e.id,
                 strategy_name: e.strategy_name,
@@ -121,7 +137,7 @@ const Page = () => {
     return (
         <div className='bg min-h-screen'>
             <div className="global-container">
-                <Titlesection strategyNames={strategyNames} getStrategyList={getStrategyList} setShowForm={setShowForm} setInitialValues={setInitialValues} setStrategyId={setStrategyId} />
+                <Titlesection strategyNames={strategyNames} getStrategyList={getStrategyList} setShowForm={setShowForm} setInitialValues={setInitialValues} setSelectedStrategy={setSelectedStrategy} selectedStrategy={selectedStrategy}/>
                 {showForm && (
                     <Formik
                         initialValues={initialValues}
@@ -215,23 +231,23 @@ const Page = () => {
                                 </section>
                                 <Entrysection />
                                 <Exitsection />
-                                <div className='save-btn-div'>
-                                    <input type='submit' className='save-btn' value='Save' />
-                                </div>
-                                {selectedStrategyId && (
+                                <div className='save-btn-div flex items-center justify-around'>
+                                    <input type='submit' className='save-btn' value={selectedStrategyId ? 'Update' : 'Save'} />
+                                    {selectedStrategyId && (
 
-                                    <div className='save-btn-div'>
-                                        <button
-                                            type='button'
-                                            className='delete-btn'
-                                            onClick={() => {
-                                                handleDeleteStrategy(selectedStrategyId); // pass id here
-                                            }}
-                                        >
-                                            Delete Strategy
-                                        </button>
-                                    </div>
-                                )}
+                                        <div className='save-btn-div'>
+                                            <button
+                                                type='button'
+                                                className='delete-btn'
+                                                onClick={() => {
+                                                    handleDeleteStrategy(selectedStrategyId); // pass id here
+                                                }}
+                                            >
+                                                Delete Strategy
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
                             </Form>
                         )}
                     </Formik>

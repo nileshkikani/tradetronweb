@@ -5,51 +5,24 @@ import { API_ROUTER } from "@/services/routes";
 // import { RiDeleteBinLine } from "react-icons/ri";
 // import toast from "react-hot-toast";
 import { setSelectedStrategyId } from "@/redux/reducers/strategySlice";
-import { useAppDispatch } from "@/redux/store/store";
+import { useAppDispatch, useAppSelector } from "@/redux/store/store";
 
-const Titlesection = ({ setShowForm, setInitialValues, setStrategyId,getStrategyList,strategyNames }) => {
-  // const [strategyNames, setStrategyName] = useState([]);
-  const [selectedStrategy, setSelectedStrategy] = useState("");
+const Titlesection = ({ setShowForm, setInitialValues, getStrategyList,strategyNames,setSelectedStrategy,selectedStrategy }) => {
+
   const dispatch = useAppDispatch();
+  const authState = useAppSelector((state) => state.auth.authState);
 
   const handleFormDisplay = () => {
     setShowForm(true);
-    setStrategyId(null);
-    setInitialValues({
-      strategy_name: "",
-      index_name: "",
-      capital: 100000,
-      strategy_type: "",
-      order_take_profit_type: "",
-      order_stop_loss_type: "",
-      positions: [],
-      start_time: "",
-      days: [],
-      exit_time: "",
-      take_profit_type: "none",
-      take_profit_value: "",
-      stop_loss_value: "",
-      stop_loss_type: "none",
-      do_repeat: false,
-    });
   };
 
-  // const getStrategyList = async () => {
-  //   try {
-  //     const { data } = await axiosInstance.get(API_ROUTER.STRATEGY_LIST);
-  //     const strategies = data?.map((e) => ({
-  //       id: e.id,
-  //       strategy_name: e.strategy_name,
-  //     }));
-  //     setStrategyName(strategies);
-  //   } catch (error) {
-  //     console.error("Error getting strategy list", error);
-  //   }
-  // };
+
 
   const getSpecificStrategy = async (id) => {
     try {
-      const { data } = await axiosInstance.get(API_ROUTER.STRATEGY_UPDATE(id));
+      const { data } = await axiosInstance.get(API_ROUTER.STRATEGY_UPDATE(id),{
+        headers: { Authorization: `Bearer ${authState}` }
+    });
       const [start_HH, start_MM] = data.start_time
         .split(":")
         .map((time) => parseInt(time, 10));
@@ -81,7 +54,7 @@ const Titlesection = ({ setShowForm, setInitialValues, setStrategyId,getStrategy
         days: data.days || [],
         exit_HH: exit_HH.toString() || "",
         exit_MM: exit_MM.toString() || "",
-        take_profit_type: data.take_profit_type || "",
+        take_profit_type: data.take_profit_type || "none",
         take_profit_value: data.take_profit_value || "",
         stop_loss_value: data.stop_loss_value || "",
         stop_loss_type: data.stop_loss_type || "none",
@@ -89,8 +62,6 @@ const Titlesection = ({ setShowForm, setInitialValues, setStrategyId,getStrategy
       };
 
       setInitialValues(initialValues);
-      setStrategyId(id);
-      // console.log('sID',id)
       dispatch(setSelectedStrategyId(id));
       setShowForm(true);
     } catch (error) {
@@ -98,17 +69,6 @@ const Titlesection = ({ setShowForm, setInitialValues, setStrategyId,getStrategy
     }
   };
 
-  // const handleDeleteStrategy = async (id) => {
-  //     try {
-  //         await axiosInstance.delete(API_ROUTER.STRATEGY_UPDATE(id));
-  //         toast.success("Strategy deleted");
-  //         // Refresh the strategy list after deletion
-  //         getStrategyList();
-  //     } catch (error) {
-  //         console.error("Error deleting strategy", error);
-  //         toast.error("Failed to delete strategy");
-  //     }
-  // };
 
   useEffect(() => {
     getStrategyList();

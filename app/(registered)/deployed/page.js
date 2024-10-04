@@ -6,6 +6,7 @@ import CustomModal from '@/components/Deployed/DeployedModal';
 import './modalStyles.css';
 import useToaster from '@/hooks/useToaster';
 import { TOAST_ALERTS, TOAST_TYPES } from '@/constants/keywords';
+import { useAppSelector } from '@/redux/store/store';
 
 const Page = () => {
   const [datas, setDatas] = useState([]);
@@ -15,6 +16,7 @@ const Page = () => {
   const [orderList, setOrderList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const authState = useAppSelector((state) => state.auth.authState);
 
   const { toaster } = useToaster()
 
@@ -24,13 +26,14 @@ const Page = () => {
       setDatas(data);
     } catch (error) {
       toaster(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR)
-      // console.error('Error fetching data:', error);
     }
   };
 
   const getStrategyList = async () => {
     try {
-      const { data } = await axiosInstance.get(API_ROUTER.STRATEGY_LIST);
+      const { data } = await axiosInstance.get(API_ROUTER.STRATEGY_LIST,{
+        headers: { Authorization: `Bearer ${authState}` }
+    });
       const strategies = data?.map((e) => ({
         id: e.id,
         strategy_name: e.strategy_name,

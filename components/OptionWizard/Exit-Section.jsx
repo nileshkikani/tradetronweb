@@ -74,7 +74,7 @@ const Exitsection = () => {
       ? Array.from({ length: 30 }, (_, i) => i) 
       : Array.from({ length: 60 }, (_, i) => i); 
     
-
+console.log('seevals',values.take_profit_type);
   return (
     <section className="exit-section">
       <h1 className="titles">Exit Setting</h1>
@@ -113,11 +113,9 @@ const Exitsection = () => {
                 ? "redField"
                 : ""
             }`}
-            disabled={values.take_profit_type === "none"}
+            disabled={values.take_profit_type === "none" || null }
             onChange={handleProfitMTMInputChange}
-            value={
-              values.take_profit_type === "none" ? 0 : values.take_profit_value
-            }
+            value={values.take_profit_value || (values.take_profit_type === "none" ? 0 : "")}
           />
           <ErrorMessage
             name="take_profit_value"
