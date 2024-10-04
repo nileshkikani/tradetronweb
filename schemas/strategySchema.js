@@ -34,7 +34,6 @@ export const combinedSchema = Yup.object().shape({
       then: (schema) => schema.required('Take profit value is required'),
       otherwise: (schema) => schema.notRequired()
     }),
-
   days: Yup.array().min(1, 'At least 1 day must be selected'),
   do_repeat: Yup.boolean(),
   exit_HH: Yup.number().required('Exit hour is required'),
