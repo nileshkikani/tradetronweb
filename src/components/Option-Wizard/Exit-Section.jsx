@@ -10,7 +10,7 @@ import {
   TextField,
   FormHelperText,
   Switch,
-} from '@mui/material';
+} from "@mui/material";
 import { toast } from "react-hot-toast";
 
 const Exitsection = () => {
@@ -19,7 +19,7 @@ const Exitsection = () => {
   const handleProfitMTMChange = (e) => {
     const value = e.target.value;
     setFieldValue("take_profit_type", value);
-    if (value === 'none') {
+    if (value === "none") {
       setFieldValue("take_profit_value", null);
     }
   };
@@ -32,7 +32,7 @@ const Exitsection = () => {
   const handleStoplossMTMChange = (e) => {
     const value = e.target.value;
     setFieldValue("stop_loss_type", value);
-    if (value === 'none') {
+    if (value === "none") {
       setFieldValue("stop_loss_value", null);
     }
   };
@@ -73,21 +73,33 @@ const Exitsection = () => {
   };
 
   const hourOptions =
-    values.index_name === 'CRUDEOIL' || values.index_name === 'CRUDEOILM'
+    values.index_name === "CRUDEOIL" || values.index_name === "CRUDEOILM"
       ? Array.from({ length: 15 }, (_, i) => i + 9)
       : Array.from({ length: 7 }, (_, i) => i + 9);
 
   const minuteOptions =
     values.exit_HH === 15 &&
-    !(values.index_name === 'CRUDEOIL' || values.index_name === 'CRUDEOILM')
+    !(values.index_name === "CRUDEOIL" || values.index_name === "CRUDEOILM")
       ? Array.from({ length: 30 }, (_, i) => i)
       : Array.from({ length: 60 }, (_, i) => i);
 
   return (
-    <Box border={2} sx={{ borderColor: 'primary.main', borderRadius: '8px', padding: '16px', margin: '16px' }}>
+    <Box
+      border={2}
+      sx={{
+        borderColor: "primary.main",
+        borderRadius: "8px",
+        padding: "16px",
+        margin: "16px",
+      }}
+    >
       <h1 className="titles">Exit Setting</h1>
       <Box display="flex" flexDirection="row" gap={2}>
-        <FormControl variant="outlined" error={touched.take_profit_type && Boolean(errors.take_profit_type)} style={{ width: '100px' }}>
+        <FormControl
+          variant="outlined"
+          error={touched.take_profit_type && Boolean(errors.take_profit_type)}
+          style={{ width: "100px" }}
+        >
           <InputLabel>Profit MTM</InputLabel>
           <Field
             as={Select}
@@ -103,7 +115,7 @@ const Exitsection = () => {
             <MenuItem value="amount">Amount</MenuItem>
           </Field>
           <FormHelperText>
-            <ErrorMessage name="take_profit_type" component="span" />
+            <ErrorMessage name="take_profit_type" component="span" className="error" />
           </FormHelperText>
         </FormControl>
 
@@ -113,13 +125,22 @@ const Exitsection = () => {
           label="Value"
           disabled={values.take_profit_type === "none"}
           onChange={handleProfitMTMInputChange}
-          value={values.take_profit_value || (values.take_profit_type === "none" ? 0 : "")}
+          value={
+            values.take_profit_value ||
+            (values.take_profit_type === "none" ? 0 : "")
+          }
           error={touched.take_profit_value && Boolean(errors.take_profit_value)}
-          helperText={<ErrorMessage name="take_profit_value" component="span" />}
-          style={{ width: '100px' }}
+          helperText={
+            <ErrorMessage name="take_profit_value" component="span" className="error" />
+          }
+          style={{ width: "100px" }}
         />
 
-        <FormControl variant="outlined" error={touched.stop_loss_type && Boolean(errors.stop_loss_type)} style={{ width: '100px' }}>
+        <FormControl
+          variant="outlined"
+          error={touched.stop_loss_type && Boolean(errors.stop_loss_type)}
+          style={{ width: "100px" }}
+        >
           <InputLabel>Stoploss MTM</InputLabel>
           <Field
             as={Select}
@@ -135,7 +156,7 @@ const Exitsection = () => {
             <MenuItem value="amount">Amount</MenuItem>
           </Field>
           <FormHelperText>
-            <ErrorMessage name="stop_loss_type" component="span" />
+            <ErrorMessage name="stop_loss_type" component="span" className="error" />
           </FormHelperText>
         </FormControl>
 
@@ -148,15 +169,22 @@ const Exitsection = () => {
           value={values.stop_loss_type === "none" ? 0 : values.stop_loss_value}
           error={touched.stop_loss_value && Boolean(errors.stop_loss_value)}
           helperText={<ErrorMessage name="stop_loss_value" component="span" />}
-          style={{ width: '100px' }}
+          style={{ width: "100px" }}
         />
       </Box>
 
       <Box display="flex" flexDirection="row" gap={2} marginTop={2}>
-        <Box className="time-div" style={{ display: "flex", flexDirection: "column" }}>
+        <Box
+          className="time-div"
+          style={{ display: "flex", flexDirection: "column" }}
+        >
           <label>Exit Time</label>
           <Box display="flex" gap={1}>
-            <FormControl variant="outlined" error={touched.exit_HH && Boolean(errors.exit_HH)} style={{ width: '100px' }}>
+            <FormControl
+              variant="outlined"
+              error={touched.exit_HH && Boolean(errors.exit_HH)}
+              style={{ width: "100px" }}
+            >
               <InputLabel>Hours</InputLabel>
               <Field
                 as={Select}
@@ -165,17 +193,25 @@ const Exitsection = () => {
                 value={values.exit_HH || ""}
                 onChange={handleTimeChange}
               >
-                <MenuItem value="" disabled>hours</MenuItem>
+                <MenuItem value="" disabled>
+                  hours
+                </MenuItem>
                 {hourOptions.map((hour) => (
-                  <MenuItem key={hour} value={hour}>{hour}</MenuItem>
+                  <MenuItem key={hour} value={hour}>
+                    {hour}
+                  </MenuItem>
                 ))}
               </Field>
               <FormHelperText>
-                <ErrorMessage name="exit_HH" component="span" />
+                <ErrorMessage name="exit_HH" component="span" className="error"/>
               </FormHelperText>
             </FormControl>
 
-            <FormControl variant="outlined" error={touched.exit_MM && Boolean(errors.exit_MM)} style={{ width: '100px' }}>
+            <FormControl
+              variant="outlined"
+              error={touched.exit_MM && Boolean(errors.exit_MM)}
+              style={{ width: "100px" }}
+            >
               <InputLabel>Minutes</InputLabel>
               <Field
                 as={Select}
@@ -184,13 +220,17 @@ const Exitsection = () => {
                 value={values.exit_MM || ""}
                 onChange={handleTimeChange}
               >
-                <MenuItem value="" disabled>minutes</MenuItem>
+                <MenuItem value="" disabled>
+                  minutes
+                </MenuItem>
                 {minuteOptions.map((minute) => (
-                  <MenuItem key={minute} value={minute}>{minute}</MenuItem>
+                  <MenuItem key={minute} value={minute}>
+                    {minute}
+                  </MenuItem>
                 ))}
               </Field>
               <FormHelperText>
-                <ErrorMessage name="exit_MM" component="span" />
+                <ErrorMessage name="exit_MM" component="span" className="error"/>
               </FormHelperText>
             </FormControl>
           </Box>

@@ -10,6 +10,7 @@ import PositionSection from 'src/components/Option-Wizard/Position-Section';
 import AddedPositions from 'src/components/Option-Wizard/Added-Positions-Map';
 import Exitsection from 'src/components/Option-Wizard/Exit-Section';
 import Entrysection from 'src/components/Option-Wizard/Entry-Section';
+import { useSnackbar } from 'notistack';
 import {
     Button,
     ListItem,
@@ -18,23 +19,33 @@ import {
     Select,
     MenuItem,
     TextField,
+    FormHelperText,
     Box,
 } from '@mui/material';
+import { API_ROUTER } from 'src/services/routes';
+import { TOAST_ALERTS } from 'src/constants/keywords';
+import { Slide } from '@mui/material';
+import axiosInstance from 'src/utils/axios';
+import { useSelector } from 'react-redux';
 
 function DashboardOptionWizardContent() {
     const [showForm, setShowForm] = useState(false);
     const [strategyNames, setStrategyName] = useState([]);
-    const [selectedStrategyId, setSelectedStrategyId] = useState(null);
+    const [selectedStrategy, setSelectedStrategy] = useState(null);
     const [initialValues, setInitialValues] = useState({
         strategy_name: '',
         index_name: '',
         capital: 100000,
         strategy_type: '',
+        entry_HH: '',//this is just for storing value and make sure validations,
+        entry_MM: '', //concatination entry_HH + entry_MM will be goes to start_time param , 
+        start_time: '',//same with exit_HH + exit_MM goes to exit_time param.
         order_take_profit_type: '',
         order_stop_loss_type: '',
         positions: [],
-        start_time: '',
         days: [],
+        exit_HH: '',
+        exit_MM: '',
         exit_time: '',
         take_profit_type: 'none',
         take_profit_value: '',
@@ -42,6 +53,9 @@ function DashboardOptionWizardContent() {
         stop_loss_type: 'none',
         do_repeat: false,
     });
+    const { enqueueSnackbar } = useSnackbar();
+    const selectedStrategyId = useSelector((state) => state.strategy.selectedStrategyId);
+    const authState = useSelector((state) => state.auth.authState);
 
 
     const handleOnSubmit = async (values) => {
@@ -71,47 +85,94 @@ function DashboardOptionWizardContent() {
             exit_time: exit_time || null,
             take_profit_type: values.take_profit_type === 'none' ? null : values.take_profit_type,
             stop_loss_type: values.stop_loss_type === 'none' ? null : values.stop_loss_type,
-            take_profit_value: values.take_profit_value === 'none' ?null : values.take_profit_value,
+            take_profit_value: values.take_profit_value === 'none' ? null : values.take_profit_value,
             stop_loss_value: values.stop_loss_value || null
         };
 
         console.log('final', formData);
 
         try {
-            const apiCall = selectedStrategyId
-                ? axiosInstance.patch(API_ROUTER.STRATEGY_UPDATE(selectedStrategyId), formData,{
-                    headers: { Authorization: `Bearer ${authState}` }
-                })
-                : axiosInstance.post(API_ROUTER.STRATEGY_CREATE, formData,{
-                    headers: { Authorization: `Bearer ${authState}` }
-                });
-            await toast.promise(
-                apiCall,
-                {
-                    pending: selectedStrategyId ? TOAST_ALERTS.STRATEGY_UPDATING : TOAST_ALERTS.STRATEGY_SAVING,
-                    success: <b>{selectedStrategyId ? TOAST_ALERTS.STRATEGY_UPDATED : TOAST_ALERTS.STRATEGY_SAVED}</b>,
-                    error: <b>{TOAST_ALERTS.GENERAL_ERROR}</b>,
-                }
-            );
-            // location.reload();
+            const apiCall =
+                 selectedStrategyId
+                    ? axiosInstance.patch(API_ROUTER.STRATEGY_UPDATE(selectedStrategyId), formData, {
+                        headers: { Authorization: `Bearer ${authState}` }
+                    })
+                    : 
+                axiosInstance.post(API_ROUTER.STRATEGY_CREATE, formData
+                        , 
+                        {
+                        headers: { Authorization: `Bearer ${authState}` }
+                    }
+                );
+
+            // Show pending notification
+            enqueueSnackbar(selectedStrategyId ? TOAST_ALERTS.STRATEGY_UPDATING : TOAST_ALERTS.STRATEGY_SAVING, {
+                variant: 'info',
+                anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'right'
+                },
+                autoHideDuration: 2000,
+                TransitionComponent: Slide
+            });
+
+            await apiCall;
+
+            // Show success notification
+            enqueueSnackbar(selectedStrategyId ? TOAST_ALERTS.STRATEGY_UPDATED : TOAST_ALERTS.STRATEGY_SAVED, {
+                variant: 'success',
+                anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'right'
+                },
+                autoHideDuration: 2000,
+                TransitionComponent: Slide
+            });
+
             getStrategyList();
 
             if (selectedStrategyId) {
                 setShowForm(false);
-                setSelectedStrategy('')
             }
-            
+
         } catch (error) {
-            toaster(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
+            // Show error notification
+            enqueueSnackbar(TOAST_ALERTS.GENERAL_ERROR, {
+                variant: 'error',
+                anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'right'
+                },
+                autoHideDuration: 2000,
+                TransitionComponent: Slide
+            });
         }
     };
+
+    const getStrategyList = async () => {
+        try {
+            const { data } = await axiosInstance.get(API_ROUTER.STRATEGY_LIST
+                    ,{
+                    headers: { Authorization: `Bearer ${authState}` }
+                }
+            );
+            const strategies = data?.map((e) => ({
+                id: e.id,
+                strategy_name: e.strategy_name,
+            }));
+            setStrategyName(strategies);
+        } catch (error) {
+            // toaster(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR)
+        }
+    };
+
 
     return (
         <>
             <PageTitleWrapper>
                 <h1>Option Wizard</h1>
             </PageTitleWrapper>
-            <Titlesection setShowForm={setShowForm} />
+            <Titlesection setSelectedStrategy={setSelectedStrategy} strategyNames={strategyNames} setShowForm={setShowForm} getStrategyList={getStrategyList} />
             {showForm && (
                 <Formik
                     initialValues={initialValues}
@@ -126,7 +187,7 @@ function DashboardOptionWizardContent() {
                                     display="flex"
                                     justifyContent="space-evenly"
                                     alignItems="center"
-                                    width="100%" // Ensures the Box takes full width
+                                    width="100%"
                                 >
                                     <Box className='dropdown-container'>
                                         <TextField
@@ -159,7 +220,9 @@ function DashboardOptionWizardContent() {
                                                 <MenuItem value="CRUDEOIL">CRUDE OIL</MenuItem>
                                                 <MenuItem value="CRUDEOILM">CRUDE OIL MINI</MenuItem>
                                             </Field>
-                                            <ErrorMessage name="index_name" component="span" className="error" />
+                                            <FormHelperText>
+                                                <ErrorMessage name="index_name" component="span" className="error" />
+                                            </FormHelperText>
                                         </FormControl>
                                     </Box>
 
@@ -190,7 +253,9 @@ function DashboardOptionWizardContent() {
                                                 <MenuItem value="INTRADAY">Intraday</MenuItem>
                                                 <MenuItem value="positional" disabled>Positional</MenuItem>
                                             </Field>
-                                            <ErrorMessage name="strategy_type" component="span" className="error" />
+                                            <FormHelperText>
+                                                <ErrorMessage name="strategy_type" component="span" className="error" />
+                                            </FormHelperText>
                                         </FormControl>
                                     </Box>
                                 </Box>
@@ -222,35 +287,45 @@ function DashboardOptionWizardContent() {
                                             >
                                                 <Box className='dropdown-container' >
                                                     <label>Target</label>
-                                                    <FormControl fullWidth className='target' error={touched.order_take_profit_type && Boolean(errors.order_take_profit_type)}>
+                                                    <FormControl fullWidth error={touched.order_take_profit_type && Boolean(errors.order_take_profit_type)}>
                                                         <Field as={Select} labelId="target-label" name="order_take_profit_type" onChange={handleChange}>
                                                             <MenuItem value="" disabled>Select Target</MenuItem>
                                                             <MenuItem value="percentage_entry">% Entry Price</MenuItem>
                                                             <MenuItem value="amount">Points</MenuItem>
                                                         </Field>
-                                                        <ErrorMessage name="order_take_profit_type" component="span" className="error" />
+                                                        <FormHelperText>
+                                                            <ErrorMessage name="order_take_profit_type" component="span" className="error" />
+                                                        </FormHelperText>
                                                     </FormControl>
                                                 </Box>
                                                 <Box className='dropdown-container'>
                                                     <label>SL</label>
-                                                    <FormControl fullWidth className='sl' error={touched.order_stop_loss_type && Boolean(errors.order_stop_loss_type)}>
+                                                    <FormControl fullWidth error={touched.order_stop_loss_type && Boolean(errors.order_stop_loss_type)}>
                                                         <Field as={Select} labelId="sl-label" name="order_stop_loss_type" onChange={handleChange}>
                                                             <MenuItem value="" disabled>Select StopLoss</MenuItem>
                                                             <MenuItem value="percentage_entry">% Entry Price</MenuItem>
                                                             <MenuItem value="amount">Points</MenuItem>
                                                         </Field>
-                                                        <ErrorMessage name="order_stop_loss_type" component="span" className="error" />
+                                                        <FormHelperText>
+                                                            <ErrorMessage name="order_stop_loss_type" component="span" className="error" />
+                                                        </FormHelperText>
                                                     </FormControl>
                                                 </Box>
                                             </Box>
                                             {values.positions && values.positions.map((position, index) => (
                                                 <AddedPositions key={index} position={position} index={index} remove={remove} />
                                             ))}
-                                            <ErrorMessage name="positions" component="span" className="error" />
+                                            {/* Error message for positions */}
+                                            {touched.positions && errors.positions && (
+                                                <FormHelperText error>
+                                                    <ErrorMessage name="positions" component="span" className="error" />
+                                                </FormHelperText>
+                                            )}
                                         </>
                                     )}
                                 </FieldArray>
                             </Box>
+
                             <Entrysection />
                             <Exitsection />
                             <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" sx={{ marginTop: 2 }}>

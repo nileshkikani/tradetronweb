@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useEffect } from "react";
-// import axiosInstance from "@/utils/axios"; // Uncomment as needed
-// import { API_ROUTER } from "@/services/routes"; // Uncomment as needed
 // import { RiDeleteBinLine } from "react-icons/ri"; // Uncomment as needed
 // import toast from "react-hot-toast"; // Uncomment as needed
 // import { setSelectedStrategyId } from "@/redux/reducers/strategySlice"; // Uncomment as needed
@@ -16,28 +14,78 @@ import {
     Select,
     MenuItem,
 } from '@mui/material';
+import { API_ROUTER } from "src/services/routes";
+import axiosInstance from "src/utils/axios";
+import { useSelector } from "react-redux";
 
 const Titlesection = ({ setShowForm, setInitialValues, getStrategyList, strategyNames, setSelectedStrategy, selectedStrategy }) => {
 
     // const dispatch = useAppDispatch();
-    // const authState = useAppSelector((state) => state.auth.authState);
+    const authState = useSelector((state) => state.auth.authState);
 
     const handleFormDisplay = () => {
         setShowForm(true);
     };
 
-    // const getSpecificStrategy = async (id) => {
-    //     // Your existing code here
-    // };
+    const getSpecificStrategy = async (id) => {
+        try {
+          const { data } = await axiosInstance.get(API_ROUTER.STRATEGY_UPDATE(id),{
+            headers: { Authorization: `Bearer ${authState}` }
+        });
+          const [start_HH, start_MM] = data.start_time
+            .split(":")
+            .map((time) => parseInt(time, 10));
+          const [exit_HH, exit_MM] = data.exit_time
+            .split(":")
+            .map((time) => parseInt(time, 10));
+    
+          const initialValues = {
+            strategy_name: data.strategy_name || "",
+            index_name: data.index_name || "",
+            capital: data.capital || 0,
+            strategy_type: data.strategy_type || "",
+            order_take_profit_type: data.order_take_profit_type || "",
+            order_stop_loss_type: data.order_stop_loss_type || "",
+            positions:
+              data.positions.map((position) => ({
+                id: position.id,
+                option_type: position.option_type,
+                order_type: position.order_type,
+                strike_selection: position.strike_selection,
+                value: position.value,
+                expiry: position.expiry,
+                order_take_profit_value: position.order_take_profit_value || "",
+                order_stop_loss_value: position.order_stop_loss_value || "",
+                lots: position.lots || 1,
+              })) || [],
+            entry_HH: start_HH.toString() || "",
+            entry_MM: start_MM.toString() || "",
+            days: data.days || [],
+            exit_HH: exit_HH.toString() || "",
+            exit_MM: exit_MM.toString() || "",
+            take_profit_type: data.take_profit_type || "none",
+            take_profit_value: data.take_profit_value || "",
+            stop_loss_value: data.stop_loss_value || "",
+            stop_loss_type: data.stop_loss_type || "none",
+            do_repeat: data.do_repeat || false,
+          };
+    
+          setInitialValues(initialValues);
+          dispatch(setSelectedStrategyId(id));
+          setShowForm(true);
+        } catch (error) {
+          console.error("Error getting specific strategy", error);
+        }
+      };
 
-    // useEffect(() => {
-    //     getStrategyList();
-    // }, [getStrategyList]);
+    useEffect(() => {
+        getStrategyList();
+    }, []);
 
     const handleStrategyChange = (event) => {
         const selectedId = event.target.value;
         setSelectedStrategy(selectedId);
-        // getSpecificStrategy(selectedId); // Uncomment as needed
+        getSpecificStrategy(selectedId); 
     };
 
     return (
@@ -58,12 +106,11 @@ const Titlesection = ({ setShowForm, setInitialValues, getStrategyList, strategy
                                         Select Strategy
                                     </MenuItem>
                                     <MenuItem value="strategy1">Pre-build here...</MenuItem>
-                                    {/* You can map over your strategyNames here */}
-                                    {/* {strategyNames.map((strategy) => (
+                                    {strategyNames.map((strategy) => (
                                         <MenuItem key={strategy.id} value={strategy.id}>
                                             {strategy.strategy_name}
                                         </MenuItem>
-                                    ))} */}
+                                    ))}
                                 </Select>
                             {/* </FormControl> */}
                         </ListItem>

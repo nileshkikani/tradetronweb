@@ -15,12 +15,12 @@ export const combinedSchema = Yup.object().shape({
   index_name: Yup.string().required('index name is required'),
   capital: Yup.number().required('Capital is required').min(1, 'Capital must be greater than zero'),
   strategy_type: Yup.string().required('Strategy type is required'),
-  entry_HH: Yup.number().required("Hour is required"),
-  entry_MM: Yup.number().required("Minute is required"),
+  entry_HH: Yup.number().required("Entry Hour is required"),
+  entry_MM: Yup.number().required("Entry Minute is required"),
   positions: Yup.array().of(positionSchema).min(1, 'At least 1 position is required'),
   
   stop_loss_type: Yup.string().required('Stop loss type is required'),
-  stop_loss_value: Yup.number()
+  stop_loss_value: Yup.number().nullable() 
     .when('stop_loss_type', {
       is: (value) => value !== 'none',
       then: (schema) => schema.required('Stop loss value is required'),
@@ -28,7 +28,7 @@ export const combinedSchema = Yup.object().shape({
     }),
   
   take_profit_type: Yup.string().required('Take profit type is required'),
-  take_profit_value: Yup.number()
+  take_profit_value: Yup.number().nullable() 
     .when('take_profit_type', {
       is: (value) => value !== 'none',
       then: (schema) => schema.required('Take profit value is required'),
