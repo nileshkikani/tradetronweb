@@ -112,6 +112,8 @@ export const AuthProvider = (props) => {
     initialize();
   }, []);
 
+  // console.log('checkState',isAuthenticated);
+
   const loginWithPopup = async (options) => {
     await auth0Client.loginWithPopup(options);
 

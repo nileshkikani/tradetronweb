@@ -18,6 +18,7 @@ import { useAuth } from 'src/hooks/useAuth';
 import { useRefMounted } from 'src/hooks/useRefMounted';
 import { useTranslation } from 'react-i18next';
 
+
 export const LoginJWT = (props) => {
   const { t } = useTranslation();
   const { login } = useAuth();
@@ -26,8 +27,8 @@ export const LoginJWT = (props) => {
 
   const formik = useFormik({
     initialValues: {
-      email: 'demo@example.com',
-      password: 'TokyoPass1@',
+      email: 'jd@delta.com',
+      password: 'jd@123',
       terms: true,
       submit: null
     },
@@ -48,10 +49,8 @@ export const LoginJWT = (props) => {
       try {
         await login(values.email, values.password);
 
-        if (isMountedRef()) {
           const backTo = router.query.backTo || '/dashboards/reports';
           router.push(backTo);
-        }
       } catch (err) {
         console.error(err);
         if (isMountedRef()) {

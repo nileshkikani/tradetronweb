@@ -38,10 +38,10 @@ function TokyoApp(props) {
         />
       </Head>
       <ReduxProvider store={store}>
+              <AuthProvider>
         <SidebarProvider>
           <ThemeProvider>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <AuthProvider>
                 <SnackbarProvider
                   maxSnack={6}
                   anchorOrigin={{
@@ -60,10 +60,10 @@ function TokyoApp(props) {
                     }
                   </AuthConsumer>
                 </SnackbarProvider>
-              </AuthProvider>
             </LocalizationProvider>
           </ThemeProvider>
         </SidebarProvider>
+              </AuthProvider>
       </ReduxProvider>
     </CacheProvider>
   );

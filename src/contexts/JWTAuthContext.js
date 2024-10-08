@@ -1,6 +1,6 @@
 import { createContext, useEffect, useReducer } from 'react';
 
-import { authApi } from 'src/mocks/auth';
+// import { authApi } from 'src/mocks/auth';
 import PropTypes from 'prop-types';
 
 const initialAuthState = {
@@ -51,7 +51,7 @@ const reducer = (state, action) =>
 export const AuthContext = createContext({
   ...initialAuthState,
   method: 'JWT',
-  login: () => Promise.resolve(),
+  // login: () => Promise.resolve(),
   logout: () => Promise.resolve(),
   register: () => Promise.resolve()
 });
@@ -60,13 +60,15 @@ export const AuthProvider = (props) => {
   const { children } = props;
   const [state, dispatch] = useReducer(reducer, initialAuthState);
 
+  // console.log('state', state.isAuthenticated)
+
   useEffect(() => {
     const initialize = async () => {
       try {
         const accessToken = window.localStorage.getItem('accessToken');
 
         if (accessToken) {
-          const user = await authApi.me(accessToken);
+          // const user = await authApi.me(accessToken);
 
           dispatch({
             type: 'INITIALIZE',
@@ -99,52 +101,66 @@ export const AuthProvider = (props) => {
     initialize();
   }, []);
 
+  // console.log('state', state.isAuthenticated)
+
   const login = async (email, password) => {
-    const accessToken = await authApi.login({ email, password });
-    const user = await authApi.me(accessToken);
-
+    const accessToken = await fetch('---ADD LOGIN URL PATH HERE----', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }), 
+    });
+  
+    // const user = await authApi.me(accessToken);
+  
     localStorage.setItem('accessToken', accessToken);
-
+    console.log('accessToken', accessToken)
+    
+    console.log('AFTERDISPATCHH')
     dispatch({
       type: 'LOGIN',
       payload: {
-        user
+        // user,
+        isAuthenticated:true
       }
     });
+    console.log('AFTERDISPATCHH2')
   };
+  
 
-  const logout = async () => {
-    localStorage.removeItem('accessToken');
-    dispatch({ type: 'LOGOUT' });
-  };
+const logout = async () => {
+  localStorage.removeItem('accessToken');
+  dispatch({ type: 'LOGOUT' });
+};
 
-  const register = async (email, name, password) => {
-    const accessToken = await authApi.register({ email, name, password });
-    const user = await authApi.me(accessToken);
+const register = async (email, name, password) => {
+  // const accessToken = await authApi.register({ email, name, password });
+  // const user = await authApi.me(accessToken);
 
-    localStorage.setItem('accessToken', accessToken);
+  localStorage.setItem('accessToken', accessToken);
 
-    dispatch({
-      type: 'REGISTER',
-      payload: {
-        user
-      }
-    });
-  };
+  dispatch({
+    type: 'REGISTER',
+    payload: {
+      user
+    }
+  });
+};
 
-  return (
-    <AuthContext.Provider
-      value={{
-        ...state,
-        method: 'JWT',
-        login,
-        logout,
-        register
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+return (
+  <AuthContext.Provider
+    value={{
+      ...state,
+      method: 'JWT',
+      login,
+      logout,
+      register
+    }}
+  >
+    {children}
+  </AuthContext.Provider>
+);
 };
 
 AuthProvider.propTypes = {
