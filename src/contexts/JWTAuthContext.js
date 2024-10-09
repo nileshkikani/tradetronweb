@@ -1,7 +1,9 @@
 import { createContext, useEffect, useReducer } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import { decode } from '../utils/jwt'; 
+import { decode } from '../utils/jwt';
+import { useDispatch } from 'react-redux';
+import { setAuth } from 'src/store/authSlice';
 
 const initialAuthState = {
   isAuthenticated: false,
@@ -59,6 +61,8 @@ export const AuthProvider = (props) => {
   const { children } = props;
   const [state, dispatch] = useReducer(reducer, initialAuthState);
 
+  const dispatchStore = useDispatch();
+
   const users = []; 
 
   const getUserFromToken = (token) => {
@@ -107,7 +111,9 @@ export const AuthProvider = (props) => {
 
       const accessToken = data.tokens.access;
       localStorage.setItem('accessToken', accessToken); 
+      
       const user = getUserFromToken(accessToken);
+      dispatchStore(setAuth(accessToken));
       dispatch({
         type: 'LOGIN',
         payload: { user }

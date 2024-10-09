@@ -94,11 +94,10 @@ const Exitsection = () => {
       }}
     >
       <h1 className="titles">Exit Setting</h1>
-      <Box display="flex" flexDirection="row" gap={2}>
+      <Box display="flex" flexDirection="row" gap={5}>
         <FormControl
           variant="outlined"
           error={touched.take_profit_type && Boolean(errors.take_profit_type)}
-          style={{ width: "100px" }}
         >
           <InputLabel>Profit MTM</InputLabel>
           <Field
@@ -107,6 +106,7 @@ const Exitsection = () => {
             label="Profit MTM"
             onChange={handleProfitMTMChange}
             value={values.take_profit_type}
+            style={{ width: "200px" }}
           >
             <MenuItem value="none">None</MenuItem>
             <MenuItem value="percentage_capital">% of Capital</MenuItem>
@@ -139,7 +139,7 @@ const Exitsection = () => {
         <FormControl
           variant="outlined"
           error={touched.stop_loss_type && Boolean(errors.stop_loss_type)}
-          style={{ width: "100px" }}
+          // style={{ width: "100px" }}
         >
           <InputLabel>Stoploss MTM</InputLabel>
           <Field
@@ -148,6 +148,7 @@ const Exitsection = () => {
             label="Stoploss MTM"
             onChange={handleStoplossMTMChange}
             value={values.stop_loss_type}
+            style={{ width: "200px" }}
           >
             <MenuItem value="none">None</MenuItem>
             <MenuItem value="percentage_capital">% of Capital</MenuItem>

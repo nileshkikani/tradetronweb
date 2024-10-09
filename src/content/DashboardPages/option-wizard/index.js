@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Footer from 'src/components/Footer';
 import PageTitleWrapper from 'src/components/PageTitleWrapper';
 import ExtendedSidebarLayout from 'src/layouts/ExtendedSidebarLayout';
@@ -23,7 +23,7 @@ import {
     Box,
 } from '@mui/material';
 import { API_ROUTER } from 'src/services/routes';
-import { TOAST_ALERTS } from 'src/constants/keywords';
+import { TOAST_ALERTS, TOAST_TYPES } from 'src/constants/keywords';
 import { Slide } from '@mui/material';
 import axiosInstance from 'src/utils/axios';
 import { useSelector } from 'react-redux';
@@ -31,7 +31,7 @@ import { useSelector } from 'react-redux';
 function DashboardOptionWizardContent() {
     const [showForm, setShowForm] = useState(false);
     const [strategyNames, setStrategyName] = useState([]);
-    const [selectedStrategy, setSelectedStrategy] = useState(null);
+    const [selectedStrategy, setSelectedStrategy] = useState("");
     const [initialValues, setInitialValues] = useState({
         strategy_name: '',
         index_name: '',
@@ -54,8 +54,10 @@ function DashboardOptionWizardContent() {
         do_repeat: false,
     });
     const { enqueueSnackbar } = useSnackbar();
-    const selectedStrategyId = useSelector((state) => state.strategy.selectedStrategyId);
+    // const selectedStrategyId = useSelector((state) => state.strategy.selectedStrategyId);
     const authState = useSelector((state) => state.auth.authState);
+
+    console.log('idFromStore', authState)
 
 
     const handleOnSubmit = async (values) => {
@@ -93,21 +95,21 @@ function DashboardOptionWizardContent() {
 
         try {
             const apiCall =
-                 selectedStrategyId
-                    ? axiosInstance.patch(API_ROUTER.STRATEGY_UPDATE(selectedStrategyId), formData, {
+                selectedStrategy
+                    ? axiosInstance.patch(API_ROUTER.STRATEGY_UPDATE(selectedStrategy), formData, {
                         headers: { Authorization: `Bearer ${authState}` }
                     })
-                    : 
-                axiosInstance.post(API_ROUTER.STRATEGY_CREATE, formData
-                        , 
+                    :
+                    axiosInstance.post(API_ROUTER.STRATEGY_CREATE, formData
+                        ,
                         {
-                        headers: { Authorization: `Bearer ${authState}` }
-                    }
-                );
+                            headers: { Authorization: `Bearer ${authState}` }
+                        }
+                    );
 
             // Show pending notification
-            enqueueSnackbar(selectedStrategyId ? TOAST_ALERTS.STRATEGY_UPDATING : TOAST_ALERTS.STRATEGY_SAVING, {
-                variant: 'info',
+            enqueueSnackbar(selectedStrategy ? TOAST_ALERTS.STRATEGY_UPDATING : TOAST_ALERTS.STRATEGY_SAVING, {
+                variant: TOAST_TYPES.INFO,
                 anchorOrigin: {
                     vertical: 'bottom',
                     horizontal: 'right'
@@ -119,8 +121,8 @@ function DashboardOptionWizardContent() {
             await apiCall;
 
             // Show success notification
-            enqueueSnackbar(selectedStrategyId ? TOAST_ALERTS.STRATEGY_UPDATED : TOAST_ALERTS.STRATEGY_SAVED, {
-                variant: 'success',
+            enqueueSnackbar(selectedStrategy ? TOAST_ALERTS.STRATEGY_UPDATED : TOAST_ALERTS.STRATEGY_SAVED, {
+                variant: TOAST_TYPES.SUCCESS,
                 anchorOrigin: {
                     vertical: 'bottom',
                     horizontal: 'right'
@@ -131,14 +133,15 @@ function DashboardOptionWizardContent() {
 
             getStrategyList();
 
-            if (selectedStrategyId) {
+            if (selectedStrategy) {
                 setShowForm(false);
+                setSelectedStrategy('')
             }
 
         } catch (error) {
             // Show error notification
             enqueueSnackbar(TOAST_ALERTS.GENERAL_ERROR, {
-                variant: 'error',
+                variant: TOAST_TYPES.ERROR,
                 anchorOrigin: {
                     vertical: 'bottom',
                     horizontal: 'right'
@@ -152,7 +155,7 @@ function DashboardOptionWizardContent() {
     const getStrategyList = async () => {
         try {
             const { data } = await axiosInstance.get(API_ROUTER.STRATEGY_LIST
-                    ,{
+                , {
                     headers: { Authorization: `Bearer ${authState}` }
                 }
             );
@@ -163,6 +166,47 @@ function DashboardOptionWizardContent() {
             setStrategyName(strategies);
         } catch (error) {
             // toaster(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR)
+            enqueueSnackbar(TOAST_ALERTS.GENERAL_ERROR, {
+                variant: TOAST_TYPES.ERROR,
+                anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'right'
+                },
+                autoHideDuration: 2000,
+                TransitionComponent: Slide
+            });
+        }
+    };
+
+    const handleDeleteStrategy = async (id) => {
+        try {
+            await axiosInstance.delete(API_ROUTER.STRATEGY_UPDATE(id), {
+                headers: { Authorization: `Bearer ${authState}` }
+            });
+            // toaster(TOAST_ALERTS.STRATEGY_DELETED_SUCCESS, TOAST_TYPES.SUCCESS)
+            enqueueSnackbar(TOAST_ALERTS.STRATEGY_DELETED_SUCCESS, {
+                variant: TOAST_TYPES.SUCCESS,
+                anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'right'
+                },
+                autoHideDuration: 2000,
+                TransitionComponent: Slide
+            });
+            // location.reload();
+            getStrategyList();
+            setInitialValues('')
+        } catch (error) {
+            // toaster(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
+            enqueueSnackbar(TOAST_ALERTS.GENERAL_ERROR, {
+                variant: TOAST_TYPES.ERROR,
+                anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'right'
+                },
+                autoHideDuration: 2000,
+                TransitionComponent: Slide
+            });
         }
     };
 
@@ -172,7 +216,7 @@ function DashboardOptionWizardContent() {
             <PageTitleWrapper>
                 <h1>Option Wizard</h1>
             </PageTitleWrapper>
-            <Titlesection setSelectedStrategy={setSelectedStrategy} strategyNames={strategyNames} setShowForm={setShowForm} getStrategyList={getStrategyList} />
+            <Titlesection setSelectedStrategy={setSelectedStrategy} selectedStrategy={selectedStrategy} setInitialValues={setInitialValues} strategyNames={strategyNames} setShowForm={setShowForm} getStrategyList={getStrategyList} />
             {showForm && (
                 <Formik
                     initialValues={initialValues}
@@ -191,7 +235,7 @@ function DashboardOptionWizardContent() {
                                 >
                                     <Box className='dropdown-container'>
                                         <TextField
-                                            label="Strategy"
+                                            label="Strategy Name"
                                             variant="outlined"
                                             name="strategy_name"
                                             error={touched.strategy_name && Boolean(errors.strategy_name)}
@@ -200,7 +244,7 @@ function DashboardOptionWizardContent() {
                                         />
                                     </Box>
 
-                                    <Box className='dropdown-container'>
+                                    <Box className='dropdown-container' width="10%">
                                         <FormControl
                                             fullWidth
                                             error={touched.index_name && Boolean(errors.index_name)}
@@ -208,11 +252,14 @@ function DashboardOptionWizardContent() {
                                             <Field
                                                 as={Select}
                                                 name="index_name"
-                                                label="Select Index"
+                                                variant="outlined"
                                                 value={values.index_name}
+                                                error={touched.index_name && Boolean(errors.index_name)}
                                                 onChange={handleChange}
                                             >
-                                                <MenuItem value="" disabled>Select Index</MenuItem>
+                                                <MenuItem value="" disabled >
+                                                    Select Index
+                                                </MenuItem>
                                                 <MenuItem value="BANKNIFTY">NIFTY BANK</MenuItem>
                                                 <MenuItem value="NIFTY">NIFTY 50</MenuItem>
                                                 <MenuItem value="FINNIFTY">NIFTY FIN SERVICE</MenuItem>
@@ -221,18 +268,19 @@ function DashboardOptionWizardContent() {
                                                 <MenuItem value="CRUDEOILM">CRUDE OIL MINI</MenuItem>
                                             </Field>
                                             <FormHelperText>
-                                                <ErrorMessage name="index_name" component="span" className="error" />
+                                                {touched.index_name && <ErrorMessage name="index_name" component="span" className="error" />}
                                             </FormHelperText>
                                         </FormControl>
                                     </Box>
 
 
                                     <Box className='dropdown-container'>
-                                        <TextField
+                                        <Field
                                             label="Capital"
                                             variant="outlined"
                                             name="capital"
-                                            value={100000}
+                                            as={TextField}
+                                            // value={capital}
                                             type="number"
                                             disabled={!values.index_name}
                                             error={touched.capital && Boolean(errors.capital)}
@@ -241,13 +289,17 @@ function DashboardOptionWizardContent() {
                                         />
                                     </Box>
 
-                                    <Box className='dropdown-container'>
-                                        <FormControl error={touched.strategy_type && Boolean(errors.strategy_type)}>
+                                    <Box className='dropdown-container' width="10%">
+                                        <FormControl
+                                            error={touched.strategy_type && Boolean(errors.strategy_type)}
+                                            style={{ width: '100%' }}
+                                        >
                                             <Field
                                                 as={Select}
                                                 labelId="strategy-type-label"
                                                 name="strategy_type"
                                                 onChange={handleChange}
+                                                style={{ width: '100%' }}
                                             >
                                                 <MenuItem value="" disabled>Select Type</MenuItem>
                                                 <MenuItem value="INTRADAY">Intraday</MenuItem>
@@ -258,6 +310,7 @@ function DashboardOptionWizardContent() {
                                             </FormHelperText>
                                         </FormControl>
                                     </Box>
+
                                 </Box>
                             </ListItem>
 
@@ -288,7 +341,7 @@ function DashboardOptionWizardContent() {
                                                 <Box className='dropdown-container' >
                                                     <label>Target</label>
                                                     <FormControl fullWidth error={touched.order_take_profit_type && Boolean(errors.order_take_profit_type)}>
-                                                        <Field as={Select} labelId="target-label" name="order_take_profit_type" onChange={handleChange}>
+                                                        <Field as={Select} labelId="target-label" name="order_take_profit_type" onChange={handleChange} style={{ width: "100px" }}>
                                                             <MenuItem value="" disabled>Select Target</MenuItem>
                                                             <MenuItem value="percentage_entry">% Entry Price</MenuItem>
                                                             <MenuItem value="amount">Points</MenuItem>
@@ -301,7 +354,7 @@ function DashboardOptionWizardContent() {
                                                 <Box className='dropdown-container'>
                                                     <label>SL</label>
                                                     <FormControl fullWidth error={touched.order_stop_loss_type && Boolean(errors.order_stop_loss_type)}>
-                                                        <Field as={Select} labelId="sl-label" name="order_stop_loss_type" onChange={handleChange}>
+                                                        <Field as={Select} labelId="sl-label" name="order_stop_loss_type" onChange={handleChange} style={{ width: "100px" }}>
                                                             <MenuItem value="" disabled>Select StopLoss</MenuItem>
                                                             <MenuItem value="percentage_entry">% Entry Price</MenuItem>
                                                             <MenuItem value="amount">Points</MenuItem>
@@ -347,17 +400,17 @@ function DashboardOptionWizardContent() {
                                         }
                                     }}
                                 >
-                                    {selectedStrategyId ? 'Update' : 'Save'}
+                                    {selectedStrategy ? 'Update Strategy' : 'Save Strategy'}
                                 </Button>
 
-                                {selectedStrategyId && (
+                                {selectedStrategy && (
                                     <Box sx={{ marginTop: 1 }}>
                                         <Button
                                             type='button'
                                             variant="outlined"
                                             color="error"
                                             className='delete-btn'
-                                            onClick={() => handleDeleteStrategy(selectedStrategyId)}
+                                            onClick={() => handleDeleteStrategy(Number(selectedStrategy))}
                                             sx={{
                                                 padding: '10px 20px',
                                                 borderRadius: '5px',

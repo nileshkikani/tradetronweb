@@ -1,11 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  authState: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI4NDgyNjQ3LCJpYXQiOjE3MjgzOTYyNDcsImp0aSI6IjViMzc0ZmUyNjhiOTQzMDJiN2QwZmU1M2M4Njk3YmViIiwidXNlcl9pZCI6MTF9.aO40G8Vw3ZvHxEcRA8dKhi3eyGYkQIf7fF4pAJbArRk",
+  authState: "",
   isUser:false,
   // isCookie:false,
   // rememberMe:false
 };
+
 
 export const authSlice = createSlice({
   name: "auth",
@@ -13,6 +14,7 @@ export const authSlice = createSlice({
   reducers: {
     setAuth: (state, action) => {
       state.authState = action.payload;
+      // console.log('accessTokenfromstore',action.payload);
     },
     setUserStatus: (state, action) => {
       state.isUser = action.payload;

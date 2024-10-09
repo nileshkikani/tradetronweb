@@ -8,14 +8,18 @@ import { CacheProvider } from '@emotion/react';
 import createEmotionCache from 'src/createEmotionCache';
 import { appWithTranslation } from 'next-i18next';
 import { SidebarProvider } from 'src/contexts/SidebarContext';
-import { Provider as ReduxProvider } from 'react-redux';
-import { store } from 'src/store';
+// import { Provider as ReduxProvider } from 'react-redux';
 import Loader from 'src/components/Loader';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import useScrollTop from 'src/hooks/useScrollTop';
+import { store } from '../src/store';
 import { SnackbarProvider } from 'notistack';
+import dynamic from 'next/dynamic';
 import { AuthConsumer, AuthProvider } from 'src/contexts/JWTAuthContext';
+const ReduxProvider = dynamic(() => import('../src/store/RootProvider'), {
+  ssr: false
+});
 
 const clientSideEmotionCache = createEmotionCache();
 

@@ -2,7 +2,7 @@
 import React from "react";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { Field, ErrorMessage, useFormikContext } from "formik";
-import { Box, FormControl, InputLabel, Select, MenuItem, TextField, FormHelperText,Grid,IconButton } from "@mui/material";
+import { Box, FormControl, InputLabel, Select, MenuItem, TextField, FormHelperText, Grid, IconButton } from "@mui/material";
 
 const AddedPositions = ({ position, index, remove }) => {
   const { values } = useFormikContext();
@@ -52,34 +52,16 @@ const AddedPositions = ({ position, index, remove }) => {
             ? ['CURRENT_MONTH'] 
             : ['CURRENT_WEEK', 'NEXT_WEEK', 'CURRENT_MONTH', 'NEXT_MONTH'] 
         },
-        { 
-          name: `positions[${index}].lots`, 
-          label: 'Lots', 
-          options: [1, 2, 3, 4, 5, 6, 7, 8] 
-        },
-        { name: `positions[${index}].order_take_profit_value`, isNumber: true },
-        { name: `positions[${index}].order_stop_loss_value`, isNumber: true },
-      ].map(({ name, label, options, isNumber }) => (
+      ].map(({ name, label, options }) => (
         <Box key={name} display="flex" flexDirection="column" flex={1} minWidth="100px">
           <FormControl variant="outlined" fullWidth>
             <InputLabel>{label}</InputLabel>
-            {isNumber ? (
-              <Field
-                name={name}
-                as={TextField}
-                type="number"
-                variant="outlined"
-                label={label}
-                fullWidth
-              />
-            ) : (
-              <Field as={Select} name={name} label={label} fullWidth>
-                <MenuItem value="" disabled>Select</MenuItem>
-                {options.map(option => (
-                  <MenuItem key={option} value={option}>{option}</MenuItem>
-                ))}
-              </Field>
-            )}
+            <Field as={Select} name={name} label={label} fullWidth>
+              <MenuItem value="" disabled>Select</MenuItem>
+              {options.map(option => (
+                <MenuItem key={option} value={option}>{option}</MenuItem>
+              ))}
+            </Field>
             <FormHelperText>
               <ErrorMessage name={name} component="span" />
             </FormHelperText>
@@ -87,7 +69,77 @@ const AddedPositions = ({ position, index, remove }) => {
         </Box>
       ))}
 
-<Grid item>
+      {/* Option Segment Type Dropdown */}
+      <Box display="flex" flexDirection="column" flex={1} style={{ width: "100px" }}>
+        <FormControl variant="outlined" fullWidth>
+          <InputLabel>Option Segment Type</InputLabel>
+          <Field as={Select} name={`positions[${index}].value`} label="Option Segment Type" fullWidth>
+            <MenuItem value="" disabled>Select Segment first</MenuItem>
+            {position.strike_selection === "ATM_FUTURE" || position.strike_selection === "ATM_SPOT" ? (
+              getOptionSegmentType()?.map(option => (
+                <MenuItem key={option} value={option}>
+                  {option.replace(/ITM_|OTM_/, match => `${match.replace("_", "")} `).replace("ATM_0", "ATM")}
+                </MenuItem>
+              ))
+            ) : null}
+          </Field>
+          <FormHelperText>
+            <ErrorMessage name={`positions[${index}].value`} component="span" />
+          </FormHelperText>
+        </FormControl>
+      </Box>
+
+      {/* Lots Field */}
+      <Box display="flex" flexDirection="column" flex={1} minWidth="100px">
+        <FormControl variant="outlined" fullWidth>
+          <InputLabel>Lots</InputLabel>
+          <Field as={Select} name={`positions[${index}].lots`} label="Lots" fullWidth>
+            <MenuItem value="" disabled>Select</MenuItem>
+            {[1, 2, 3, 4, 5, 6, 7, 8].map(e => (
+              <MenuItem key={e} value={e}>{e}</MenuItem>
+            ))}
+          </Field>
+          <FormHelperText>
+            <ErrorMessage name={`positions[${index}].lots`} component="span" />
+          </FormHelperText>
+        </FormControl>
+      </Box>
+
+      {/* Order Take Profit Value */}
+      <Box display="flex" flexDirection="column" flex={1} minWidth="100px">
+        <FormControl variant="outlined" fullWidth>
+          <InputLabel>Take Profit Value</InputLabel>
+          <Field
+            name={`positions[${index}].order_take_profit_value`}
+            type="number"
+            as={TextField}
+            variant="outlined"
+            fullWidth
+          />
+          <FormHelperText>
+            <ErrorMessage name={`positions[${index}].order_take_profit_value`} component="span" />
+          </FormHelperText>
+        </FormControl>
+      </Box>
+
+      {/* Order Stop Loss Value */}
+      <Box display="flex" flexDirection="column" flex={1} minWidth="100px">
+        <FormControl variant="outlined" fullWidth>
+          <InputLabel>Stop Loss Value</InputLabel>
+          <Field
+            name={`positions[${index}].order_stop_loss_value`}
+            type="number"
+            as={TextField}
+            variant="outlined"
+            fullWidth
+          />
+          <FormHelperText>
+            <ErrorMessage name={`positions[${index}].order_stop_loss_value`} component="span" />
+          </FormHelperText>
+        </FormControl>
+      </Box>
+
+      <Grid item>
         <IconButton 
           onClick={() => remove(index)} 
           sx={{ color: 'red' }} 

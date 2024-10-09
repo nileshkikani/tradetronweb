@@ -149,8 +149,9 @@ const PositionSection = ({ push }) => {
             as={Select}
             name="lots"
             fullWidth
+            label='lots'
           >
-            <MenuItem value="" disabled>Select</MenuItem>
+            <MenuItem value="" disabled>Select Lot</MenuItem>
             {[1, 2, 3, 4, 5, 6, 7, 8].map(e => (
               <MenuItem key={e} value={e}>
                 {e}

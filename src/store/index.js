@@ -4,11 +4,25 @@ import {
 } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { rootReducer } from './rootReducer';
+import storage from "redux-persist/lib/storage";
+import { persistReducer, persistStore } from 'redux-persist';
+// import { PersistGate } from 'redux-persist/integration/react';
+
+const persistConfig = {
+  key: "root",
+  storage,
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
 
 export const store = configureStore({
-  reducer: rootReducer,
-  devTools: process.env.REACT_APP_ENABLE_REDUX_DEV_TOOLS === 'true'
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }),
 });
+
+
+export const persistor = persistStore(store);
 
 export const useSelector = useReduxSelector;
 
