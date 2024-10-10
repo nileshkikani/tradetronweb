@@ -4,9 +4,9 @@ import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { wait } from 'src/utils/wait';
 import dynamic from 'next/dynamic';
-import 'react-quill/dist/quill.snow.css';
+// import 'react-quill/dist/quill.snow.css';
 
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+// const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 import {
   styled,
@@ -342,7 +342,7 @@ function PageHeader() {
                     md={9}
                   >
                     <EditorWrapper>
-                      <ReactQuill />
+                      {/* <ReactQuill /> */}
                     </EditorWrapper>
                   </Grid>
                   <Grid

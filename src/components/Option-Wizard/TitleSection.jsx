@@ -149,7 +149,7 @@ const Titlesection = ({ setShowForm, setInitialValues, strategyNames, selectedSt
                                 <MenuItem value="" disabled>
                                     Own strategy
                                 </MenuItem>
-                                <MenuItem value="strategy1">created strategies here</MenuItem>
+                                {/* <MenuItem value="strategy1">created strategies here</MenuItem> */}
                                 {strategyNames.map((strategy) => (
                                     <MenuItem key={strategy.id} value={strategy.id}>
                                         {strategy.strategy_name}

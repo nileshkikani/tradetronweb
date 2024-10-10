@@ -20,7 +20,10 @@ export const TOAST_ALERTS = {
     STRATEGY_SAVING:'Saving Strategy...',
     STRATEGY_SAVED:'Saved Successfully!',
 
-    STRATEGY_DELETED_SUCCESS:'Strategy deleted'
+    STRATEGY_DELETED_SUCCESS:'Strategy deleted',
+
+    SL_PERCENTAGE_EXCEED:'Stop loss cannot exceed 100%',
+    SL_VALUE_EXCEED:'Stop loss cannot be more than capital',
   };
   
   export const TOAST_TYPES = {

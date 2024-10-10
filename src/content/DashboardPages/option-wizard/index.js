@@ -57,7 +57,6 @@ function DashboardOptionWizardContent() {
     // const selectedStrategyId = useSelector((state) => state.strategy.selectedStrategyId);
     const authState = useSelector((state) => state.auth.authState);
 
-    console.log('idFromStore', authState)
 
 
     const handleOnSubmit = async (values) => {
@@ -212,7 +211,6 @@ function DashboardOptionWizardContent() {
         }
     };
 
-
     return (
         <>
             <PageTitleWrapper>
@@ -237,9 +235,10 @@ function DashboardOptionWizardContent() {
                                 >
                                     <Box className='dropdown-container'>
                                         <TextField
-                                            label="Strategy Name"
+                                            // label="Strategy Name"
                                             variant="outlined"
                                             name="strategy_name"
+                                            value={values.strategy_name} 
                                             error={touched.strategy_name && Boolean(errors.strategy_name)}
                                             helperText={touched.strategy_name && <ErrorMessage name="strategy_name" component="span" className="error" />}
                                             onChange={handleChange}

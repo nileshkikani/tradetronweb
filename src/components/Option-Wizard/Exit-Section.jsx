@@ -10,11 +10,16 @@ import {
   TextField,
   FormHelperText,
   Switch,
+  Slide
 } from "@mui/material";
-import { toast } from "react-hot-toast";
+import { useSnackbar } from 'notistack';
+import { TOAST_ALERTS, TOAST_TYPES } from "src/constants/keywords";
+// import { toast } from "react-hot-toast";
+
 
 const Exitsection = () => {
   const { setFieldValue, values, errors, touched } = useFormikContext();
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleProfitMTMChange = (e) => {
     const value = e.target.value;
@@ -45,12 +50,30 @@ const Exitsection = () => {
         stopLossType === "percentage_margin") &&
       value > 100
     ) {
-      toast.error("Stop loss cannot exceed 100%");
+      // toast.error("Stop loss cannot exceed 100%");
+      enqueueSnackbar(TOAST_ALERTS.SL_PERCENTAGE_EXCEED, {
+        variant: TOAST_TYPES.ERROR,
+        anchorOrigin: {
+            vertical: 'bottom',
+            horizontal: 'right'
+        },
+        autoHideDuration: 2000,
+        TransitionComponent: Slide
+    });
       return;
     }
 
     if (stopLossType === "amount" && value > values.capital) {
-      toast.error(`Stop loss cannot be more than capital`);
+      // toast.error(`Stop loss cannot be more than capital`);
+      enqueueSnackbar(TOAST_ALERTS.SL_VALUE_EXCEED, {
+        variant: TOAST_TYPES.ERROR,
+        anchorOrigin: {
+            vertical: 'bottom',
+            horizontal: 'right'
+        },
+        autoHideDuration: 2000,
+        TransitionComponent: Slide
+    });
       return;
     }
     setFieldValue("stop_loss_value", value);
