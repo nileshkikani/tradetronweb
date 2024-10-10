@@ -55,7 +55,7 @@ function SidebarFooter() {
       alignItems="center"
       justifyContent="center"
     >
-      <LightTooltip placement="top" arrow title={t('Events Calendar')}>
+      {/* <LightTooltip placement="top" arrow title={t('Events Calendar')}>
         <IconButton
           sx={{
             background: `${theme.colors.alpha.trueWhite[10]}`,
@@ -108,7 +108,7 @@ function SidebarFooter() {
             <SmsTwoToneIcon fontSize="small" />
           </IconButton>
         </Badge>
-      </LightTooltip>
+      </LightTooltip> */}
       <LightTooltip placement="top" arrow title={t('Logout')}>
         <IconButton
           sx={{

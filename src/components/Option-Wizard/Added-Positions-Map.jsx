@@ -108,9 +108,10 @@ const AddedPositions = ({ position, index, remove }) => {
       {/* Order Take Profit Value */}
       <Box display="flex" flexDirection="column" flex={1} minWidth="100px">
         <FormControl variant="outlined" fullWidth>
-          <InputLabel>Take Profit Value</InputLabel>
+          {/* <InputLabel>Take Profit Value</InputLabel> */}
           <Field
             name={`positions[${index}].order_take_profit_value`}
+            label='take profit value'
             type="number"
             as={TextField}
             variant="outlined"
@@ -125,9 +126,10 @@ const AddedPositions = ({ position, index, remove }) => {
       {/* Order Stop Loss Value */}
       <Box display="flex" flexDirection="column" flex={1} minWidth="100px">
         <FormControl variant="outlined" fullWidth>
-          <InputLabel>Stop Loss Value</InputLabel>
+          {/* <InputLabel>Stop Loss Value</InputLabel> */}
           <Field
             name={`positions[${index}].order_stop_loss_value`}
+            label='take stop loss value'
             type="number"
             as={TextField}
             variant="outlined"

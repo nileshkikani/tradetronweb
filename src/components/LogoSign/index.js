@@ -9,6 +9,9 @@ import {
 import Link from 'src/components/Link';
 import { useTranslation } from 'react-i18next';
 
+
+import Image from 'next/image';
+
 const LogoWrapper = styled(Link)(
   ({ theme }) => `
         color: ${theme.palette.text.primary};
@@ -99,9 +102,30 @@ function Logo() {
   const theme = useTheme();
 
   return (
-    <TooltipWrapper title={t('Tokyo Next.js Javascript Admin Dashboard')} arrow>
-      <LogoWrapper href="/">
-        <Badge
+    // <TooltipWrapper title={t('Tokyo Next.js Javascript Admin Dashboard')} arrow>
+    //   <LogoWrapper href="/">
+    //     <Badge
+    //       sx={{
+    //         '.MuiBadge-badge': {
+    //           fontSize: theme.typography.pxToRem(11),
+    //           right: -2,
+    //           top: 8
+    //         }
+    //       }}
+    //       overlap="circular"
+    //       color="success"
+    //       badgeContent="3.1"
+    //     >
+    //       <LogoSignWrapper>
+    //         <LogoSign>
+    //           <LogoSignInner />
+    //         </LogoSign>
+    //       </LogoSignWrapper>
+    //     </Badge>
+    //   </LogoWrapper>
+    // </TooltipWrapper>
+    <>
+     <Badge
           sx={{
             '.MuiBadge-badge': {
               fontSize: theme.typography.pxToRem(11),
@@ -111,16 +135,17 @@ function Logo() {
           }}
           overlap="circular"
           color="success"
-          badgeContent="3.1"
         >
-          <LogoSignWrapper>
-            <LogoSign>
-              <LogoSignInner />
-            </LogoSign>
-          </LogoSignWrapper>
+          <Box sx={{ position: 'relative', width: 83, height: 58 }}>
+            <Image 
+              src="/bull_logo.png" 
+              alt="Bull Logo" 
+              layout="fill" 
+              objectFit="contain" 
+            />
+          </Box>
         </Badge>
-      </LogoWrapper>
-    </TooltipWrapper>
+    </>
   );
 }
 

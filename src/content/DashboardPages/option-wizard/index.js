@@ -195,7 +195,9 @@ function DashboardOptionWizardContent() {
             });
             // location.reload();
             getStrategyList();
-            setInitialValues('')
+            setInitialValues('');
+            setSelectedStrategy('');
+            setShowForm(false)
         } catch (error) {
             // toaster(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
             enqueueSnackbar(TOAST_ALERTS.GENERAL_ERROR, {
@@ -338,10 +340,10 @@ function DashboardOptionWizardContent() {
                                                 alignItems="center"
                                                 gap={2}
                                             >
-                                                <Box className='dropdown-container' >
+                                                <Box className='dropdown-container' style={{ width: "150px" }}>
                                                     <label>Target</label>
-                                                    <FormControl fullWidth error={touched.order_take_profit_type && Boolean(errors.order_take_profit_type)}>
-                                                        <Field as={Select} labelId="target-label" name="order_take_profit_type" onChange={handleChange} style={{ width: "100px" }}>
+                                                    <FormControl fullWidth error={touched.order_take_profit_type && Boolean(errors.order_take_profit_type)} >
+                                                        <Field as={Select} labelId="target-label" name="order_take_profit_type" onChange={handleChange} style={{ width: "150px" }}>
                                                             <MenuItem value="" disabled>Select Target</MenuItem>
                                                             <MenuItem value="percentage_entry">% Entry Price</MenuItem>
                                                             <MenuItem value="amount">Points</MenuItem>
@@ -351,10 +353,10 @@ function DashboardOptionWizardContent() {
                                                         </FormHelperText>
                                                     </FormControl>
                                                 </Box>
-                                                <Box className='dropdown-container'>
+                                                <Box className='dropdown-container' style={{ width: "150px" }}>
                                                     <label>SL</label>
-                                                    <FormControl fullWidth error={touched.order_stop_loss_type && Boolean(errors.order_stop_loss_type)}>
-                                                        <Field as={Select} labelId="sl-label" name="order_stop_loss_type" onChange={handleChange} style={{ width: "100px" }}>
+                                                    <FormControl fullWidth error={touched.order_stop_loss_type && Boolean(errors.order_stop_loss_type)} >
+                                                        <Field as={Select} labelId="sl-label" name="order_stop_loss_type" onChange={handleChange} >
                                                             <MenuItem value="" disabled>Select StopLoss</MenuItem>
                                                             <MenuItem value="percentage_entry">% Entry Price</MenuItem>
                                                             <MenuItem value="amount">Points</MenuItem>
@@ -381,14 +383,13 @@ function DashboardOptionWizardContent() {
 
                             <Entrysection />
                             <Exitsection />
-                            <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" sx={{ marginTop: 2 }}>
+                            <Box display="flex"  alignItems="center" justifyContent="center" gap={2} >
                                 <Button
                                     type='submit'
                                     variant="contained"
                                     color="primary"
                                     className='save-btn'
                                     sx={{
-                                        marginBottom: 2,
                                         padding: '10px 20px',
                                         borderRadius: '5px',
                                         fontSize: '16px',
@@ -404,7 +405,7 @@ function DashboardOptionWizardContent() {
                                 </Button>
 
                                 {selectedStrategy && (
-                                    <Box sx={{ marginTop: 1 }}>
+                                    <Box >
                                         <Button
                                             type='button'
                                             variant="outlined"
