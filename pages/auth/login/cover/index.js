@@ -268,9 +268,9 @@ function LoginCover() {
                 <Tooltip
                   title={t('Used only for the live preview demonstration !')}
                 >
-                  <Alert severity="warning">
+                  <box>
                     {/* Use <b>demo@example.com</b> and password <b>TokyoPass1@</b> */}
-                  </Alert>
+                  </box>
                 </Tooltip>
               )}
             </Card>

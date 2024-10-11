@@ -27,8 +27,8 @@ export const LoginJWT = (props) => {
 
   const formik = useFormik({
     initialValues: {
-      email: 'jd@delta.com',
-      password: 'jd@123',
+      email: '',
+      password: '',
       terms: true,
       submit: null
     },
