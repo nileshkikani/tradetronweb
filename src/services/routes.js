@@ -9,7 +9,9 @@ export const API_ROUTER = {
   
 
     SYMBOLS: 'stocks/get-symbols/',
-    OPTIONS_OR_FUTURES: 'stocks/',
+    GET_FUTURE_EXPIRY:"stocks/get-future-expiry/",
+    GET_STRIKE_PRICE :"stocks/get-strike-price/",
+    ADD_POSITION : "stocks/add-position/",
 
     STRATEGY_LIST: 'strategy/',
     STRATEGY_CREATE: 'strategy/create/',
