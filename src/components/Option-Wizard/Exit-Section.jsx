@@ -13,7 +13,7 @@ import {
   Slide
 } from "@mui/material";
 import { useSnackbar } from 'notistack';
-import { TOAST_ALERTS, TOAST_TYPES } from "src/constants/keywords";
+import { TOAST_ALERTS, TOAST_TYPES,TOAST_PLACE } from "src/constants/keywords";
 // import { toast } from "react-hot-toast";
 
 
@@ -53,10 +53,7 @@ const Exitsection = () => {
       // toast.error("Stop loss cannot exceed 100%");
       enqueueSnackbar(TOAST_ALERTS.SL_PERCENTAGE_EXCEED, {
         variant: TOAST_TYPES.ERROR,
-        anchorOrigin: {
-            vertical: 'bottom',
-            horizontal: 'right'
-        },
+        anchorOrigin: TOAST_PLACE,
         autoHideDuration: 2000,
         TransitionComponent: Slide
     });
@@ -67,10 +64,7 @@ const Exitsection = () => {
       // toast.error(`Stop loss cannot be more than capital`);
       enqueueSnackbar(TOAST_ALERTS.SL_VALUE_EXCEED, {
         variant: TOAST_TYPES.ERROR,
-        anchorOrigin: {
-            vertical: 'bottom',
-            horizontal: 'right'
-        },
+        anchorOrigin: TOAST_PLACE,
         autoHideDuration: 2000,
         TransitionComponent: Slide
     });

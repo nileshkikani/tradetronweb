@@ -21,6 +21,7 @@ import {
     Paper,
   } from '@mui/material';
 import CustomModal from 'src/components/Deployed/DeployedModal';
+import { TOAST_ALERTS, TOAST_PLACE, TOAST_TYPES } from 'src/constants/keywords';
 
 
 
@@ -47,10 +48,7 @@ function DashboardDeployedContent() {
             // toaster(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
             enqueueSnackbar(TOAST_ALERTS.GENERAL_ERROR, {
                 variant: TOAST_TYPES.ERROR,
-                anchorOrigin: {
-                    vertical: 'bottom',
-                    horizontal: 'right'
-                },
+                anchorOrigin: TOAST_PLACE,
                 autoHideDuration: 2000,
                 TransitionComponent: Slide
             });
@@ -71,10 +69,7 @@ function DashboardDeployedContent() {
             // toaster(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR)
             enqueueSnackbar(TOAST_ALERTS.GENERAL_ERROR, {
                 variant: TOAST_TYPES.ERROR,
-                anchorOrigin: {
-                    vertical: 'bottom',
-                    horizontal: 'right'
-                },
+                anchorOrigin: TOAST_PLACE,
                 autoHideDuration: 2000,
                 TransitionComponent: Slide
             });
@@ -105,10 +100,7 @@ function DashboardDeployedContent() {
                 // toaster(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR)
                 enqueueSnackbar(TOAST_ALERTS.GENERAL_ERROR, {
                     variant: TOAST_TYPES.ERROR,
-                    anchorOrigin: {
-                        vertical: 'bottom',
-                        horizontal: 'right'
-                    },
+                    anchorOrigin: TOAST_PLACE,
                     autoHideDuration: 2000,
                     TransitionComponent: Slide
                 });
@@ -129,10 +121,7 @@ function DashboardDeployedContent() {
                 // toaster(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR)
                 enqueueSnackbar(TOAST_ALERTS.GENERAL_ERROR, {
                     variant: TOAST_TYPES.ERROR,
-                    anchorOrigin: {
-                        vertical: 'bottom',
-                        horizontal: 'right'
-                    },
+                    anchorOrigin: TOAST_PLACE,
                     autoHideDuration: 2000,
                     TransitionComponent: Slide
                 });

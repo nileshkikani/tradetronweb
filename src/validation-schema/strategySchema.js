@@ -14,7 +14,7 @@ export const combinedSchema = Yup.object().shape({
   strategy_name: Yup.string().required('Strategy name is required'),
   index_name: Yup.string().required('index name is required'),
   capital: Yup.number().required('Capital is required').min(1, 'Capital must be greater than zero'),
-  strategy_type: Yup.string().required('Strategy type is required'),
+  strategy_type: Yup.string().required('Position is required'),
   entry_HH: Yup.number().required("Entry Hour is required"),
   entry_MM: Yup.number().required("Entry Minute is required"),
   positions: Yup.array().of(positionSchema).min(1, 'At least 1 position is required'),

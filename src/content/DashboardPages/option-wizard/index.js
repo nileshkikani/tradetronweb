@@ -15,7 +15,7 @@ import {
     Button,
     ListItem,
     FormControl,
-    // InputLabel,
+    InputLabel,
     Select,
     MenuItem,
     TextField,
@@ -23,7 +23,7 @@ import {
     Box,
 } from '@mui/material';
 import { API_ROUTER } from 'src/services/routes';
-import { TOAST_ALERTS, TOAST_TYPES } from 'src/constants/keywords';
+import { TOAST_ALERTS, TOAST_PLACE, TOAST_TYPES } from 'src/constants/keywords';
 import { Slide } from '@mui/material';
 import axiosInstance from 'src/utils/axios';
 import { useSelector } from 'react-redux';
@@ -109,10 +109,7 @@ function DashboardOptionWizardContent() {
             // Show pending notification
             enqueueSnackbar(selectedStrategy ? TOAST_ALERTS.STRATEGY_UPDATING : TOAST_ALERTS.STRATEGY_SAVING, {
                 variant: TOAST_TYPES.INFO,
-                anchorOrigin: {
-                    vertical: 'bottom',
-                    horizontal: 'right'
-                },
+                anchorOrigin: TOAST_PLACE,
                 autoHideDuration: 2000,
                 TransitionComponent: Slide
             });
@@ -122,10 +119,7 @@ function DashboardOptionWizardContent() {
             // Show success notification
             enqueueSnackbar(selectedStrategy ? TOAST_ALERTS.STRATEGY_UPDATED : TOAST_ALERTS.STRATEGY_SAVED, {
                 variant: TOAST_TYPES.SUCCESS,
-                anchorOrigin: {
-                    vertical: 'bottom',
-                    horizontal: 'right'
-                },
+                anchorOrigin: TOAST_PLACE,
                 autoHideDuration: 2000,
                 TransitionComponent: Slide
             });
@@ -141,10 +135,7 @@ function DashboardOptionWizardContent() {
             // Show error notification
             enqueueSnackbar(TOAST_ALERTS.GENERAL_ERROR, {
                 variant: TOAST_TYPES.ERROR,
-                anchorOrigin: {
-                    vertical: 'bottom',
-                    horizontal: 'right'
-                },
+                anchorOrigin: TOAST_PLACE,
                 autoHideDuration: 2000,
                 TransitionComponent: Slide
             });
@@ -167,10 +158,7 @@ function DashboardOptionWizardContent() {
             // toaster(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR)
             enqueueSnackbar(TOAST_ALERTS.GENERAL_ERROR, {
                 variant: TOAST_TYPES.ERROR,
-                anchorOrigin: {
-                    vertical: 'bottom',
-                    horizontal: 'right'
-                },
+                anchorOrigin: TOAST_PLACE,
                 autoHideDuration: 2000,
                 TransitionComponent: Slide
             });
@@ -185,10 +173,7 @@ function DashboardOptionWizardContent() {
             // toaster(TOAST_ALERTS.STRATEGY_DELETED_SUCCESS, TOAST_TYPES.SUCCESS)
             enqueueSnackbar(TOAST_ALERTS.STRATEGY_DELETED_SUCCESS, {
                 variant: TOAST_TYPES.SUCCESS,
-                anchorOrigin: {
-                    vertical: 'bottom',
-                    horizontal: 'right'
-                },
+                anchorOrigin: TOAST_PLACE,
                 autoHideDuration: 2000,
                 TransitionComponent: Slide
             });
@@ -201,10 +186,7 @@ function DashboardOptionWizardContent() {
             // toaster(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
             enqueueSnackbar(TOAST_ALERTS.GENERAL_ERROR, {
                 variant: TOAST_TYPES.ERROR,
-                anchorOrigin: {
-                    vertical: 'bottom',
-                    horizontal: 'right'
-                },
+                anchorOrigin: TOAST_PLACE,
                 autoHideDuration: 2000,
                 TransitionComponent: Slide
             });
@@ -234,33 +216,36 @@ function DashboardOptionWizardContent() {
                                     width="100%"
                                 >
                                     <Box className='dropdown-container'>
-                                        <TextField
-                                            // label="Strategy Name"
-                                            variant="outlined"
-                                            name="strategy_name"
-                                            value={values.strategy_name} 
-                                            error={touched.strategy_name && Boolean(errors.strategy_name)}
-                                            helperText={touched.strategy_name && <ErrorMessage name="strategy_name" component="span" className="error" />}
-                                            onChange={handleChange}
-                                        />
+                                        <FormControl error={touched.index_name && Boolean(errors.index_name)}>
+                                            <TextField
+                                                variant="outlined"
+                                                name="strategy_name"
+                                                label="Strategy Name"
+                                                value={values.strategy_name}
+                                                error={touched.strategy_name && Boolean(errors.strategy_name)}
+                                                helperText={touched.strategy_name && <ErrorMessage name="strategy_name" component="span" className="error" />}
+                                                onChange={handleChange}
+                                                style={{ width: "150px" }}
+                                            />
+                                            <FormHelperText>
+                                                {touched.strategy_name && <ErrorMessage name="strategy_name" component="span" className="error" />}
+                                            </FormHelperText>
+                                        </FormControl>
                                     </Box>
 
-                                    <Box className='dropdown-container' width="10%">
-                                        <FormControl
-                                            fullWidth
-                                            error={touched.index_name && Boolean(errors.index_name)}
-                                        >
+                                    <Box className='dropdown-container' width="15%">
+                                        <FormControl fullWidth error={touched.index_name && Boolean(errors.index_name)}>
+                                            <InputLabel>Index</InputLabel>
                                             <Field
-                                                as={Select}
                                                 name="index_name"
-                                                variant="outlined"
+                                                as={Select}
+                                                label="Index"
                                                 value={values.index_name}
                                                 error={touched.index_name && Boolean(errors.index_name)}
                                                 onChange={handleChange}
+                                                displayEmpty
                                             >
-                                                <MenuItem value="" disabled >
-                                                    Select Index
-                                                </MenuItem>
+                                                {/* <MenuItem value="" disabled>Select Index</MenuItem> */}
                                                 <MenuItem value="BANKNIFTY">NIFTY BANK</MenuItem>
                                                 <MenuItem value="NIFTY">NIFTY 50</MenuItem>
                                                 <MenuItem value="FINNIFTY">NIFTY FIN SERVICE</MenuItem>
@@ -273,7 +258,6 @@ function DashboardOptionWizardContent() {
                                             </FormHelperText>
                                         </FormControl>
                                     </Box>
-
 
                                     <Box className='dropdown-container'>
                                         <Field
@@ -288,19 +272,24 @@ function DashboardOptionWizardContent() {
                                             helperText={touched.capital && <ErrorMessage name="capital" component="span" className="error" />}
                                             onChange={handleChange}
                                         />
+                                        <FormHelperText>
+                                            <ErrorMessage name="capital" component="span" className="error" />
+                                        </FormHelperText>
                                     </Box>
 
-                                    <Box className='dropdown-container' width="10%">
+                                    <Box className='dropdown-container' width="15%">
                                         <FormControl
+                                            fullWidth
                                             error={touched.strategy_type && Boolean(errors.strategy_type)}
                                             style={{ width: '100%' }}
                                         >
+                                            {/* <InputLabel id="strategy-type-label">Position</InputLabel> */}
                                             <Field
                                                 as={Select}
-                                                labelId="strategy-type-label"
                                                 name="strategy_type"
                                                 onChange={handleChange}
                                                 style={{ width: '100%' }}
+                                                displayEmpty
                                             >
                                                 <MenuItem value="" disabled>Select Type</MenuItem>
                                                 <MenuItem value="INTRADAY">Intraday</MenuItem>
@@ -311,6 +300,7 @@ function DashboardOptionWizardContent() {
                                             </FormHelperText>
                                         </FormControl>
                                     </Box>
+
 
                                 </Box>
                             </ListItem>
@@ -382,7 +372,7 @@ function DashboardOptionWizardContent() {
 
                             <Entrysection />
                             <Exitsection />
-                            <Box display="flex"  alignItems="center" justifyContent="center" gap={2} >
+                            <Box display="flex" alignItems="center" justifyContent="center" gap={2} >
                                 <Button
                                     type='submit'
                                     variant="contained"

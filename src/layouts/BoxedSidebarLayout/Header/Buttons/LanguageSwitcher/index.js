@@ -62,7 +62,7 @@ function LanguageSwitcher() {
 
   return (
     <>
-      <Tooltip arrow title={t('Language Switcher')}>
+      {/* <Tooltip arrow title={t('Language Switcher')}>
         <IconButtonWrapper color="secondary" ref={ref} onClick={handleOpen}>
           {getLanguage === 'de' && <DE title="German" />}
           {getLanguage === 'en' && <US title="English" />}
@@ -73,7 +73,7 @@ function LanguageSwitcher() {
           {getLanguage === 'cn' && <CN title="Chinese" />}
           {getLanguage === 'ae' && <AE title="Arabic" />}
         </IconButtonWrapper>
-      </Tooltip>
+      </Tooltip> */}
       <Popover
         disableScrollLock
         anchorEl={ref.current}

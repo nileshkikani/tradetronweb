@@ -155,14 +155,14 @@ function Hero() {
         container
       >
         <Grid item md={6} pr={{ xs: 0, md: 3 }}>
-          <LabelWrapper color="success">{t('Version') + ' 3.1'}</LabelWrapper>
+          <LabelWrapper color="success">{t('Version') + ' 2.0'}</LabelWrapper>
           <TypographyH1
             sx={{
               mb: 2
             }}
             variant="h1"
           >
-            {t('Tokyo Next.js Javascript Admin Dashboard')}
+            {t('Trading for Everyone')}
           </TypographyH1>
           <TypographyH2
             sx={{
@@ -173,19 +173,17 @@ function Hero() {
             color="text.secondary"
             fontWeight="normal"
           >
-            {t(
-              'High performance React template built with lots of powerful MUI (Material-UI) components across multiple product niches for fast & perfect apps development processes'
-            )}
+            {t(" 'Tradetron has been created to empower strategy creators. How? By allowing them to automate their quant strategies and sell them to investors and traders the world over. The best part? You never have to write a single bit of code or download clunky algo trading software'")}
           </TypographyH2>
-          <Button
+          {/* <Button
             component={Link}
             href="/dashboards/reports"
             size="large"
             variant="contained"
           >
             {t('Browse Live Preview')}
-          </Button>
-          <Button
+          </Button> */}
+          {/* <Button
             sx={{
               ml: 2
             }}
@@ -195,8 +193,8 @@ function Hero() {
             variant="text"
           >
             {t('Key Features')}
-          </Button>
-          <ListItemWrapper sx={{ mt: 5, mb: 2 }}>
+          </Button> */}
+          {/* <ListItemWrapper sx={{ mt: 5, mb: 2 }}>
             <NextJsAvatar>
               <img src="/static/images/logo/next-js.svg" alt="NextJS" />
             </NextJsAvatar>
@@ -242,23 +240,25 @@ function Hero() {
                 React + Javascript.
               </Typography>
             </Typography>
-          </ListItemWrapper>
+          </ListItemWrapper> */}
         </Grid>
         <Grid item md={6}>
           <BoxContent>
-            <Link href="/dashboards/reports">
-              <ImgWrapper>
-                <img
-                  alt="Tokyo"
-                  src="/static/images/overview/hero-screenshot.png"
-                />
-              </ImgWrapper>
-            </Link>
-            <BoxAccent
-              sx={{
-                display: { xs: 'none', md: 'block' }
-              }}
-            />
+          <video
+                  className="w-full"
+                  id="bannerVideo"
+                  autoPlay
+                  loop
+                  playsInline
+                  muted
+                  style={{width:'50rem'}}
+                >
+                  <source
+                    src="https://files.tradetron.tech/tt-ad2.mp4"
+                    type="video/mp4"
+                  />
+                  Your browser does not support the video tag.
+                </video>
           </BoxContent>
         </Grid>
       </Grid>

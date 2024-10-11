@@ -40,7 +40,7 @@ const Content = styled(Box)(
 const MainContent = styled(Box)(
   ({ theme }) => `
   @media (min-width: ${theme.breakpoints.values.md}px) {
-    padding: 0 0 0 440px;
+    padding: 0 0 0 0px;
   }
   width: 100%;
   display: flex;
@@ -103,7 +103,7 @@ function LoginCover() {
         <title>Login - Cover</title>
       </Head>
       <Content>
-        <SidebarWrapper
+        {/* <SidebarWrapper
           sx={{
             display: { xs: 'none', md: 'flex' }
           }}
@@ -205,7 +205,7 @@ function LoginCover() {
               </Box>
             </SidebarContent>
           </Scrollbar>
-        </SidebarWrapper>
+        </SidebarWrapper> */}
         <MainContent>
           <Container
             sx={{
@@ -269,7 +269,7 @@ function LoginCover() {
                   title={t('Used only for the live preview demonstration !')}
                 >
                   <Alert severity="warning">
-                    Use <b>demo@example.com</b> and password <b>TokyoPass1@</b>
+                    {/* Use <b>demo@example.com</b> and password <b>TokyoPass1@</b> */}
                   </Alert>
                 </Tooltip>
               )}

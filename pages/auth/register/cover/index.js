@@ -52,7 +52,7 @@ const Content = styled(Box)(
 const MainContent = styled(Box)(
   ({ theme }) => `
     @media (min-width: ${theme.breakpoints.values.md}px) {
-      padding: 0 0 0 500px;
+      padding: 0 0 0 0px;
     }
     width: 100%;
     display: flex;
@@ -178,7 +178,7 @@ function RegisterCover() {
         <title>Register - Cover</title>
       </Head>
       <Content>
-        <SidebarWrapper
+        {/* <SidebarWrapper
           sx={{
             display: { xs: 'none', md: 'inline-block' }
           }}
@@ -390,7 +390,7 @@ function RegisterCover() {
               </Box>
             </SidebarContent>
           </Scrollbar>
-        </SidebarWrapper>
+        </SidebarWrapper> */}
         <MainContent>
           <LogoWrapper
             sx={{

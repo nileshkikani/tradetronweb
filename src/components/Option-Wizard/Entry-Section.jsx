@@ -37,8 +37,19 @@ const Entrysection = () => {
     setFieldValue("days", selectedDays);
   };
 
-  const hourOptions = Array.from({ length: 7 }, (_, i) => i + 9); // Adjust as needed
-  const minuteOptions = Array.from({ length: 60 }, (_, i) => i); // Adjust as needed
+  // const hourOptions = Array.from({ length: 7 }, (_, i) => i + 9); 
+  // const minuteOptions = Array.from({ length: 60 }, (_, i) => i); 
+
+  const hourOptions =
+  values.index_name === 'CRUDEOIL' || values.index_name === 'CRUDEOILM'
+    ? Array.from({ length: 15 }, (_, i) => i + 9)
+    : Array.from({ length: 7 }, (_, i) => i + 9);
+
+const minuteOptions =
+  values.entry_HH == 15 && 
+  !(values.index_name === 'CRUDEOIL' || values.index_name === 'CRUDEOILM')
+    ? Array.from({ length: 30 }, (_, i) => i) 
+    : Array.from({ length: 60 }, (_, i) => i); 
 
   return (
     <Box border={2} sx={{ borderColor: 'primary.main', borderRadius: '8px', padding: '16px', margin: '16px' }}>

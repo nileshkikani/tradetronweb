@@ -382,7 +382,7 @@ function Highlights() {
             backgroundImage: 'url("/static/images/placeholders/covers/7.jpg")'
           }}
         />
-        <BoxLayoutsContent maxWidth="lg">
+        {/* <BoxLayoutsContent maxWidth="lg">
           <Grid
             justifyContent="center"
             alignItems="center"
@@ -513,8 +513,8 @@ function Highlights() {
               </LayoutImgButton>
             </Grid>
           </Grid>
-        </BoxLayoutsContent>
-        <BoxWaveAlt>
+        </BoxLayoutsContent> */}
+        {/* <BoxWaveAlt>
           <svg
             viewBox="0 0 1440 172"
             fill="none"
@@ -525,9 +525,9 @@ function Highlights() {
               fill="white"
             />
           </svg>
-        </BoxWaveAlt>
+        </BoxWaveAlt> */}
       </BoxLayouts>
-      <Container
+      {/* <Container
         maxWidth="lg"
         sx={{
           py: { xs: 8, md: 10 }
@@ -1939,9 +1939,9 @@ function Highlights() {
             </Container>
           </BoxRtl>
         )}
-      </Container>
+      </Container> */}
 
-      <Container
+      {/* <Container
         sx={{
           pt: { xs: 6, md: 12 },
           pb: { xs: 5, md: 15 }
@@ -2107,7 +2107,7 @@ function Highlights() {
             </Card>
           </Grid>
         </Grid>
-      </Container>
+      </Container> */}
     </BoxHighlights>
   );
 }

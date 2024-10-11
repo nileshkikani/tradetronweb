@@ -49,7 +49,8 @@ export const LoginJWT = (props) => {
       try {
         await login(values.email, values.password);
 
-          const backTo = router.query.backTo || '/dashboards/reports';
+          // const backTo = router.query.backTo || '/dashboards/reports';
+          const backTo = '/dashboards/option-wizard';
           router.push(backTo);
       } catch (err) {
         console.error(err);
@@ -116,9 +117,9 @@ export const LoginJWT = (props) => {
             }
           />
         </Box>
-        <Link href="/auth/recover-password">
+        {/* <Link href="/auth/recover-password">
           <b>{t('Lost password?')}</b>
-        </Link>
+        </Link> */}
       </Box>
 
       {Boolean(formik.touched.terms && formik.errors.terms) && (
