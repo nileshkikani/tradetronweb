@@ -110,7 +110,8 @@ export const AuthProvider = (props) => {
           },
         }
       );
-
+      console.log('daraa',data)
+      console.log('axios',axiosInstance)
       const accessToken = data.tokens.access;
       localStorage.setItem('accessToken', accessToken); 
       
