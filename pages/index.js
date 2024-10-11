@@ -50,14 +50,22 @@ function Overview() {
             >
               <Box />
               <Box>
-                <LanguageSwitcher />
+                {/* <LanguageSwitcher /> */}
                 <Button
                   component={Link}
                   href="/dashboards/reports"
                   variant="contained"
                   sx={{ ml: 2 }}
                 >
-                  {t('Live Preview')}
+                  {t('Log In')}
+                </Button>
+                <Button
+                  component={Link}
+                  href="auth/register/cover"
+                  variant="contained"
+                  sx={{ ml: 2 }}
+                >
+                  {t('Sign Up')}
                 </Button>
               </Box>
             </Box>

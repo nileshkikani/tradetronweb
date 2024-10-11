@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import { decode } from '../utils/jwt';
 import { useDispatch } from 'react-redux';
 import { setAuth } from 'src/store/authSlice';
+import { API_ROUTER } from 'src/services/routes';
+import axiosInstance from 'src/utils/axios';
 
 const initialAuthState = {
   isAuthenticated: false,
@@ -101,7 +103,7 @@ export const AuthProvider = (props) => {
 
   const login = async (email, password) => {
     try {
-      const { data } = await axios.post('http://192.168.0.248:8000/api/user/login/', 
+      const { data } = await axiosInstance.post(API_ROUTER.LOG_IN, 
         JSON.stringify({ email, password }), {
           headers: {
             'Content-Type': 'application/json',
@@ -130,7 +132,7 @@ export const AuthProvider = (props) => {
 
   const register = async (email, name, password) => {
     try {
-      const { data } = await axios.post('http://192.168.0.248:8000/api/user/register/', 
+      const { data } = await axiosInstance.post(API_ROUTER.REGISTER, 
         JSON.stringify({ email, name, password }), {
           headers: {
             'Content-Type': 'application/json',
