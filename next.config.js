@@ -41,6 +41,9 @@ module.exports = withImages(
       defaultLocale: 'en',
       locales: ['en']
     },
-    redirects
+    redirects,
+    env: {
+      NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL
+  },
   })
 );
