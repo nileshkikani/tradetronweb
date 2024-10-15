@@ -5,7 +5,6 @@ import ExtendedSidebarLayout from "src/layouts/ExtendedSidebarLayout";
 import { Authenticated } from "src/components/Authenticated";
 import {
   Button,
-  ListItem,
   FormControl,
   Select,
   MenuItem,
@@ -14,7 +13,7 @@ import {
   Box,
   Slide,
 } from "@mui/material";
-import InputLabel from "@mui/material/InputLabel";
+
 import { useSnackbar } from "notistack";
 import { TOAST_ALERTS, TOAST_TYPES } from "src/constants/keywords";
 import axiosInstance from "src/utils/axios";
@@ -32,6 +31,11 @@ import TableRow from "@mui/material/TableRow";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import Modal from "@mui/material/Modal";
+import Backdrop from "@mui/material/Backdrop";
+import Fade from "@mui/material/Fade";
+import Typography from "@mui/material/Typography";
+
 function DashboardStrategyBuilderContent() {
   const { enqueueSnackbar } = useSnackbar();
   const authState = useSelector((state) => state.auth.authState);
@@ -45,6 +49,21 @@ function DashboardStrategyBuilderContent() {
   const [selectedOptionType, setSelectedOptionType] = useState("ce");
   const [optionPrice, setOptionPrice] = useState();
   const [allPosition, setAllPosition] = useState();
+  const [entryPrice, setEntryPrice] = useState(0);
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const modelStyle = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 400,
+    bgcolor: "background.paper",
+    border: "2px solid #000",
+    boxShadow: 24,
+    p: 4,
+  };
 
   const getSymbolList = async () => {
     try {
@@ -64,6 +83,14 @@ function DashboardStrategyBuilderContent() {
         TransitionComponent: Slide,
       });
     }
+  };
+
+  const incrementPrice = () => {
+    setEntryPrice((prev) => prev + 1);
+  };
+
+  const decrementPrice = () => {
+    setEntryPrice((prev) => (prev > 0 ? prev - 1 : 0));
   };
 
   const getExpiryDate = async () => {
@@ -273,7 +300,7 @@ function DashboardStrategyBuilderContent() {
         Option Price
         <TextField
           id="outlined-disabled"
-          value={optionPrice?.futureprice || ""} // Safely access futureprice, default to empty if undefined
+          value={optionPrice?.futureprice || ""}
           variant="outlined"
         />
         <RadioGroup
@@ -326,10 +353,7 @@ function DashboardStrategyBuilderContent() {
                   </IconButton>
                 </TableCell>
                 <TableCell>
-                  <IconButton
-                    aria-label="delete"
-                    // onClick={() => handleUpdate(row.uuid)}
-                  >
+                  <IconButton aria-label="delete" onClick={handleOpen}>
                     <ModeEditIcon />
                   </IconButton>
                 </TableCell>
@@ -338,6 +362,78 @@ function DashboardStrategyBuilderContent() {
           </TableBody>
         </Table>
       </TableContainer>
+    <Footer/>
+
+      <Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        open={open}
+        onClose={handleClose}
+        closeAfterTransition
+        slots={{ backdrop: Backdrop }}
+        slotProps={{
+          backdrop: {
+            timeout: 500,
+          },
+        }}
+      >
+        <Fade in={open}>
+          <Box sx={modelStyle}>
+            <Typography id="transition-modal-title" variant="h6" component="h2">
+              Update Position
+            </Typography>
+            <Typography id="transition-modal-description" sx={{ mt: 2 }}>
+              <Select
+                labelId="expiry-select-label"
+                id="expiry-select"
+                onChange={(event) => setSelectedExpiryDate(event.target.value)}
+                value={selectedExpiryDate}
+              >
+                <MenuItem disabled value="">
+                  <em>Select Expiry</em>
+                </MenuItem>
+                {expiryDate?.map((expiryDate, index) => (
+                  <MenuItem key={index} value={expiryDate}>
+                    {expiryDate}
+                  </MenuItem>
+                ))}
+              </Select>
+              <FormHelperText>Select Expiry</FormHelperText>
+              <RadioGroup
+                row
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                name="row-radio-buttons-group"
+                defaultValue="buy"
+              >
+                <FormControlLabel value="buy" control={<Radio />} label="Buy" />
+                <FormControlLabel
+                  value="sell"
+                  control={<Radio />}
+                  label="Sell"
+                />
+              </RadioGroup>
+              <Box display="flex" alignItems="center" sx={{ mt: 2 }}>
+                <Button variant="outlined" onClick={decrementPrice}>
+                  -
+                </Button>
+                <TextField
+                  label="Quantity"
+                  value={entryPrice}
+                  variant="outlined"
+                  sx={{ mx: 2, width: "100px" }}
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                />
+                <Button variant="outlined" onClick={incrementPrice}>
+                  +
+                </Button>
+              </Box>
+            </Typography>
+          </Box>
+        </Fade>
+      </Modal>
+     
     </>
   );
 }
