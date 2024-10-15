@@ -28,31 +28,33 @@ import { Slide } from '@mui/material';
 import axiosInstance from 'src/utils/axios';
 import { useSelector } from 'react-redux';
 
+const initialFormStateObj = {
+    strategy_name: '',
+    index_name: '',
+    capital: 100000,
+    strategy_type: '',
+    entry_HH: '',//this is just for storing value and make sure validations,
+    entry_MM: '', //concatination entry_HH + entry_MM will be goes to start_time param , 
+    start_time: '',//same with exit_HH + exit_MM goes to exit_time param.
+    order_take_profit_type: '',
+    order_stop_loss_type: '',
+    positions: [],
+    days: [],
+    exit_HH: '',
+    exit_MM: '',
+    exit_time: '',
+    take_profit_type: 'none',
+    take_profit_value: '',
+    stop_loss_value: '',
+    stop_loss_type: 'none',
+    do_repeat: false,
+}
+
 function DashboardOptionWizardContent() {
     const [showForm, setShowForm] = useState(false);
     const [strategyNames, setStrategyName] = useState([]);
     const [selectedStrategy, setSelectedStrategy] = useState("");
-    const [initialValues, setInitialValues] = useState({
-        strategy_name: '',
-        index_name: '',
-        capital: 100000,
-        strategy_type: '',
-        entry_HH: '',//this is just for storing value and make sure validations,
-        entry_MM: '', //concatination entry_HH + entry_MM will be goes to start_time param , 
-        start_time: '',//same with exit_HH + exit_MM goes to exit_time param.
-        order_take_profit_type: '',
-        order_stop_loss_type: '',
-        positions: [],
-        days: [],
-        exit_HH: '',
-        exit_MM: '',
-        exit_time: '',
-        take_profit_type: 'none',
-        take_profit_value: '',
-        stop_loss_value: '',
-        stop_loss_type: 'none',
-        do_repeat: false,
-    });
+    const [initialValues, setInitialValues] = useState(initialFormStateObj);
     const { enqueueSnackbar } = useSnackbar();
     // const selectedStrategyId = useSelector((state) => state.strategy.selectedStrategyId);
     const authState = useSelector((state) => state.auth.authState);
@@ -133,6 +135,7 @@ function DashboardOptionWizardContent() {
 
         } catch (error) {
             // Show error notification
+
             enqueueSnackbar(TOAST_ALERTS.GENERAL_ERROR, {
                 variant: TOAST_TYPES.ERROR,
                 anchorOrigin: TOAST_PLACE,
@@ -179,7 +182,7 @@ function DashboardOptionWizardContent() {
             });
             // location.reload();
             getStrategyList();
-            setInitialValues('');
+            setInitialValues(initialFormStateObj);
             setSelectedStrategy('');
             setShowForm(false)
         } catch (error) {
@@ -193,12 +196,14 @@ function DashboardOptionWizardContent() {
         }
     };
 
+    console.log('selectedStrategy', selectedStrategy)
+
     return (
         <>
             <PageTitleWrapper>
                 <h1>Option Wizard</h1>
             </PageTitleWrapper>
-            <Titlesection setSelectedStrategy={setSelectedStrategy} selectedStrategy={selectedStrategy} setInitialValues={setInitialValues} strategyNames={strategyNames} setShowForm={setShowForm} getStrategyList={getStrategyList} />
+            <Titlesection initialFormStateObj={initialFormStateObj} setSelectedStrategy={setSelectedStrategy} selectedStrategy={selectedStrategy} setInitialValues={setInitialValues} strategyNames={strategyNames} setShowForm={setShowForm} getStrategyList={getStrategyList} />
             {showForm && (
                 <Formik
                     initialValues={initialValues}

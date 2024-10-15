@@ -123,8 +123,8 @@ function DashboardStrategyBuilderContent() {
   ]);
 
   useEffect(() => {
-    setSelectedExpiryDate(expiryDate[0]);
-    setSelectedStrikePrice(strikePrice[0]);
+    expiryDate && setSelectedExpiryDate(expiryDate[0]);
+    strikePrice && setSelectedStrikePrice(strikePrice[0]);
   }, [expiryDate, strikePrice]);
 
   const addPosition = async () => {

@@ -15,8 +15,8 @@ import {
 
 import { useTranslation } from 'react-i18next';
 import HelpTwoToneIcon from '@mui/icons-material/HelpTwoTone';
-import BounceRate from 'src/content/Dashboards/Analytics/BounceRate';
-import ConversionsAlt from 'src/content/Dashboards/Analytics/ConversionsAlt';
+// import BounceRate from 'src/content/Dashboards/Analytics/BounceRate';
+// import ConversionsAlt from 'src/content/Dashboards/Analytics/ConversionsAlt';
 import ChevronRightTwoToneIcon from '@mui/icons-material/ChevronRightTwoTone';
 
 const BoxComposed = styled(Box)(
@@ -317,10 +317,10 @@ function Block2() {
             >
               <Grid container spacing={4}>
                 <Grid item xs={12} md={6}>
-                  <ConversionsAlt />
+                  {/* <ConversionsAlt /> */}
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <BounceRate />
+                  {/* <BounceRate /> */}
                 </Grid>
               </Grid>
             </BoxComposedContent>

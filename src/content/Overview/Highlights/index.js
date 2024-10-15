@@ -20,25 +20,25 @@ import {
   styled
 } from '@mui/material';
 
-import Text from 'src/components/Text';
-import LaunchTwoToneIcon from '@mui/icons-material/LaunchTwoTone';
-import CheckTwoToneIcon from '@mui/icons-material/CheckTwoTone';
-import { DE } from 'country-flag-icons/react/3x2';
-import { US } from 'country-flag-icons/react/3x2';
-import { ES } from 'country-flag-icons/react/3x2';
-import { FR } from 'country-flag-icons/react/3x2';
-import { CN } from 'country-flag-icons/react/3x2';
-import { AE } from 'country-flag-icons/react/3x2';
-import ActiveReferrals from 'src/content/Dashboards/Analytics/ActiveReferrals';
-import MonthlyGoalsTarget from 'src/content/Dashboards/Fitness/MonthlyGoalsTarget';
-import Transfers from 'src/content/Dashboards/Banking/Transfers';
-import RecentTransactions from 'src/content/Dashboards/Commerce/RecentTransactions';
-import Thermostat from 'src/content/Dashboards/Automation/Thermostat';
-import AccountSecurity from 'src/content/Dashboards/Crypto/AccountSecurity';
-import AppointmentsAlt from 'src/content/Dashboards/Healthcare/hospital/AppointmentsAlt';
-import UnresolvedTickets from 'src/content/Dashboards/Helpdesk/UnresolvedTickets';
-import ResourcesAlarm from 'src/content/Dashboards/Monitoring/ResourcesAlarm';
-import Performance from 'src/content/Dashboards/Tasks/Performance';
+// import Text from 'src/components/Text';
+// import LaunchTwoToneIcon from '@mui/icons-material/LaunchTwoTone';
+// import CheckTwoToneIcon from '@mui/icons-material/CheckTwoTone';
+// import { DE } from 'country-flag-icons/react/3x2';
+// import { US } from 'country-flag-icons/react/3x2';
+// import { ES } from 'country-flag-icons/react/3x2';
+// import { FR } from 'country-flag-icons/react/3x2';
+// import { CN } from 'country-flag-icons/react/3x2';
+// import { AE } from 'country-flag-icons/react/3x2';
+// import ActiveReferrals from 'src/content/Dashboards/Analytics/ActiveReferrals';
+// import MonthlyGoalsTarget from 'src/content/Dashboards/Fitness/MonthlyGoalsTarget';
+// import Transfers from 'src/content/Dashboards/Banking/Transfers';
+// import RecentTransactions from 'src/content/Dashboards/Commerce/RecentTransactions';
+// import Thermostat from 'src/content/Dashboards/Automation/Thermostat';
+// import AccountSecurity from 'src/content/Dashboards/Crypto/AccountSecurity';
+// import AppointmentsAlt from 'src/content/Dashboards/Healthcare/hospital/AppointmentsAlt';
+// import UnresolvedTickets from 'src/content/Dashboards/Helpdesk/UnresolvedTickets';
+// import ResourcesAlarm from 'src/content/Dashboards/Monitoring/ResourcesAlarm';
+// import Performance from 'src/content/Dashboards/Tasks/Performance';
 
 const AvatarSuccess = styled(Avatar)(
   ({ theme }) => `

@@ -1,16 +1,9 @@
 "use client";
 
 import React,{useEffect} from "react";
-// import { RiDeleteBinLine } from "react-icons/ri"; // Uncomment as needed
-// import toast from "react-hot-toast"; // Uncomment as needed
-// import { setSelectedStrategyId } from "@/redux/reducers/strategySlice"; // Uncomment as needed
-// import { useAppDispatch, useAppSelector } from "@/redux/store/store"; // Uncomment as needed
-
 import {
     Button,
     ListItem,
-    FormControl,
-    InputLabel,
     Select,
     MenuItem,
     Slide
@@ -18,20 +11,17 @@ import {
 import { API_ROUTER } from "src/services/routes";
 import axiosInstance from "src/utils/axios";
 import { useSelector } from "react-redux";
-import { setSelectedStrategyId } from "src/store/strategySlice";
-import { useDispatch } from "react-redux";
 import { TOAST_ALERTS, TOAST_TYPES,TOAST_PLACE } from "src/constants/keywords";
 import { useSnackbar } from 'notistack';
 
-const Titlesection = ({ setShowForm, setInitialValues, strategyNames, selectedStrategy,setSelectedStrategy,getStrategyList }) => {
+const Titlesection = ({ setShowForm, setInitialValues,initialFormStateObj, strategyNames, selectedStrategy,setSelectedStrategy,getStrategyList }) => {
 
     const { enqueueSnackbar } = useSnackbar();
     const authState = useSelector((state) => state.auth.authState);
-    const dispatchStore = useDispatch();
 
     const handleFormDisplay = () => {
         setShowForm(true);
-        // setInitialValues('');
+        setInitialValues(initialFormStateObj);
         setSelectedStrategy(null)
     };
 
@@ -81,10 +71,9 @@ const Titlesection = ({ setShowForm, setInitialValues, strategyNames, selectedSt
           console.log('selectedStrategyData', selectedStrategyData)
     
           setInitialValues(selectedStrategyData);
-          dispatch(setSelectedStrategyId(id));
-          handleFormDisplay()
+        setSelectedStrategy(id);
         } catch (error) {
-        //   console.error("Error getting specific strategy", error);
+
         enqueueSnackbar(TOAST_ALERTS.GENERAL_ERROR, {
             variant: TOAST_TYPES.ERROR,
             anchorOrigin: TOAST_PLACE,
@@ -97,10 +86,9 @@ const Titlesection = ({ setShowForm, setInitialValues, strategyNames, selectedSt
 
     const handleStrategyChange = (event) => {
         const selectedId = event.target.value;
-        setSelectedStrategy(selectedId);
         getSpecificStrategy(selectedId); 
         setShowForm(true)
-        // dispatchStore(setSelectedStrategyId(selectedId))
+
     };
 
 

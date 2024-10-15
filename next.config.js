@@ -17,7 +17,7 @@ const redirects = {
       },
       {
         source: '/dashboards',
-        destination: '/dashboards/reports'
+        destination: '/dashboards/option-wizard'
       },
       {
         source: '/applications',
