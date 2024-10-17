@@ -50,7 +50,6 @@ const Exitsection = () => {
         stopLossType === "percentage_margin") &&
       value > 100
     ) {
-      // toast.error("Stop loss cannot exceed 100%");
       enqueueSnackbar(TOAST_ALERTS.SL_PERCENTAGE_EXCEED, {
         variant: TOAST_TYPES.ERROR,
         anchorOrigin: TOAST_PLACE,
@@ -61,7 +60,6 @@ const Exitsection = () => {
     }
 
     if (stopLossType === "amount" && value > values.capital) {
-      // toast.error(`Stop loss cannot be more than capital`);
       enqueueSnackbar(TOAST_ALERTS.SL_VALUE_EXCEED, {
         variant: TOAST_TYPES.ERROR,
         anchorOrigin: TOAST_PLACE,
@@ -164,7 +162,7 @@ const Exitsection = () => {
             name="stop_loss_type"
             label="Stoploss MTM"
             onChange={handleStoplossMTMChange}
-            value={values.stop_loss_type}
+            value={values.stop_loss_type }
             style={{ width: "200px" }}
           >
             <MenuItem value="none">None</MenuItem>
@@ -184,7 +182,7 @@ const Exitsection = () => {
           label="Value"
           disabled={values.stop_loss_type === "none"}
           onChange={handleStoplossMTMInputChange}
-          value={values.stop_loss_type === "none" ? 0 : values.stop_loss_value}
+          value={values.stop_loss_type === "none" ? 0 : ""}
           error={touched.stop_loss_value && Boolean(errors.stop_loss_value)}
           helperText={<ErrorMessage name="stop_loss_value" component="span" />}
           style={{ width: "100px" }}
@@ -196,7 +194,7 @@ const Exitsection = () => {
           className="time-div"
           style={{ display: "flex", flexDirection: "column" }}
         >
-          <label>Exit Time</label>
+          {/* <label>Exit Time</label> */}
           <Box display="flex" gap={1}>
             <FormControl
               variant="outlined"

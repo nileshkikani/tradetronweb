@@ -19,7 +19,7 @@ export const combinedSchema = Yup.object().shape({
   entry_MM: Yup.number().required("Entry Minute is required"),
   positions: Yup.array().of(positionSchema).min(1, 'At least 1 position is required'),
   
-  stop_loss_type: Yup.string().required('Stop loss type is required'),
+  stop_loss_type: Yup.string().required('Stop loss type is required').nullable(),
   stop_loss_value: Yup.number().nullable() 
     .when('stop_loss_type', {
       is: (value) => value !== 'none',

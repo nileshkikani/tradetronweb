@@ -16,6 +16,8 @@ export const API_ROUTER = {
 
     STRATEGY_LIST: 'strategy/',
     STRATEGY_CREATE: 'strategy/create/',
+    // /strategy/pre-build/?name=Strangle
+    STRATEGY_PREBUILD:(name)=>(name?`/strategy/pre-build/?name=${name}`: '/strategy/pre-build/'),
     STRATEGY_UPDATE: (id) => (id ? `strategy/update/${id}/` : 'strategy/update/'),//wokrs with delete also
 
     

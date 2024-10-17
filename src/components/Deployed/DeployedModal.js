@@ -10,16 +10,14 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Typography,
 } from '@mui/material';
 
 const CustomModal = ({ isOpen, onClose, order }) => {
   if (!order) return null;
 
-  console.log('order', order)
 
   return (
-    <Dialog open={isOpen} onClose={onClose} maxWidth="md" fullWidth>
+    <Dialog open={isOpen} onClose={onClose} maxWidth="lg" fullWidth>
       <DialogTitle>Order Details</DialogTitle>
       <DialogContent>
         <Table>
@@ -37,7 +35,7 @@ const CustomModal = ({ isOpen, onClose, order }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-          {order.map((orderData) => (
+          {order.slice().reverse().map((orderData) => (
               <TableRow key={orderData.id}>
                 <TableCell>{orderData.symbol}</TableCell>
                 <TableCell>{orderData.order_type}</TableCell>
