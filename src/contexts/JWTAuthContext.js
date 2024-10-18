@@ -131,10 +131,10 @@ export const AuthProvider = (props) => {
     dispatch({ type: 'LOGOUT' });
   };
 
-  const register = async (email, name, password) => {
+  const register = async (email, full_name, password) => {
     try {
       const { data } = await axiosInstance.post(API_ROUTER.REGISTER, 
-        JSON.stringify({ email, name, password }), {
+        JSON.stringify({ email, full_name, password }), {
           headers: {
             'Content-Type': 'application/json',
           },
@@ -147,7 +147,7 @@ export const AuthProvider = (props) => {
       const newUser = {
         id: new Date().getTime().toString(),
         email,
-        name,
+        full_name,
 
       };
 
