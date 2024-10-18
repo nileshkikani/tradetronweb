@@ -10,16 +10,14 @@ import {
   TextField,
   FormHelperText,
   Switch,
-  Slide
 } from "@mui/material";
-import { useSnackbar } from 'notistack';
-import { TOAST_ALERTS, TOAST_TYPES,TOAST_PLACE } from "src/constants/keywords";
-// import { toast } from "react-hot-toast";
+import { TOAST_ALERTS, TOAST_TYPES } from "src/constants/keywords";
+import useToast from 'src/hooks/useToast';
 
 
 const Exitsection = () => {
   const { setFieldValue, values, errors, touched } = useFormikContext();
-  const { enqueueSnackbar } = useSnackbar();
+  const { showToast } = useToast();
 
   const handleProfitMTMChange = (e) => {
     const value = e.target.value;
@@ -50,22 +48,12 @@ const Exitsection = () => {
         stopLossType === "percentage_margin") &&
       value > 100
     ) {
-      enqueueSnackbar(TOAST_ALERTS.SL_PERCENTAGE_EXCEED, {
-        variant: TOAST_TYPES.ERROR,
-        anchorOrigin: TOAST_PLACE,
-        autoHideDuration: 2000,
-        TransitionComponent: Slide
-    });
+      showToast(TOAST_ALERTS.SL_PERCENTAGE_EXCEED, TOAST_TYPES.ERROR);
       return;
     }
 
     if (stopLossType === "amount" && value > values.capital) {
-      enqueueSnackbar(TOAST_ALERTS.SL_VALUE_EXCEED, {
-        variant: TOAST_TYPES.ERROR,
-        anchorOrigin: TOAST_PLACE,
-        autoHideDuration: 2000,
-        TransitionComponent: Slide
-    });
+      showToast(TOAST_ALERTS.SL_VALUE_EXCEED, TOAST_TYPES.ERROR);
       return;
     }
     setFieldValue("stop_loss_value", value);
@@ -142,7 +130,7 @@ const Exitsection = () => {
           onChange={handleProfitMTMInputChange}
           value={
             values.take_profit_value ||
-            (values.take_profit_type === "none" ? 0 : "")
+            (values.take_profit_type === "none" ? null : values.take_profit_value)
           }
           error={touched.take_profit_value && Boolean(errors.take_profit_value)}
           helperText={
@@ -182,7 +170,7 @@ const Exitsection = () => {
           label="Value"
           disabled={values.stop_loss_type === "none"}
           onChange={handleStoplossMTMInputChange}
-          value={values.stop_loss_type === "none" ? 0 : ""}
+          value={values.stop_loss_type === "none" ? null : values.stop_loss_value}
           error={touched.stop_loss_value && Boolean(errors.stop_loss_value)}
           helperText={<ErrorMessage name="stop_loss_value" component="span" />}
           style={{ width: "100px" }}

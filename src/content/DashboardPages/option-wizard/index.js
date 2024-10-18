@@ -10,7 +10,6 @@ import PositionSection from 'src/components/Option-Wizard/Position-Section';
 import AddedPositions from 'src/components/Option-Wizard/Added-Positions-Map';
 import Exitsection from 'src/components/Option-Wizard/Exit-Section';
 import Entrysection from 'src/components/Option-Wizard/Entry-Section';
-import { useSnackbar } from 'notistack';
 import {
     Button,
     ListItem,
@@ -20,13 +19,14 @@ import {
     MenuItem,
     TextField,
     FormHelperText,
-    Box,
-    Slide
+    Box
 } from '@mui/material';
 import { API_ROUTER } from 'src/services/routes';
-import { TOAST_ALERTS, TOAST_PLACE, TOAST_TYPES } from 'src/constants/keywords';
+import { TOAST_ALERTS, TOAST_TYPES } from 'src/constants/keywords';
 import axiosInstance from 'src/utils/axios';
 import { useSelector } from 'react-redux';
+import useToast from 'src/hooks/useToast';
+
 
 const initialFormStateObj = {
     strategy_name: '',
@@ -56,9 +56,12 @@ function DashboardOptionWizardContent() {
     const [selectedStrategy, setSelectedStrategy] = useState("");
     const [initialValues, setInitialValues] = useState(initialFormStateObj);
     const [preBuild, setPreBuild] = useState([]);
-    const { enqueueSnackbar } = useSnackbar();
-    // const selectedStrategyId = useSelector((state) => state.strategy.selectedStrategyId);
     const authState = useSelector((state) => state.auth.authState);
+
+    const { showToast } = useToast();
+
+    //bear token for api calling
+    const headers = { Authorization: `Bearer ${authState}` };
 
 
     //submit form api call 
@@ -98,90 +101,49 @@ function DashboardOptionWizardContent() {
         try {
             const apiCall =
                 selectedStrategy
-                    ? axiosInstance.patch(API_ROUTER.STRATEGY_UPDATE(selectedStrategy), formData, {
-                        headers: { Authorization: `Bearer ${authState}` }
-                    })
-                    :
-                    axiosInstance.post(API_ROUTER.STRATEGY_CREATE, formData
-                        ,
-                        {
-                            headers: { Authorization: `Bearer ${authState}` }
-                        }
-                    );
-            enqueueSnackbar(selectedStrategy ? TOAST_ALERTS.STRATEGY_UPDATING : TOAST_ALERTS.STRATEGY_SAVING, {
-                variant: TOAST_TYPES.INFO,
-                anchorOrigin: TOAST_PLACE,
-                autoHideDuration: 2000,
-                TransitionComponent: Slide
-            });
+                    ? axiosInstance.patch(API_ROUTER.STRATEGY_UPDATE(selectedStrategy), formData, { headers })
+                    : axiosInstance.post(API_ROUTER.STRATEGY_CREATE, formData, { headers });
+            showToast(selectedStrategy ? TOAST_ALERTS.STRATEGY_UPDATING : TOAST_ALERTS.STRATEGY_SAVING, TOAST_TYPES.INFO);
+
             await apiCall;
-            enqueueSnackbar(selectedStrategy ? TOAST_ALERTS.STRATEGY_UPDATED : TOAST_ALERTS.STRATEGY_SAVED, {
-                variant: TOAST_TYPES.SUCCESS,
-                anchorOrigin: TOAST_PLACE,
-                autoHideDuration: 2000,
-                TransitionComponent: Slide
-            });
+            showToast(selectedStrategy ? TOAST_ALERTS.STRATEGY_UPDATED : TOAST_ALERTS.STRATEGY_SAVED, TOAST_TYPES.SUCCESS);
+
             getStrategyList();
             if (selectedStrategy) {
                 setShowForm(false);
                 setSelectedStrategy('')
             }
         } catch (error) {
-            enqueueSnackbar(TOAST_ALERTS.GENERAL_ERROR, {
-                variant: TOAST_TYPES.ERROR,
-                anchorOrigin: TOAST_PLACE,
-                autoHideDuration: 2000,
-                TransitionComponent: Slide
-            });
+            showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
         }
     };
 
     //users created strategy list api
     const getStrategyList = async () => {
         try {
-            const { data } = await axiosInstance.get(API_ROUTER.STRATEGY_LIST
-                , {
-                    headers: { Authorization: `Bearer ${authState}` }
-                }
-            );
+            const { data } = await axiosInstance.get(API_ROUTER.STRATEGY_LIST, { headers });
             const strategies = data?.map((e) => ({
                 id: e.id,
                 strategy_name: e.strategy_name,
             }));
             setStrategyName(strategies);
         } catch (error) {
-            enqueueSnackbar(TOAST_ALERTS.GENERAL_ERROR, {
-                variant: TOAST_TYPES.ERROR,
-                anchorOrigin: TOAST_PLACE,
-                autoHideDuration: 2000,
-                TransitionComponent: Slide
-            });
+            showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
         }
     };
 
     //delete strategy api
     const handleDeleteStrategy = async (id) => {
         try {
-            await axiosInstance.delete(API_ROUTER.STRATEGY_UPDATE(id), {
-                headers: { Authorization: `Bearer ${authState}` }
-            });
-            enqueueSnackbar(TOAST_ALERTS.STRATEGY_DELETED_SUCCESS, {
-                variant: TOAST_TYPES.SUCCESS,
-                anchorOrigin: TOAST_PLACE,
-                autoHideDuration: 2000,
-                TransitionComponent: Slide
-            });
+            await axiosInstance.delete(API_ROUTER.STRATEGY_UPDATE(id), { headers });
+            showToast(TOAST_ALERTS.STRATEGY_DELETED_SUCCESS, TOAST_TYPES.SUCCESS);
+
             getStrategyList();
             setInitialValues(initialFormStateObj);
             setSelectedStrategy('');
             setShowForm(false)
         } catch (error) {
-            enqueueSnackbar(TOAST_ALERTS.GENERAL_ERROR, {
-                variant: TOAST_TYPES.ERROR,
-                anchorOrigin: TOAST_PLACE,
-                autoHideDuration: 2000,
-                TransitionComponent: Slide
-            });
+            showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
         }
     };
 
@@ -192,9 +154,7 @@ function DashboardOptionWizardContent() {
                 ? API_ROUTER.STRATEGY_PREBUILD(selectedStrategyName)
                 : API_ROUTER.STRATEGY_PREBUILD();
 
-            const { data } = await axiosInstance.get(url, {
-                headers: { Authorization: `Bearer ${authState}` }
-            });
+            const { data } = await axiosInstance.get(url, { headers });
 
             setPreBuild(data.pre_built_strategies);
 
@@ -202,11 +162,11 @@ function DashboardOptionWizardContent() {
                 setShowForm(true);
                 const initialValues = { ...data };
 
-                // Set take_profit_type and stop_loss_type to "none" if null
+                // set take_profit_type and stop_loss_type to "none" if null
                 initialValues.take_profit_type = data.take_profit_type || "none";
                 initialValues.stop_loss_type = data.stop_loss_type || "none";
 
-                // Split start_time and exit_time into hours and minutes
+                // split start_time and exit_time into hours and minutes
                 if (data.start_time) {
                     const [entry_HH, entry_MM] = data.start_time.split(':');
                     initialValues.entry_HH = entry_HH;
@@ -221,12 +181,7 @@ function DashboardOptionWizardContent() {
                 setInitialValues(initialValues);
             }
         } catch (error) {
-            enqueueSnackbar(TOAST_ALERTS.GENERAL_ERROR, {
-                variant: TOAST_TYPES.ERROR,
-                anchorOrigin: TOAST_PLACE,
-                autoHideDuration: 2000,
-                TransitionComponent: Slide
-            });
+            showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
         }
     };
 
@@ -235,12 +190,7 @@ function DashboardOptionWizardContent() {
     const getSpecificStrategy = async (event) => {
         const selectedId = event.target.value;
         try {
-            const { data } = await axiosInstance.get(
-                API_ROUTER.STRATEGY_UPDATE(selectedId),
-                {
-                    headers: { Authorization: `Bearer ${authState}` },
-                }
-            );
+            const { data } = await axiosInstance.get(API_ROUTER.STRATEGY_UPDATE(selectedId), { headers });
             const [start_HH, start_MM] = data.start_time
                 .split(":")
                 .map((time) => parseInt(time, 10));
@@ -285,15 +235,9 @@ function DashboardOptionWizardContent() {
             setSelectedStrategy(selectedId);
             setShowForm(true);
         } catch (error) {
-            enqueueSnackbar(TOAST_ALERTS.GENERAL_ERROR, {
-                variant: TOAST_TYPES.ERROR,
-                anchorOrigin: TOAST_PLACE,
-                autoHideDuration: 2000,
-                TransitionComponent: Slide,
-            });
+            showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
         }
     };
-
 
     useEffect(() => {
         getStrategyList();
@@ -428,7 +372,6 @@ function DashboardOptionWizardContent() {
 
                                 </Box>
                             </ListItem>
-
 
                             {/*------------ Positions Section---------- */}
                             <Box className='positions-section'
