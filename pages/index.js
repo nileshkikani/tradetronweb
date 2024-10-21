@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import Logo from 'src/components/LogoSign';
 import Hero from 'src/content/Overview/Hero';
 import Highlights from 'src/content/Overview/Highlights';
-import LanguageSwitcher from 'src/layouts/BoxedSidebarLayout/Header/Buttons/LanguageSwitcher';
+// import LanguageSwitcher from 'src/layouts/BoxedSidebarLayout/Header/Buttons/LanguageSwitcher';
 import Footer from 'src/components/Footer';
 
 const HeaderWrapper = styled(Card)(

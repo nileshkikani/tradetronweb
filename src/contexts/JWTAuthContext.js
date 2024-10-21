@@ -1,11 +1,10 @@
 import { createContext, useEffect, useReducer } from 'react';
-import axios from 'axios';
 import PropTypes from 'prop-types';
 import { decode } from '../utils/jwt';
 import { useDispatch } from 'react-redux';
-import { setAuth } from 'src/store/authSlice';
 import axiosInstance from 'src/utils/axios';
 import { API_ROUTER } from 'src/services/routes';
+import { setAuth } from 'src/redux/reducers/authSlice';
 
 const initialAuthState = {
   isAuthenticated: false,
