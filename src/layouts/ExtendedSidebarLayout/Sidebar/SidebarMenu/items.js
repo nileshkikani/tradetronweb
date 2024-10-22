@@ -1,11 +1,11 @@
-import AnalyticsTwoToneIcon from '@mui/icons-material/AnalyticsTwoTone';
-import HealthAndSafetyTwoToneIcon from '@mui/icons-material/HealthAndSafetyTwoTone';
-import AssignmentIndTwoToneIcon from '@mui/icons-material/AssignmentIndTwoTone';
-import AccountTreeTwoToneIcon from '@mui/icons-material/AccountTreeTwoTone';
-import StorefrontTwoToneIcon from '@mui/icons-material/StorefrontTwoTone';
-import VpnKeyTwoToneIcon from '@mui/icons-material/VpnKeyTwoTone';
-import ErrorTwoToneIcon from '@mui/icons-material/ErrorTwoTone';
-import DesignServicesTwoToneIcon from '@mui/icons-material/DesignServicesTwoTone';
+// import AnalyticsTwoToneIcon from '@mui/icons-material/AnalyticsTwoTone';
+// import HealthAndSafetyTwoToneIcon from '@mui/icons-material/HealthAndSafetyTwoTone';
+// import AssignmentIndTwoToneIcon from '@mui/icons-material/AssignmentIndTwoTone';
+// import AccountTreeTwoToneIcon from '@mui/icons-material/AccountTreeTwoTone';
+// import StorefrontTwoToneIcon from '@mui/icons-material/StorefrontTwoTone';
+// import VpnKeyTwoToneIcon from '@mui/icons-material/VpnKeyTwoTone';
+// import ErrorTwoToneIcon from '@mui/icons-material/ErrorTwoTone';
+// import DesignServicesTwoToneIcon from '@mui/icons-material/DesignServicesTwoTone';
 import SupportTwoToneIcon from '@mui/icons-material/SupportTwoTone';
 import ReceiptTwoToneIcon from '@mui/icons-material/ReceiptTwoTone';
 import BackupTableTwoToneIcon from '@mui/icons-material/BackupTableTwoTone';
@@ -40,8 +40,13 @@ const menuItems = [
       },
       {
         name: 'Positions',
-        icon: SmartToyTwoToneIcon,
+        icon: SupportTwoToneIcon,
         link: '/dashboards/positions',
+      },
+      {
+        name: 'Broker',
+        icon: ReceiptTwoToneIcon,
+        link: '/dashboards/brokers',
       }
       
 ]
