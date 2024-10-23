@@ -16,7 +16,8 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    Paper
+    Paper,
+    TableFooter
 } from '@mui/material';
 import CustomModal from 'src/components/Deployed/DeployedModal';
 import { TOAST_ALERTS, TOAST_TYPES } from 'src/constants/keywords';
@@ -199,8 +200,20 @@ function DashboardDeployedContent() {
                                     </TableRow>
                                 ))}
                             </TableBody>
+                            <TableFooter>
+                                <TableRow>
+                                    <TableCell colSpan={5} align="right"><strong>Total PnL:</strong></TableCell>
+                                    <TableCell>
+                                        {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
+                                            orderList.reduce((total, order) => total + (parseFloat(order.profit) || 0), 0)
+                                        )}
+                                    </TableCell>
+                                    <TableCell colSpan={2}></TableCell>
+                                </TableRow>
+                            </TableFooter>
                         </Table>
                     </TableContainer>
+
                 )}
             </Box>
 

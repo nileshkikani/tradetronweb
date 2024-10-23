@@ -26,10 +26,9 @@ const DashboardBrokersContent = () => {
     const [formData, setFormData] = useState({});
     const { showToast } = useToast();
 
-    const key = process.env.ENCRYPTION_KEY;
+    const key = process.env.ENCRYPTION_KEY || 'testkeytestkey12';
     const secretKey = CryptoJS.enc.Utf8.parse(key);
 
-    //bear token for api calling
     const headers = { Authorization: `Bearer ${authState}`, "Content-Type": "application/json" };
 
     const addBroker = async () => {
@@ -38,25 +37,11 @@ const DashboardBrokersContent = () => {
                 accounts: {
                     provider: selectedBroker,
                     creds: selectedBroker === 'kotak' 
-                        ? {
-                            consumer_key: encryptData(formData.consumer_key),
-                            consumer_secret: encryptData(formData.consumer_secret),
-                            username: encryptData(formData.username),
-                            password: encryptData(formData.password),
-                            neo_fin_key: encryptData(formData.neo_fin_key),
-                            mobile_no: encryptData(`+91${formData.mobile_no}`),
-                            login_password: encryptData(formData.login_password),
-                            mpin: encryptData(formData.mpin),
-                        }
-                        : {
-                            client_code: encryptData(formData.CLIENT_CODE),
-                            password: encryptData(formData.PASSWORD),
-                            api_key: encryptData(formData.API_KEY),
-                            totp: encryptData(formData.TOTP),
-                        },
+                        ? encryptKotakCredentials(formData)
+                        : encryptAngelCredentials(formData),
                 },
             };
-    
+            console.log('encryptedData', encryptedData);
             await axiosInstance.post(API_ROUTER.ADD_BROKER, encryptedData, { headers });
             showToast(TOAST_ALERTS.STRATEGY_SAVED, TOAST_TYPES.SUCCESS);
         } catch (error) {
@@ -64,14 +49,34 @@ const DashboardBrokersContent = () => {
             showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
         }
     };
-    
-    
 
-    const encryptData = (data) => {
-        return CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(data), secretKey, {
+    const encryptField = (field) => {
+        return CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(field), secretKey, {
             mode: CryptoJS.mode.ECB,
             padding: CryptoJS.pad.Pkcs7,
         }).toString().toString(CryptoJS.enc.Base64);
+    };
+
+    const encryptAngelCredentials = (data) => {
+        return {
+            client_code: encryptField(data.CLIENT_CODE),
+            password: encryptField(data.PASSWORD),
+            api_key: encryptField(data.API_KEY),
+            totp: encryptField(data.TOTP),
+        };
+    };
+
+    const encryptKotakCredentials = (data) => {
+        return {
+            consumer_key: encryptField(data.consumer_key),
+            consumer_secret: encryptField(data.consumer_secret),
+            username: encryptField(data.username),
+            password: encryptField(data.password),
+            neo_fin_key: encryptField(data.neo_fin_key),
+            mobile_no: encryptField(`+91${data.mobile_no}`),
+            login_password: encryptField(data.login_password),
+            mpin: encryptField(data.mpin),
+        };
     };
 
     const handleOpen = (broker) => {
