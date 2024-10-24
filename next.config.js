@@ -44,7 +44,8 @@ module.exports = withImages(
     redirects,
     env: {
       NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
-      NEXT_PUBLIC_SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL
+      NEXT_PUBLIC_SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL,
+      ENCRYPTION_KEY: process.env.ENCRYPTION_KEY
   },
   })
 );

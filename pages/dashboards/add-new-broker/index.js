@@ -3,7 +3,8 @@ import Head from 'next/head';
 import ExtendedSidebarLayout from 'src/layouts/ExtendedSidebarLayout';
 import { Authenticated } from 'src/components/Authenticated';
 // import DashboardOptionWizardContent from '../../../src/content/DashboardPages/d';
-import DashboardBrokersContent from '../../../src/content/DashboardPages/brokers/index';
+import DashboardBrokersContent from '../../../src/content/DashboardPages/add-new-broker/index';
+
 
 
 

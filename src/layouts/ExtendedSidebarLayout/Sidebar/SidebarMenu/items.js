@@ -44,9 +44,22 @@ const menuItems = [
         link: '/dashboards/positions',
       },
       {
-        name: 'Broker',
+        name: 'Brokers',
         icon: ReceiptTwoToneIcon,
-        link: '/dashboards/brokers',
+        // link: '/dashboards/brokers',
+        items: [
+          {
+            name: 'Add New Broker',
+            link: '/dashboards/add-new-broker',
+            badge: '',
+            // badgeTooltip: 'Dot indicator with example tooltip'
+          },
+          {
+            name: 'Existing Brokers',
+            link: '/dashboards/existing-brokers',
+            badge: ''
+          }
+        ]
       }
       
 ]
