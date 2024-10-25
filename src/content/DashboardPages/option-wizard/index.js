@@ -10,7 +10,6 @@ import PositionSection from 'src/components/Option-Wizard/Position-Section';
 import AddedPositions from 'src/components/Option-Wizard/Added-Positions-Map';
 import Exitsection from 'src/components/Option-Wizard/Exit-Section';
 import Entrysection from 'src/components/Option-Wizard/Entry-Section';
-import { useSnackbar } from 'notistack';
 import {
     Button,
     ListItem,
@@ -20,13 +19,14 @@ import {
     MenuItem,
     TextField,
     FormHelperText,
-    Box,
+    Box
 } from '@mui/material';
 import { API_ROUTER } from 'src/services/routes';
-import { TOAST_ALERTS, TOAST_PLACE, TOAST_TYPES } from 'src/constants/keywords';
-import { Slide } from '@mui/material';
+import { TOAST_ALERTS, TOAST_TYPES } from 'src/constants/keywords';
 import axiosInstance from 'src/utils/axios';
 import { useSelector } from 'react-redux';
+import useToast from 'src/hooks/useToast';
+
 
 const initialFormStateObj = {
     strategy_name: '',
@@ -55,12 +55,16 @@ function DashboardOptionWizardContent() {
     const [strategyNames, setStrategyName] = useState([]);
     const [selectedStrategy, setSelectedStrategy] = useState("");
     const [initialValues, setInitialValues] = useState(initialFormStateObj);
-    const { enqueueSnackbar } = useSnackbar();
-    // const selectedStrategyId = useSelector((state) => state.strategy.selectedStrategyId);
+    const [preBuild, setPreBuild] = useState([]);
     const authState = useSelector((state) => state.auth.authState);
 
+    const { showToast } = useToast();
+
+    //bear token for api calling
+    const headers = { Authorization: `Bearer ${authState}` };
 
 
+    //submit form api call 
     const handleOnSubmit = async (values) => {
         const start_time = values.entry_HH && values.entry_MM
             ? `${values.entry_HH}:${values.entry_MM}`
@@ -92,118 +96,177 @@ function DashboardOptionWizardContent() {
             stop_loss_value: values.stop_loss_value || null
         };
 
-        console.log('final', formData);
+        // console.log('final', formData);
 
         try {
             const apiCall =
                 selectedStrategy
-                    ? axiosInstance.patch(API_ROUTER.STRATEGY_UPDATE(selectedStrategy), formData, {
-                        headers: { Authorization: `Bearer ${authState}` }
-                    })
-                    :
-                    axiosInstance.post(API_ROUTER.STRATEGY_CREATE, formData
-                        ,
-                        {
-                            headers: { Authorization: `Bearer ${authState}` }
-                        }
-                    );
-
-            // Show pending notification
-            enqueueSnackbar(selectedStrategy ? TOAST_ALERTS.STRATEGY_UPDATING : TOAST_ALERTS.STRATEGY_SAVING, {
-                variant: TOAST_TYPES.INFO,
-                anchorOrigin: TOAST_PLACE,
-                autoHideDuration: 2000,
-                TransitionComponent: Slide
-            });
+                    ? axiosInstance.patch(API_ROUTER.STRATEGY_UPDATE(selectedStrategy), formData, { headers })
+                    : axiosInstance.post(API_ROUTER.STRATEGY_CREATE, formData, { headers });
+            showToast(selectedStrategy ? TOAST_ALERTS.STRATEGY_UPDATING : TOAST_ALERTS.STRATEGY_SAVING, TOAST_TYPES.INFO);
 
             await apiCall;
-
-            // Show success notification
-            enqueueSnackbar(selectedStrategy ? TOAST_ALERTS.STRATEGY_UPDATED : TOAST_ALERTS.STRATEGY_SAVED, {
-                variant: TOAST_TYPES.SUCCESS,
-                anchorOrigin: TOAST_PLACE,
-                autoHideDuration: 2000,
-                TransitionComponent: Slide
-            });
+            showToast(selectedStrategy ? TOAST_ALERTS.STRATEGY_UPDATED : TOAST_ALERTS.STRATEGY_SAVED, TOAST_TYPES.SUCCESS);
 
             getStrategyList();
-
             if (selectedStrategy) {
                 setShowForm(false);
                 setSelectedStrategy('')
             }
-
         } catch (error) {
-            // Show error notification
-
-            enqueueSnackbar(TOAST_ALERTS.GENERAL_ERROR, {
-                variant: TOAST_TYPES.ERROR,
-                anchorOrigin: TOAST_PLACE,
-                autoHideDuration: 2000,
-                TransitionComponent: Slide
-            });
+            showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
         }
     };
 
+    //users created strategy list api
     const getStrategyList = async () => {
         try {
-            const { data } = await axiosInstance.get(API_ROUTER.STRATEGY_LIST
-                , {
-                    headers: { Authorization: `Bearer ${authState}` }
-                }
-            );
+            const { data } = await axiosInstance.get(API_ROUTER.STRATEGY_LIST, { headers });
             const strategies = data?.map((e) => ({
                 id: e.id,
                 strategy_name: e.strategy_name,
             }));
             setStrategyName(strategies);
         } catch (error) {
-            // toaster(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR)
-            enqueueSnackbar(TOAST_ALERTS.GENERAL_ERROR, {
-                variant: TOAST_TYPES.ERROR,
-                anchorOrigin: TOAST_PLACE,
-                autoHideDuration: 2000,
-                TransitionComponent: Slide
-            });
+            showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
         }
     };
 
+    //delete strategy api
     const handleDeleteStrategy = async (id) => {
         try {
-            await axiosInstance.delete(API_ROUTER.STRATEGY_UPDATE(id), {
-                headers: { Authorization: `Bearer ${authState}` }
-            });
-            // toaster(TOAST_ALERTS.STRATEGY_DELETED_SUCCESS, TOAST_TYPES.SUCCESS)
-            enqueueSnackbar(TOAST_ALERTS.STRATEGY_DELETED_SUCCESS, {
-                variant: TOAST_TYPES.SUCCESS,
-                anchorOrigin: TOAST_PLACE,
-                autoHideDuration: 2000,
-                TransitionComponent: Slide
-            });
-            // location.reload();
+            await axiosInstance.delete(API_ROUTER.STRATEGY_UPDATE(id), { headers });
+            showToast(TOAST_ALERTS.STRATEGY_DELETED_SUCCESS, TOAST_TYPES.SUCCESS);
+
             getStrategyList();
             setInitialValues(initialFormStateObj);
             setSelectedStrategy('');
             setShowForm(false)
         } catch (error) {
-            // toaster(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
-            enqueueSnackbar(TOAST_ALERTS.GENERAL_ERROR, {
-                variant: TOAST_TYPES.ERROR,
-                anchorOrigin: TOAST_PLACE,
-                autoHideDuration: 2000,
-                TransitionComponent: Slide
-            });
+            showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
         }
     };
 
-    console.log('selectedStrategy', selectedStrategy)
+    //pre build strategy list api
+    const getPrebuildStrategy = async (selectedStrategyName) => {
+        try {
+            const url = selectedStrategyName
+                ? API_ROUTER.STRATEGY_PREBUILD(selectedStrategyName)
+                : API_ROUTER.STRATEGY_PREBUILD();
+
+            const { data } = await axiosInstance.get(url, { headers });
+
+            setPreBuild(data.pre_built_strategies);
+
+            if (selectedStrategyName) {
+                setShowForm(true);
+                const initialValues = { ...data };
+
+                // set take_profit_type and stop_loss_type to "none" if null
+                initialValues.take_profit_type = data.take_profit_type || "none";
+                initialValues.stop_loss_type = data.stop_loss_type || "none";
+
+                // split start_time and exit_time into hours and minutes
+                if (data.start_time) {
+                    const [entry_HH, entry_MM] = data.start_time.split(':');
+                    initialValues.entry_HH = entry_HH;
+                    initialValues.entry_MM = entry_MM;
+                }
+                if (data.exit_time) {
+                    const [exit_HH, exit_MM] = data.exit_time.split(':');
+                    initialValues.exit_HH = exit_HH;
+                    initialValues.exit_MM = exit_MM;
+                }
+                setSelectedStrategy('');
+                setInitialValues(initialValues);
+            }
+        } catch (error) {
+            showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
+        }
+    };
+
+
+    //get specific strategy
+    const getSpecificStrategy = async (event) => {
+        const selectedId = event.target.value;
+        try {
+            const { data } = await axiosInstance.get(API_ROUTER.STRATEGY_UPDATE(selectedId), { headers });
+            const [start_HH, start_MM] = data.start_time
+                .split(":")
+                .map((time) => parseInt(time, 10));
+            const [exit_HH, exit_MM] = data.exit_time
+                .split(":")
+                .map((time) => parseInt(time, 10));
+
+            const selectedStrategyData = {
+                strategy_name: data.strategy_name || "",
+                index_name: data.index_name || "",
+                capital: data.capital || 0,
+                strategy_type: data.strategy_type || "",
+                order_take_profit_type: data.order_take_profit_type || "",
+                order_stop_loss_type: data.order_stop_loss_type || "",
+                positions:
+                    data.positions.map((position) => ({
+                        id: position.id,
+                        option_type: position.option_type,
+                        order_type: position.order_type,
+                        strike_selection: position.strike_selection,
+                        value: position.value,
+                        expiry: position.expiry,
+                        order_take_profit_value: position.order_take_profit_value || "",
+                        order_stop_loss_value: position.order_stop_loss_value || "",
+                        lots: position.lots || 1,
+                    })) || [],
+                entry_HH: start_HH.toString() || "",
+                entry_MM: start_MM.toString() || "",
+                days: data.days || [],
+                exit_HH: exit_HH.toString() || "",
+                exit_MM: exit_MM.toString() || "",
+                take_profit_type: data.take_profit_type || "none",
+                take_profit_value: data.take_profit_value || "",
+                stop_loss_value: data.stop_loss_value || "",
+                stop_loss_type: data.stop_loss_type || "none",
+                do_repeat: data.do_repeat || false,
+            };
+
+            //   console.log("selectedStrategyData", selectedStrategyData);
+
+            setInitialValues(selectedStrategyData);
+            setSelectedStrategy(selectedId);
+            setShowForm(true);
+        } catch (error) {
+            showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
+        }
+    };
+
+    useEffect(() => {
+        getStrategyList();
+    }, []);
+
+    useEffect(() => {
+        getPrebuildStrategy();
+    }, [initialValues]);
+
+
+    // console.log('selectedStrategy', selectedStrategy)
 
     return (
         <>
             <PageTitleWrapper>
                 <h1>Option Wizard</h1>
             </PageTitleWrapper>
-            <Titlesection initialFormStateObj={initialFormStateObj} setSelectedStrategy={setSelectedStrategy} selectedStrategy={selectedStrategy} setInitialValues={setInitialValues} strategyNames={strategyNames} setShowForm={setShowForm} getStrategyList={getStrategyList} />
+            <Titlesection
+                initialFormStateObj={initialFormStateObj}
+                setSelectedStrategy={setSelectedStrategy}
+                selectedStrategy={selectedStrategy}
+                setInitialValues={setInitialValues}
+                strategyNames={strategyNames}
+                setShowForm={setShowForm}
+                getPrebuildStrategy={getPrebuildStrategy}
+                preBuild={preBuild}
+                getSpecificStrategy={getSpecificStrategy}
+            //  getStrategyList={getStrategyList}
+            />
             {showForm && (
                 <Formik
                     initialValues={initialValues}
@@ -309,7 +372,6 @@ function DashboardOptionWizardContent() {
 
                                 </Box>
                             </ListItem>
-
 
                             {/*------------ Positions Section---------- */}
                             <Box className='positions-section'

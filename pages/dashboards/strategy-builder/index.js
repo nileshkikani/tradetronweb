@@ -11,10 +11,8 @@ import {
   TextField,
   FormHelperText,
   Box,
-  Slide,
 } from "@mui/material";
 
-import { useSnackbar } from "notistack";
 import { TOAST_ALERTS, TOAST_TYPES } from "src/constants/keywords";
 import axiosInstance from "src/utils/axios";
 import { API_ROUTER } from "src/services/routes";
@@ -35,9 +33,9 @@ import Modal from "@mui/material/Modal";
 import Backdrop from "@mui/material/Backdrop";
 import Fade from "@mui/material/Fade";
 import Typography from "@mui/material/Typography";
+import useToast from 'src/hooks/useToast';
 
 function DashboardStrategyBuilderContent() {
-  const { enqueueSnackbar } = useSnackbar();
   const authState = useSelector((state) => state.auth.authState);
   const [symbol, setSymbol] = useState([]);
   const [segment, setSegment] = useState("futures");
@@ -64,6 +62,7 @@ function DashboardStrategyBuilderContent() {
     boxShadow: 24,
     p: 4,
   };
+  const { showToast } = useToast();
 
   const getSymbolList = async () => {
     try {
@@ -73,15 +72,16 @@ function DashboardStrategyBuilderContent() {
       const symbollist = response.data?.symbols;
       setSymbol(symbollist);
     } catch (error) {
-      enqueueSnackbar(TOAST_ALERTS.GENERAL_ERROR, {
-        variant: TOAST_TYPES.ERROR,
-        anchorOrigin: {
-          vertical: "bottom",
-          horizontal: "right",
-        },
-        autoHideDuration: 2000,
-        TransitionComponent: Slide,
-      });
+      showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
+      // enqueueSnackbar(TOAST_ALERTS.GENERAL_ERROR, {
+      //   variant: TOAST_TYPES.ERROR,
+      //   anchorOrigin: {
+      //     vertical: "bottom",
+      //     horizontal: "right",
+      //   },
+      //   autoHideDuration: 2000,
+      //   TransitionComponent: Slide,
+      // });
     }
   };
 
@@ -186,15 +186,7 @@ function DashboardStrategyBuilderContent() {
       const allPositionList = response.data;
       setAllPosition(allPositionList);
     } catch (error) {
-      enqueueSnackbar(TOAST_ALERTS.GENERAL_ERROR, {
-        variant: TOAST_TYPES.ERROR,
-        anchorOrigin: {
-          vertical: "bottom",
-          horizontal: "right",
-        },
-        autoHideDuration: 2000,
-        TransitionComponent: Slide,
-      });
+      showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
     }
   };
 

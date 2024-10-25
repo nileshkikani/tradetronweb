@@ -16,12 +16,19 @@ export const API_ROUTER = {
 
     STRATEGY_LIST: 'strategy/',
     STRATEGY_CREATE: 'strategy/create/',
-    STRATEGY_UPDATE: (id) => (id ? `strategy/update/${id}/` : 'strategy/update/'),//wokrs with delete also
+    STRATEGY_PREBUILD:(name)=>(name?`/strategy/pre-build/?name=${name}`: '/strategy/pre-build/'),
+    STRATEGY_UPDATE: (id) => (id ? `strategy/update/${id}/` : 'strategy/update/'), //wokrs with delete also
 
     
     ORDER_DATE_LIST: (id) => (`orders/dates/${id}/`),
     ORDER_LIST: (id, selectedDate, positionType) => {
         const baseUrl = `orders/${id}/?date=${selectedDate}`;
         return positionType ? `${baseUrl}&position_type=${positionType}` : baseUrl;
-      }
+      },
+
+
+    ADD_BROKER:'broker/add/',
+
+    //get method to get broker data, patch method for update, delete for delete (provider)
+    UPDATE_BROKER:'broker/update/',
 };

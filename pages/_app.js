@@ -13,11 +13,11 @@ import Loader from 'src/components/Loader';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import useScrollTop from 'src/hooks/useScrollTop';
-import { store } from '../src/store';
 import { SnackbarProvider } from 'notistack';
 import dynamic from 'next/dynamic';
 import { AuthConsumer, AuthProvider } from 'src/contexts/JWTAuthContext';
-const ReduxProvider = dynamic(() => import('../src/store/RootProvider'), {
+import { store } from '../src/redux/store';
+const ReduxProvider = dynamic(() => import('../src/redux/store/RootProvider'), {
   ssr: false
 });
 
