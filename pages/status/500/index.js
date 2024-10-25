@@ -122,7 +122,7 @@ function Status500() {
               <Container maxWidth="sm">
                 <Box textAlign="center">
                   <TypographyPrimary variant="h1" sx={{ my: 2 }}>
-                    {t('Tokyo Black NextJS Javascript Admin Dashboard')}
+                    {t('TradeTron-custom strategy creation tool')}
                   </TypographyPrimary>
                   <TypographySecondary
                     variant="h4"

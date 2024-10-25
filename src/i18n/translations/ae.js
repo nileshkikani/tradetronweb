@@ -86,7 +86,7 @@ const aeJSON = {
   'Sign out': 'خروج',
   'Change Theme': 'غير الخلفية',
   'View all notifications': 'عرض جميع الإخطارات',
-  'Tokyo Black NextJS Javascript Admin Dashboard':
+  'TradeTron-custom strategy creation tool':
     'لوحة تحكم إدارة Tokyo React',
   'High performance React template built with lots of powerful Material-UI components across multiple product niches for fast & perfect apps development processes':
     'قالب React عالي الأداء المصمم بالكثير من مكونات واجهة المستخدم المادية القوية عبر منافذ منتجات متعددة لعمليات تطوير تطبيقات سريعة ومثالية',
