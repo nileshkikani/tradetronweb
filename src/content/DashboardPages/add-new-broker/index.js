@@ -25,6 +25,8 @@ const DashboardBrokersContent = () => {
     const [selectedBroker, setSelectedBroker] = useState('');
     const [formData, setFormData] = useState({});
     const [isAngelAdded, setIsAngelAdded] = useState(false);
+    const [isKotakAdded, setIsKotakAdded] = useState(false);
+
     const { showToast } = useToast();
 
     const key = process.env.ENCRYPTION_KEY;
@@ -54,7 +56,8 @@ const DashboardBrokersContent = () => {
     const getBrokerData = async () => {
         try {
             const { data } = await axiosInstance.get(API_ROUTER.UPDATE_BROKER, { headers });
-            setIsAngelAdded(data.accounts.angel); // Update state based on the API response
+            setIsAngelAdded(data.accounts.angel);
+            setIsKotakAdded(data.accounts.kotak);
             setSelectedBroker(data.accounts.kotak ? 'kotak' : (data.accounts.angel ? 'angel' : ''));
         } catch (error) {
             showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
@@ -145,6 +148,10 @@ const DashboardBrokersContent = () => {
             </Box>
             <Box p={5}>
                 {selectedBroker === 'angel' && isAngelAdded ? (
+                    <Typography variant="caption">
+                       {selectedBroker} already added
+                    </Typography>
+                ) : selectedBroker === 'kotak' && isKotakAdded ? ( // Added Kotak check
                     <Typography variant="caption">
                        {selectedBroker} already added
                     </Typography>

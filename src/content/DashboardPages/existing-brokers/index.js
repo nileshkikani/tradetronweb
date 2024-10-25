@@ -151,15 +151,17 @@ const DashboardExistingBrokersContent = () => {
     
         if (selectedBroker === 'kotak' && hasKotak) {
             return (
-                <Paper style={{ padding: 20, marginTop: '20px' }}>
+                <Paper style={{ padding: 20,display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <Typography variant="h4">Kotak Credentials</Typography>
                     {renderFields(formData.accounts.kotak)}
-                    <Button variant="contained" onClick={updateBroker} style={{ marginTop: '16px' }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }} gap={3}>
+                    <Button variant="contained" onClick={updateBroker} >
                         Update
                     </Button>
-                    <Button variant="outlined" onClick={deleteBroker} style={{ borderColor: 'red' }}>
+                    <Button variant="outlined" color="error" onClick={deleteBroker} >
                         Delete
                     </Button>
+                    </Box>
                 </Paper>
             );
         }
