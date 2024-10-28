@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react';
 import Footer from 'src/components/Footer';
 import PageTitleWrapper from 'src/components/PageTitleWrapper';
 import ExtendedSidebarLayout from 'src/layouts/ExtendedSidebarLayout';
@@ -24,8 +24,6 @@ import { TOAST_ALERTS, TOAST_TYPES } from 'src/constants/keywords';
 import { initializeWebSocket } from 'src/utils/socket';
 import useToast from 'src/hooks/useToast';
 
-
-
 function DashboardDeployedContent() {
     const [datas, setDatas] = useState([]);
     const [strategyNames, setStrategyNames] = useState([]);
@@ -34,14 +32,13 @@ function DashboardDeployedContent() {
     const [orderList, setOrderList] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
+    const [selectedTotalPL, setSelectedTotalPL] = useState(0); // New state for selected total PL
     const socketRef = useRef(null);
     const [livePrices, setLivePrices] = useState({});
     const authState = useSelector((state) => state.auth.authState);
     const { showToast } = useToast();
 
-    //bear token for api calling
     const headers = { Authorization: `Bearer ${authState}` };
-
 
     const getData = async (id) => {
         try {
@@ -52,7 +49,6 @@ function DashboardDeployedContent() {
         }
     };
 
-    // user's strategy list
     const getStrategyList = async () => {
         try {
             const { data } = await axiosInstance.get(API_ROUTER.STRATEGY_LIST, { headers });
@@ -85,10 +81,12 @@ function DashboardDeployedContent() {
                 const { data } = await axiosInstance.get(API_ROUTER.ORDER_LIST(selectedStrategyId, selectedParam), { headers });
                 const openOrderTokens = data.filter(item => item.close_price === null).map(item => item.token);
                 setOrderList(data);
+                
+                // Update the selected total PL based on the selected date
+                const selectedData = datas.find(item => item.date === selectedParam);
+                setSelectedTotalPL(selectedData ? selectedData.total_pl : 0);
 
-                // socket call for live prices (open order's live prices only, based on openOrderTokens we pass)
                 initializeWebSocket(setLivePrices, openOrderTokens, socketRef);
-
             } catch (error) {
                 showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
             }
@@ -113,18 +111,14 @@ function DashboardDeployedContent() {
         setSelectedOrder(null);
     };
 
-    // console.log('livePrices', livePrices);
     const getLivePrice = (token) => {
         const price = livePrices[String(token)]?.ltp || 'N/A';
-        // console.log('Retrieved live price for token', token, ':', price);
         return price;
     };
-
 
     useEffect(() => {
         getStrategyList();
 
-        // close socket when component unmount
         return () => {
             if (socketRef.current) {
                 socketRef.current.close();
@@ -132,7 +126,6 @@ function DashboardDeployedContent() {
             }
         };
     }, []);
-
 
     return (
         <>
@@ -170,7 +163,6 @@ function DashboardDeployedContent() {
                         <Table px={4}>
                             <TableHead>
                                 <TableRow>
-                                    {/* <TableCell>ID</TableCell> */}
                                     <TableCell>Created At</TableCell>
                                     <TableCell>Symbol</TableCell>
                                     <TableCell>Order Type</TableCell>
@@ -184,7 +176,6 @@ function DashboardDeployedContent() {
                             <TableBody>
                                 {orderList.map((order) => (
                                     <TableRow key={order.id}>
-                                        {/* <TableCell>{order.id}</TableCell> */}
                                         <TableCell>{new Date(order.created_at).toLocaleString()}</TableCell>
                                         <TableCell onClick={() => handleSymbolClick(order)} style={{ cursor: 'pointer', color: 'lightblue', textDecoration: 'underline' }}>
                                             {order.symbol}
@@ -204,16 +195,13 @@ function DashboardDeployedContent() {
                                 <TableRow>
                                     <TableCell colSpan={5} align="right"><strong>Total PnL:</strong></TableCell>
                                     <TableCell>
-                                        {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
-                                            orderList.reduce((total, order) => total + (parseFloat(order.profit) || 0), 0)
-                                        )}
+                                        {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(selectedTotalPL)}
                                     </TableCell>
                                     <TableCell colSpan={2}></TableCell>
                                 </TableRow>
                             </TableFooter>
                         </Table>
                     </TableContainer>
-
                 )}
             </Box>
 
@@ -232,6 +220,5 @@ DashboardDeployedContent.getLayout = (page) => (
         <ExtendedSidebarLayout>{page}</ExtendedSidebarLayout>
     </Authenticated>
 );
-
 
 export default DashboardDeployedContent;

@@ -17,6 +17,8 @@ import {
 import { useAuth } from 'src/hooks/useAuth';
 import { useRefMounted } from 'src/hooks/useRefMounted';
 import { useTranslation } from 'react-i18next';
+import { TOAST_ALERTS, TOAST_TYPES } from 'src/constants/keywords';
+import useToast from 'src/hooks/useToast';
 
 
 export const LoginJWT = (props) => {
@@ -24,6 +26,7 @@ export const LoginJWT = (props) => {
   const { login } = useAuth();
   const isMountedRef = useRefMounted();
   const router = useRouter();
+  const { showToast } = useToast();
 
   const formik = useFormik({
     initialValues: {
@@ -54,6 +57,7 @@ export const LoginJWT = (props) => {
           router.push(backTo);
       } catch (err) {
         console.error(err);
+        showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
         if (isMountedRef()) {
           helpers.setStatus({ success: false });
           helpers.setErrors({ submit: err.message });

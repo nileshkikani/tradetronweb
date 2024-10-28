@@ -38,11 +38,11 @@ const menuItems = [
           }
         ]
       },
-      {
-        name: 'Positions',
-        icon: SupportTwoToneIcon,
-        link: '/dashboards/positions',
-      },
+      // {
+      //   name: 'Positions',
+      //   icon: SupportTwoToneIcon,
+      //   link: '/dashboards/positions',
+      // },
       {
         name: 'Brokers',
         icon: ReceiptTwoToneIcon,
