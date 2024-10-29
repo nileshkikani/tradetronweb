@@ -86,8 +86,8 @@ const deJSON = {
   'Sign out': 'Ausloggen',
   'Change Theme': 'Thema ändern',
   'View all notifications': 'Alle Benachrichtigungen anzeigen',
-  'TradeTron-custom strategy creation tool':
-    'TradeTron-custom strategy creation tool',
+  'TradeOnAir-custom strategy creation tool':
+    'TradeOnAir-custom strategy creation tool',
   'High performance React template built with lots of powerful Material-UI components across multiple product niches for fast & perfect apps development processes':
     'Hochleistungs-React-Vorlage mit vielen leistungsstarken Material-UI-Komponenten in mehreren Produktnischen für schnelle und perfekte Entwicklungsprozesse für Apps',
   'Browse Live Preview': 'Durchsuchen Sie die Live-Vorschau',

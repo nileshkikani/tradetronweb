@@ -86,7 +86,7 @@ const znJSON = {
   'Sign out': '登出',
   'Change Theme': '改变主题',
   'View all notifications': '查看所有通知',
-  'TradeTron-custom strategy creation tool': '东京React管理员仪表板',
+  'TradeOnAir-custom strategy creation tool': '东京React管理员仪表板',
   'High performance React template built with lots of powerful Material-UI components across multiple product niches for fast & perfect apps development processes':
     '高性能React模板由跨多个产品细分市场的大量功能强大的Material-UI组件构建，可实现快速，完美的应用程序开发流程',
   'Browse Live Preview': '浏览实时预览',

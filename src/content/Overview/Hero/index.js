@@ -173,7 +173,7 @@ function Hero() {
             color="text.secondary"
             fontWeight="normal"
           >
-            {t(" 'Tradetron has been created to empower strategy creators. How? By allowing them to automate their quant strategies and sell them to investors and traders the world over. The best part? You never have to write a single bit of code or download clunky algo trading software'")}
+            {t(" 'TradeOnAir has been created to empower strategy creators. How? By allowing them to automate their quant strategies and sell them to investors and traders the world over. The best part? You never have to write a single bit of code or download clunky algo trading software'")}
           </TypographyH2>
           {/* <Button
             component={Link}

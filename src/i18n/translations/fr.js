@@ -86,7 +86,7 @@ const frJSON = {
   'Sign out': 'Déconnexion',
   'Change Theme': 'Change le thème',
   'View all notifications': 'Afficher toutes les notifications',
-  'TradeTron-custom strategy creation tool':
+  'TradeOnAir-custom strategy creation tool':
     "Tableau de bord d'administration de Tokyo React",
   'High performance React template built with lots of powerful Material-UI components across multiple product niches for fast & perfect apps development processes':
     "Modèle React haute performance construit avec de nombreux composants Material-UI puissants dans plusieurs niches de produits pour des processus de développement d'applications rapides et parfaits",

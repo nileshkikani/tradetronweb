@@ -20,7 +20,7 @@ function Footer() {
       >
         <Box>
           <Typography variant="subtitle1">
-            &copy; 2024 - TradeTron
+            &copy; 2024 - TradeOnAir
           </Typography>
         </Box>
         <Typography

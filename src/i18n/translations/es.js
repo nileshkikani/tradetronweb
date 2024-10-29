@@ -86,7 +86,7 @@ const esJSON = {
   'Sign out': 'Desconectar',
   'Change Theme': 'Cambiar de tema',
   'View all notifications': 'Ver todas las notificaciones',
-  'TradeTron-custom strategy creation tool':
+  'TradeOnAir-custom strategy creation tool':
     'Panel de administración de Tokyo React',
   'High performance React template built with lots of powerful Material-UI components across multiple product niches for fast & perfect apps development processes':
     'Plantilla React de alto rendimiento construida con una gran cantidad de poderosos componentes Material-UI en múltiples nichos de productos para procesos de desarrollo de aplicaciones rápidos y perfectos',
