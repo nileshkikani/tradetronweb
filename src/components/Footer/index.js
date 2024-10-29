@@ -1,5 +1,7 @@
+import React, { useState } from 'react';
 import { Box, Card, Typography, styled } from '@mui/material';
 import Link from 'src/components/Link';
+import ContactUs from '../../../pages/contact-us/index'; // Adjust the path as needed
 
 const FooterWrapper = styled(Card)(
   ({ theme }) => `
@@ -9,20 +11,31 @@ const FooterWrapper = styled(Card)(
 );
 
 function Footer() {
+  const [showContactForm, setShowContactForm] = useState(false);
+
   return (
     <FooterWrapper className="footer-wrapper">
       <Box
         p={4}
-        display={{ xs: 'block', md: 'flex' }}
+        display="flex"
         alignItems="center"
-        textAlign={{ xs: 'center', md: 'left' }}
         justifyContent="space-between"
       >
-        <Box>
+        <Box display="flex" alignItems="center">
           <Typography variant="subtitle1">
             &copy; 2024 - TradeOnAir
           </Typography>
+          <Box mx={2}> {/* Add margin for spacing */}
+            <Link
+            href="/contact-us"
+              onClick={() => setShowContactForm(!showContactForm)}
+              style={{ cursor: 'pointer' }}
+            >
+              {showContactForm ? 'Hide Contact Us' : 'Contact us'}
+            </Link>
+          </Box>
         </Box>
+       
         <Typography
           sx={{
             pt: { xs: 2, md: 0 }
@@ -30,15 +43,14 @@ function Footer() {
           variant="subtitle1"
         >
           Made in India
-          {/* <Link
-            href="https://bloomui.com"
-            target="_blank"
-            rel="noopener noreferrer"
-          > */}
-            
-          {/* </Link> */}
         </Typography>
       </Box>
+
+      {showContactForm && (
+        <Box mt={2}> 
+          <ContactUs />
+        </Box>
+      )}
     </FooterWrapper>
   );
 }

@@ -50,7 +50,12 @@ function Overview() {
             >
               <Box />
               <Box>
-                {/* <LanguageSwitcher /> */}
+              <Link
+                  href="/contact-us"
+                  style={{ cursor: 'pointer' }}
+                >
+                  {t('Contact us')}
+                </Link>
                 <Button
                   component={Link}
                   href="/dashboards/reports"
