@@ -120,7 +120,7 @@ export const RegisterJWT = (props) => {
           <>
             <Typography variant="body2">
               {t('I accept the')}{' '}
-              <Link href="#">{t('terms and conditions')}</Link>.
+              <Link href="/terms-and-conditions">{t('terms and conditions')}</Link>.
             </Typography>
           </>
         }

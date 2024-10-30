@@ -60,7 +60,12 @@ const DashboardBrokersContent = () => {
             setIsKotakAdded(data.accounts.kotak);
             setSelectedBroker(data.accounts.kotak ? 'kotak' : (data.accounts.angel ? 'angel' : ''));
         } catch (error) {
-            showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
+            if (error.response && error.response.status === 400) {
+                const errorMessage = error.response.data[0] || "You don't have any broker added";
+                showToast(errorMessage, TOAST_TYPES.INFO);
+            } else {
+                showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
+            }
         }
     };
 
@@ -87,10 +92,10 @@ const DashboardBrokersContent = () => {
     const renderFields = () => {
         const fields = {
             angel: [
-                { name: 'client_code', label: 'CLIENT CODE' },
-                { name: 'password', label: 'PASSWORD', type: 'password' },
+                { name: 'client_code', label: 'Client Code' },
+                { name: 'password', label: 'Password', type: 'password' },
                 { name: 'totp', label: 'TOTP' },
-                { name: 'api_key', label: 'API KEY', type: 'password' },
+                { name: 'api_key', label: 'API Key', type: 'password' },
             ],
             kotak: [
                 { name: 'consumer_key', label: 'Consumer Key' },
@@ -151,7 +156,7 @@ const DashboardBrokersContent = () => {
                     <Typography variant="caption">
                        {selectedBroker} already added
                     </Typography>
-                ) : selectedBroker === 'kotak' && isKotakAdded ? ( // Added Kotak check
+                ) : selectedBroker === 'kotak' && isKotakAdded ? (
                     <Typography variant="caption">
                        {selectedBroker} already added
                     </Typography>

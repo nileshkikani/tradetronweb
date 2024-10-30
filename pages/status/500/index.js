@@ -122,7 +122,7 @@ function Status500() {
               <Container maxWidth="sm">
                 <Box textAlign="center">
                   <TypographyPrimary variant="h1" sx={{ my: 2 }}>
-                    {t('TradeTron-custom strategy creation tool')}
+                    {t('TradeOnAir-custom strategy creation tool')}
                   </TypographyPrimary>
                   <TypographySecondary
                     variant="h4"
