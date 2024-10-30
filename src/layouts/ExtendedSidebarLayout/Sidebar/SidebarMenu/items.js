@@ -16,7 +16,7 @@ const menuItems = [
     // heading: 'General',
     items: [
       {
-        name: 'Opstra',
+        name: 'Builder',
         icon: BackupTableTwoToneIcon,
         link: '/dashboards/strategy-builder'
       },
@@ -37,6 +37,11 @@ const menuItems = [
             badge: ''
           }
         ]
+      },
+      {
+        name: "Index/Stoke Report",
+        icon: SmartToyTwoToneIcon,
+        link: "/dashboards/stoke-report",
       },
       // {
       //   name: 'Positions',
