@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useFormikContext, Field, ErrorMessage } from "formik";
 import {
   FormControl,
@@ -12,12 +12,12 @@ import {
   Switch,
 } from "@mui/material";
 import { TOAST_ALERTS, TOAST_TYPES } from "src/constants/keywords";
-import useToast from 'src/hooks/useToast';
+import useToast from "src/hooks/useToast";
 
-
-const Exitsection = () => {
+const Exitsection = ({ brokers }) => {
   const { setFieldValue, values, errors, touched } = useFormikContext();
   const { showToast } = useToast();
+  const [isTradeInLive, setIsTradeInLive] = useState("");
 
   const handleProfitMTMChange = (e) => {
     const value = e.target.value;
@@ -59,8 +59,19 @@ const Exitsection = () => {
     setFieldValue("stop_loss_value", value);
   };
 
-  const handleSwitchChange = (event) => {
-    setFieldValue("do_repeat", event.target.checked);
+  // do repeat toggle handle
+  const handleSwitchChange = (e) => {
+    setFieldValue("do_repeat", e.target.checked);
+  };
+
+  // do trade in live toggle handle
+  const handleLiveTradeToggle = (e) => {
+    setFieldValue("do_trade_in_live", e.target.checked);
+    setIsTradeInLive((prev) => !prev);
+  };
+
+  const handleBrokerName = (e) => {
+    setFieldValue("broker_name", e.target.value);
   };
 
   const handleTimeChange = (e) => {
@@ -118,7 +129,11 @@ const Exitsection = () => {
             <MenuItem value="amount">Amount</MenuItem>
           </Field>
           <FormHelperText>
-            <ErrorMessage name="take_profit_type" component="span" className="error" />
+            <ErrorMessage
+              name="take_profit_type"
+              component="span"
+              className="error"
+            />
           </FormHelperText>
         </FormControl>
 
@@ -130,11 +145,17 @@ const Exitsection = () => {
           onChange={handleProfitMTMInputChange}
           value={
             values.take_profit_value ||
-            (values.take_profit_type === "none" ? null : values.take_profit_value)
+            (values.take_profit_type === "none"
+              ? null
+              : values.take_profit_value)
           }
           error={touched.take_profit_value && Boolean(errors.take_profit_value)}
           helperText={
-            <ErrorMessage name="take_profit_value" component="span" className="error" />
+            <ErrorMessage
+              name="take_profit_value"
+              component="span"
+              className="error"
+            />
           }
           style={{ width: "100px" }}
         />
@@ -150,7 +171,7 @@ const Exitsection = () => {
             name="stop_loss_type"
             label="Stoploss MTM"
             onChange={handleStoplossMTMChange}
-            value={values.stop_loss_type }
+            value={values.stop_loss_type}
             style={{ width: "200px" }}
           >
             <MenuItem value="none">None</MenuItem>
@@ -160,7 +181,11 @@ const Exitsection = () => {
             <MenuItem value="amount">Amount</MenuItem>
           </Field>
           <FormHelperText>
-            <ErrorMessage name="stop_loss_type" component="span" className="error" />
+            <ErrorMessage
+              name="stop_loss_type"
+              component="span"
+              className="error"
+            />
           </FormHelperText>
         </FormControl>
 
@@ -170,7 +195,10 @@ const Exitsection = () => {
           label="Value"
           disabled={values.stop_loss_type === "none"}
           onChange={handleStoplossMTMInputChange}
-          value={values.stop_loss_value || (values.stop_loss_type === "none" ? null : values.stop_loss_value)}
+          value={
+            values.stop_loss_value ||
+            (values.stop_loss_type === "none" ? null : values.stop_loss_value)
+          }
           error={touched.stop_loss_value && Boolean(errors.stop_loss_value)}
           helperText={<ErrorMessage name="stop_loss_value" component="span" />}
           style={{ width: "100px" }}
@@ -207,7 +235,11 @@ const Exitsection = () => {
                 ))}
               </Field>
               <FormHelperText>
-                <ErrorMessage name="exit_HH" component="span" className="error"/>
+                <ErrorMessage
+                  name="exit_HH"
+                  component="span"
+                  className="error"
+                />
               </FormHelperText>
             </FormControl>
 
@@ -234,7 +266,11 @@ const Exitsection = () => {
                 ))}
               </Field>
               <FormHelperText>
-                <ErrorMessage name="exit_MM" component="span" className="error"/>
+                <ErrorMessage
+                  name="exit_MM"
+                  component="span"
+                  className="error"
+                />
               </FormHelperText>
             </FormControl>
           </Box>
@@ -248,6 +284,53 @@ const Exitsection = () => {
             <label>Yes</label>
           </Box>
         </FormControl>
+        <FormControl component="fieldset">
+          <label>Trade in Live?</label>
+          <Box display="flex" alignItems="center">
+            <label>No</label>
+            <Switch
+              checked={values.do_trade_in_live}
+              onChange={handleLiveTradeToggle}
+            />
+            <label>Yes</label>
+          </Box>
+        </FormControl>
+        {/* disply only if do trade in live is true */}
+        <Box className="dropdown-container" width="15%">
+          <FormControl
+            fullWidth
+            error={touched.broker_name && Boolean(errors.broker_name)}
+            style={{ width: "100%" }}
+          >
+            {isTradeInLive && (
+              <Field
+                as={Select}
+                name="broker_name"
+                onChange={handleBrokerName}
+                style={{ width: "100%" }}
+                value={values.broker_name}
+                displayEmpty
+              >
+                <MenuItem value="" disabled>
+                  Select Broker
+                </MenuItem>
+                {brokers &&
+                  Object.keys(brokers).map((key, index) => (
+                    <MenuItem key={index} value={key}>
+                      {key}
+                    </MenuItem>
+                  ))}
+              </Field>
+            )}
+            <FormHelperText>
+              <ErrorMessage
+                name="broker_name"
+                component="span"
+                className="error"
+              />
+            </FormHelperText>
+          </FormControl>
+        </Box>
       </Box>
     </Box>
   );
