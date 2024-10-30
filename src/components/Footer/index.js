@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { Box, Card, Typography, styled } from '@mui/material';
 import Link from 'src/components/Link';
-import ContactUs from '../../../pages/contact-us/index'; // Adjust the path as needed
+import ContactUs from '../../../pages/contact-us/index'; 
 
 const FooterWrapper = styled(Card)(
   ({ theme }) => `
         border-radius: 0;
         margin-top: ${theme.spacing(4)};
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+        z-index:9;
 `
 );
 
@@ -25,9 +29,9 @@ function Footer() {
           <Typography variant="subtitle1">
             &copy; 2024 - TradeOnAir
           </Typography>
-          <Box mx={2}> {/* Add margin for spacing */}
+          <Box mx={2}>
             <Link
-            href="/contact-us"
+              href="/contact-us"
               onClick={() => setShowContactForm(!showContactForm)}
               style={{ cursor: 'pointer' }}
             >
@@ -35,7 +39,7 @@ function Footer() {
             </Link>
           </Box>
         </Box>
-       
+
         <Typography
           sx={{
             pt: { xs: 2, md: 0 }

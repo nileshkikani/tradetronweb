@@ -170,7 +170,7 @@ const Exitsection = () => {
           label="Value"
           disabled={values.stop_loss_type === "none"}
           onChange={handleStoplossMTMInputChange}
-          value={values.stop_loss_type === "none" ? null : values.stop_loss_value}
+          value={values.stop_loss_value || (values.stop_loss_type === "none" ? null : values.stop_loss_value)}
           error={touched.stop_loss_value && Boolean(errors.stop_loss_value)}
           helperText={<ErrorMessage name="stop_loss_value" component="span" />}
           style={{ width: "100px" }}

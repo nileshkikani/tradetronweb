@@ -251,7 +251,12 @@ function DashboardOptionWizardContent() {
     // console.log('selectedStrategy', selectedStrategy)
 
     return (
-        <>
+        <Box sx={{
+            height: "100vh",
+            overflow: "hidden",
+            overflowY: "auto",
+            paddingBottom: "110px"
+        }}>
             <PageTitleWrapper>
                 <h1>Option Wizard</h1>
             </PageTitleWrapper>
@@ -491,7 +496,7 @@ function DashboardOptionWizardContent() {
                 </Formik>
             )}
             <Footer />
-        </>
+        </Box>
     );
 }
 

@@ -12,7 +12,7 @@ function DashboardReports() {
   return (
     <>
       <Head>
-        <title>Select your brokerss</title>
+        <title>Add your brokers</title>
       </Head>
       <DashboardBrokersContent />
     </>

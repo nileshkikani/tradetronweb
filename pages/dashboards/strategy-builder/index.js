@@ -203,7 +203,12 @@ function DashboardStrategyBuilderContent() {
     getAllPosition();
   }, []);
   return (
-    <>
+    <Box sx={{
+      height: "100vh",
+      overflow: "hidden",
+      overflowY: "auto",
+      paddingBottom: "110px"
+  }}>
       <PageTitleWrapper>
         <h1>Strategy-Builder (Opstra)</h1>
       </PageTitleWrapper>
@@ -354,7 +359,7 @@ function DashboardStrategyBuilderContent() {
           </TableBody>
         </Table>
       </TableContainer>
-    <Footer/>
+   
 
       <Modal
         aria-labelledby="transition-modal-title"
@@ -426,7 +431,8 @@ function DashboardStrategyBuilderContent() {
         </Fade>
       </Modal>
      
-    </>
+      <Footer/>
+    </Box>
   );
 }
 
