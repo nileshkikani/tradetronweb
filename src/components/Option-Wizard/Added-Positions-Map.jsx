@@ -24,8 +24,9 @@ const AddedPositions = ({ position, index, remove }) => {
   return (
     <Box
       key={index}
-      className="position-section-dropdowns"
+      // className="position-section-dropdowns"
       display="flex"
+      alignItems={"center"}
       flexWrap="wrap"
       gap={2}
       sx={{
@@ -116,6 +117,7 @@ const AddedPositions = ({ position, index, remove }) => {
             as={TextField}
             variant="outlined"
             fullWidth
+            InputLabelProps={{ shrink: true }}
           />
           <FormHelperText>
             <ErrorMessage name={`positions[${index}].order_take_profit_value`} component="span" />
@@ -134,6 +136,7 @@ const AddedPositions = ({ position, index, remove }) => {
             as={TextField}
             variant="outlined"
             fullWidth
+            InputLabelProps={{ shrink: true }}
           />
           <FormHelperText>
             <ErrorMessage name={`positions[${index}].order_stop_loss_value`} component="span" />

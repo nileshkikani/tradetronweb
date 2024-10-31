@@ -48,7 +48,7 @@ const initialFormStateObj = {
     stop_loss_value: '',
     stop_loss_type: 'none',
     do_repeat: false,
-    broker_name: "",
+    broker_name: '',
     do_trade_in_live: false
 }
 
@@ -102,7 +102,7 @@ function DashboardOptionWizardContent() {
 
         };
 
-        console.log('final', formData);
+        // console.log('final', formData);
 
         try {
             const apiCall =
@@ -233,7 +233,7 @@ function DashboardOptionWizardContent() {
                 stop_loss_type: data.stop_loss_type || "none",
                 do_repeat: data.do_repeat || false,
                 do_trade_in_live: data.do_trade_in_live || false,
-                broker_name: values.broker_name || null
+                broker_name: data.broker_name || null
             };
 
             //   console.log("selectedStrategyData", selectedStrategyData);
@@ -430,7 +430,7 @@ function DashboardOptionWizardContent() {
                                                 <Box className='dropdown-container' style={{ width: "150px" }}>
                                                     <label>Target</label>
                                                     <FormControl fullWidth error={touched.order_take_profit_type && Boolean(errors.order_take_profit_type)} >
-                                                        <Field as={Select} labelId="target-label" name="order_take_profit_type" onChange={handleChange} style={{ width: "150px" }}>
+                                                        <Field as={Select} labelId="target-label" name="order_take_profit_type" onChange={handleChange}>
                                                             <MenuItem value="" disabled>Select Target</MenuItem>
                                                             <MenuItem value="percentage_entry">% Entry Price</MenuItem>
                                                             <MenuItem value="amount">Points</MenuItem>

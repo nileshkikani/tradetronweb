@@ -17,7 +17,7 @@ import useToast from "src/hooks/useToast";
 const Exitsection = ({ brokers }) => {
   const { setFieldValue, values, errors, touched } = useFormikContext();
   const { showToast } = useToast();
-  const [isTradeInLive, setIsTradeInLive] = useState("");
+  // const [isTradeInLive, setIsTradeInLive] = useState("");
 
   const handleProfitMTMChange = (e) => {
     const value = e.target.value;
@@ -67,7 +67,7 @@ const Exitsection = ({ brokers }) => {
   // do trade in live toggle handle
   const handleLiveTradeToggle = (e) => {
     setFieldValue("do_trade_in_live", e.target.checked);
-    setIsTradeInLive((prev) => !prev);
+    // setIsTradeInLive((prev) => !prev);
   };
 
   const handleBrokerName = (e) => {
@@ -158,6 +158,7 @@ const Exitsection = ({ brokers }) => {
             />
           }
           style={{ width: "100px" }}
+          InputLabelProps={{ shrink: true }}
         />
 
         <FormControl
@@ -202,6 +203,7 @@ const Exitsection = ({ brokers }) => {
           error={touched.stop_loss_value && Boolean(errors.stop_loss_value)}
           helperText={<ErrorMessage name="stop_loss_value" component="span" />}
           style={{ width: "100px" }}
+          InputLabelProps={{ shrink: true }}
         />
       </Box>
 
@@ -302,7 +304,7 @@ const Exitsection = ({ brokers }) => {
             error={touched.broker_name && Boolean(errors.broker_name)}
             style={{ width: "100%" }}
           >
-            {isTradeInLive && (
+            {values.do_trade_in_live && (
               <Field
                 as={Select}
                 name="broker_name"
