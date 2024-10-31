@@ -20,12 +20,26 @@ const ContactUs = () => {
   };
 
   const handleSubmit = (values) => {
-    // add api call here
+    // Add API call here
     console.log(values);
   };
 
   return (
-    <Box sx={{ maxWidth: 400, mx: 'auto', mt: 4 }}>
+    <Box 
+      sx={{ 
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        maxWidth: 400,
+        mx: 'auto',
+        mt: 4,
+        p: 3,
+        border: '1px solid #ccc',
+        borderRadius: '8px',
+        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+      }}
+    >
       <Typography variant="h4" gutterBottom>
         Contact Us
       </Typography>
@@ -35,7 +49,7 @@ const ContactUs = () => {
         onSubmit={handleSubmit}
       >
         {({ values, handleChange, handleBlur, errors, touched }) => (
-          <Form>
+          <Form style={{ width: '100%' }}>
             <TextField
               fullWidth
               variant="outlined"
@@ -84,15 +98,20 @@ const ContactUs = () => {
                   onBlur={handleBlur}
                 />
               }
-              label="add captcha"
+              label="Add captcha"
             />
             {touched.captcha && errors.captcha && (
               <FormHelperText error>{errors.captcha}</FormHelperText>
             )}
-            <Button variant="contained" color="primary" type="submit" sx={{ mt: 2 }}>
+            <Button 
+              variant="contained" 
+              color="primary" 
+              type="submit" 
+              sx={{ mt: 2 }}
+            >
               Submit
             </Button>
-          </Form>
+          </Form> 
         )}
       </Formik>
     </Box>

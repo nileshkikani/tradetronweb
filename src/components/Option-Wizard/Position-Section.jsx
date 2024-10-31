@@ -61,7 +61,7 @@ const PositionSection = ({ push }) => {
   const lotsDisplay = lotSizes[values.index_name];
 
   return (
-    <Box className="position-section-dropdowns" display="flex" flexDirection="row" flexWrap="wrap" gap={2} >
+    <Box className="position-section-dropdowns" display="flex" flexDirection="row" flexWrap="wrap" gap={2}  >
       {[
         { name: 'option_type', label: 'Segment', options: ['CE', 'PE'], disabled: !values.index_name },
         { name: 'order_type', label: 'B/S', options: ['BUY', 'SELL'], disabled: !values.option_type },
@@ -81,7 +81,7 @@ const PositionSection = ({ push }) => {
             : ['CURRENT_WEEK', 'NEXT_WEEK', 'CURRENT_MONTH', 'NEXT_MONTH'] 
         },
       ].map(({ name, label, options, disabled }) => (
-        <Box key={name} display="flex" flexDirection="row" flex={1} minWidth="100px">
+        <Box key={name} display="flex" flexDirection="row" flex={1} minWidth="100px" >
           <FormControl variant="outlined" error={touched[name] && Boolean(errors[name])} fullWidth>
             <InputLabel>{label}</InputLabel>
             <Field
@@ -164,7 +164,7 @@ const PositionSection = ({ push }) => {
         </FormControl>
       </Box>
 
-      <Box display="flex" justifyContent="center" mt={2}>
+      <Box display="flex" justifyContent="center">
         <Button variant="contained" onClick={handleAddPosition} className="create-own-strategy-btn">
           Add
         </Button>

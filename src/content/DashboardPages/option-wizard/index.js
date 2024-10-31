@@ -48,6 +48,8 @@ const initialFormStateObj = {
     stop_loss_value: '',
     stop_loss_type: 'none',
     do_repeat: false,
+    broker_name: '',
+    do_trade_in_live: false
 }
 
 function DashboardOptionWizardContent() {
@@ -56,6 +58,7 @@ function DashboardOptionWizardContent() {
     const [selectedStrategy, setSelectedStrategy] = useState("");
     const [initialValues, setInitialValues] = useState(initialFormStateObj);
     const [preBuild, setPreBuild] = useState([]);
+    const [brokers, setBrokers] = useState([]);
     const authState = useSelector((state) => state.auth.authState);
 
     const { showToast } = useToast();
@@ -89,11 +92,14 @@ function DashboardOptionWizardContent() {
             start_time: start_time || null,
             days: values.days || null,
             do_repeat: values.do_repeat || false,
+            do_trade_in_live: values.do_trade_in_live || false,
             exit_time: exit_time || null,
             take_profit_type: values.take_profit_type === 'none' ? null : values.take_profit_type,
             stop_loss_type: values.stop_loss_type === 'none' ? null : values.stop_loss_type,
             take_profit_value: values.take_profit_value === 'none' ? null : values.take_profit_value,
-            stop_loss_value: values.stop_loss_value || null
+            stop_loss_value: values.stop_loss_value || null,
+            broker_name: values.broker_name || null
+
         };
 
         // console.log('final', formData);
@@ -185,7 +191,6 @@ function DashboardOptionWizardContent() {
         }
     };
 
-
     //get specific strategy
     const getSpecificStrategy = async (event) => {
         const selectedId = event.target.value;
@@ -227,6 +232,8 @@ function DashboardOptionWizardContent() {
                 stop_loss_value: data.stop_loss_value || "",
                 stop_loss_type: data.stop_loss_type || "none",
                 do_repeat: data.do_repeat || false,
+                do_trade_in_live: data.do_trade_in_live || false,
+                broker_name: data.broker_name || null
             };
 
             //   console.log("selectedStrategyData", selectedStrategyData);
@@ -239,8 +246,28 @@ function DashboardOptionWizardContent() {
         }
     };
 
+    // get added broker api call
+    const getBrokerData = async () => {
+        try {
+            const { data } = await axiosInstance.get(API_ROUTER.UPDATE_BROKER, { headers });
+            // setIsAngelAdded(data.accounts.angel);
+            // setIsKotakAdded(data.accounts.kotak);
+            // setSelectedBroker(data.accounts.kotak ? 'kotak' : (data.accounts.angel ? 'angel' : ''));
+            setBrokers(data.accounts)
+        } catch (error) {
+            if (error.response && error.response.status === 400) {
+                const errorMessage = error.response.data[0] || "You don't have any broker added";
+                showToast(errorMessage, TOAST_TYPES.INFO);
+            } else {
+                showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
+            }
+        }
+    };
+
+    // console.log('brokers',brokers)
     useEffect(() => {
         getStrategyList();
+        getBrokerData();
     }, []);
 
     useEffect(() => {
@@ -251,7 +278,12 @@ function DashboardOptionWizardContent() {
     // console.log('selectedStrategy', selectedStrategy)
 
     return (
-        <>
+        <Box sx={{
+            height: "100vh",
+            overflow: "hidden",
+            overflowY: "auto",
+            paddingBottom: "110px"
+        }}>
             <PageTitleWrapper>
                 <h1>Option Wizard</h1>
             </PageTitleWrapper>
@@ -295,9 +327,9 @@ function DashboardOptionWizardContent() {
                                                 onChange={handleChange}
                                                 style={{ width: "150px" }}
                                             />
-                                            <FormHelperText>
+                                            {/* <FormHelperText>
                                                 {touched.strategy_name && <ErrorMessage name="strategy_name" component="span" className="error" />}
-                                            </FormHelperText>
+                                            </FormHelperText> */}
                                         </FormControl>
                                     </Box>
 
@@ -369,7 +401,6 @@ function DashboardOptionWizardContent() {
                                         </FormControl>
                                     </Box>
 
-
                                 </Box>
                             </ListItem>
 
@@ -399,7 +430,7 @@ function DashboardOptionWizardContent() {
                                                 <Box className='dropdown-container' style={{ width: "150px" }}>
                                                     <label>Target</label>
                                                     <FormControl fullWidth error={touched.order_take_profit_type && Boolean(errors.order_take_profit_type)} >
-                                                        <Field as={Select} labelId="target-label" name="order_take_profit_type" onChange={handleChange} style={{ width: "150px" }}>
+                                                        <Field as={Select} labelId="target-label" name="order_take_profit_type" onChange={handleChange}>
                                                             <MenuItem value="" disabled>Select Target</MenuItem>
                                                             <MenuItem value="percentage_entry">% Entry Price</MenuItem>
                                                             <MenuItem value="amount">Points</MenuItem>
@@ -438,7 +469,7 @@ function DashboardOptionWizardContent() {
                             </Box>
 
                             <Entrysection />
-                            <Exitsection />
+                            <Exitsection brokers={brokers}/>
                             <Box display="flex" alignItems="center" justifyContent="center" gap={2} >
                                 <Button
                                     type='submit'
@@ -491,7 +522,7 @@ function DashboardOptionWizardContent() {
                 </Formik>
             )}
             <Footer />
-        </>
+        </Box>
     );
 }
 

@@ -4,9 +4,9 @@
 // import AccountTreeTwoToneIcon from '@mui/icons-material/AccountTreeTwoTone';
 // import StorefrontTwoToneIcon from '@mui/icons-material/StorefrontTwoTone';
 // import VpnKeyTwoToneIcon from '@mui/icons-material/VpnKeyTwoTone';
-// import ErrorTwoToneIcon from '@mui/icons-material/ErrorTwoTone';
-// import DesignServicesTwoToneIcon from '@mui/icons-material/DesignServicesTwoTone';
-import SupportTwoToneIcon from '@mui/icons-material/SupportTwoTone';
+import ConstructionIcon from '@mui/icons-material/Construction';
+import AddchartIcon from '@mui/icons-material/Addchart';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ReceiptTwoToneIcon from '@mui/icons-material/ReceiptTwoTone';
 import BackupTableTwoToneIcon from '@mui/icons-material/BackupTableTwoTone';
 import SmartToyTwoToneIcon from '@mui/icons-material/SmartToyTwoTone';
@@ -16,13 +16,18 @@ const menuItems = [
     // heading: 'General',
     items: [
       {
-        name: 'Opstra',
-        icon: BackupTableTwoToneIcon,
+        name: 'Profile',
+        icon: AccountCircleIcon,
+        link: '/dashboards/profile'
+      },
+      {
+        name: 'Builder',
+        icon: ConstructionIcon,
         link: '/dashboards/strategy-builder'
       },
       {
         name: 'Strategy',
-        icon: SmartToyTwoToneIcon,
+        icon: AddchartIcon,
         // link: '/dashboards/banking',
         items: [
           {
@@ -38,6 +43,11 @@ const menuItems = [
           }
         ]
       },
+      // {
+      //   name: "Index/Stoke Report",
+      //   icon: SmartToyTwoToneIcon,
+      //   link: "/dashboards/stoke-report",
+      // },
       // {
       //   name: 'Positions',
       //   icon: SupportTwoToneIcon,

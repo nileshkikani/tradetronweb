@@ -129,53 +129,67 @@ const DashboardBrokersContent = () => {
     }, []);
 
     return (
-        <>
-            <PageTitleWrapper>
-                <h1>Select Your Broker</h1>
-            </PageTitleWrapper>
-            <Box display="flex" justifyContent="space-around" p={2}>
-                <Button
-                    variant="outlined"
-                    onClick={() => handleOpen('angel')}
-                    startIcon={<Image src="/angel.png" alt="Angel" width={60} height={60} />}
-                    endIcon={selectedBroker === 'angel' ? <CheckCircleIcon color="success" /> : null}
-                >
-                    Angel One
-                </Button>
-                <Button
-                    variant="outlined"
-                    onClick={() => handleOpen('kotak')}
-                    startIcon={<Image src="/kotak_neo.png" alt="Kotak" width={60} height={60} />}
-                    endIcon={selectedBroker === 'kotak' ? <CheckCircleIcon color="success" /> : null}
-                >
-                    Kotak Neo
-                </Button>
+        <Box
+            // display="flex"
+            // flexDirection="column"
+            // minHeight="100vh"
+            height="100vh"
+        >
+            <Box style={{ height: "100vh" }}>
+
+                <PageTitleWrapper>
+                    <h1>Add Your Broker</h1>
+                </PageTitleWrapper>
+                <Box display="flex" justifyContent="space-around" p={2}>
+                    <Button
+                        variant="outlined"
+                        onClick={() => handleOpen('angel')}
+                        startIcon={<Image src="/angel.png" alt="Angel" width={60} height={60} />}
+                        endIcon={selectedBroker === 'angel' ? <CheckCircleIcon color="success" /> : null}
+                    >
+                        Angel One
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        onClick={() => handleOpen('kotak')}
+                        startIcon={<Image src="/kotak_neo.png" alt="Kotak" width={60} height={60} />}
+                        endIcon={selectedBroker === 'kotak' ? <CheckCircleIcon color="success" /> : null}
+                    >
+                        Kotak Neo
+                    </Button>
+                </Box>
+                <Box p={5} sx={{
+                    height: "calc(100vh - 302px)",
+                    overflow: "hidden",
+                    overflowY: "auto",
+                    paddingBottom: "110px"
+                }}   >
+                    {selectedBroker === 'angel' && isAngelAdded ? (
+                        <Typography variant="caption">
+                            {selectedBroker} already added
+                        </Typography>
+                    ) : selectedBroker === 'kotak' && isKotakAdded ? (
+                        <Typography variant="caption">
+                            {selectedBroker} already added
+                        </Typography>
+                    ) : (
+                        selectedBroker && (
+                            <Paper style={{ padding: 20, marginTop: '20px' }}>
+                                <Typography variant="h4">
+                                    Please Enter {selectedBroker} Credentials
+                                </Typography>
+                                {renderFields()}
+                                <Button variant="contained" onClick={addBroker} style={{ marginTop: '16px' }}>
+                                    Submit
+                                </Button>
+                            </Paper>
+                        )
+                    )}
+                </Box>
+                <Footer />
             </Box>
-            <Box p={5}>
-                {selectedBroker === 'angel' && isAngelAdded ? (
-                    <Typography variant="caption">
-                       {selectedBroker} already added
-                    </Typography>
-                ) : selectedBroker === 'kotak' && isKotakAdded ? (
-                    <Typography variant="caption">
-                       {selectedBroker} already added
-                    </Typography>
-                ) : (
-                    selectedBroker && (
-                        <Paper style={{ padding: 20, marginTop: '20px' }}>
-                            <Typography variant="h4">
-                                Please Enter {selectedBroker} Credentials
-                            </Typography>
-                            {renderFields()}
-                            <Button variant="contained" onClick={addBroker} style={{ marginTop: '16px' }}>
-                                Submit
-                            </Button>
-                        </Paper>
-                    )
-                )}
-            </Box>
-            <Footer />
-        </>
+        </Box>
+        // </Box>
     );
 };
 

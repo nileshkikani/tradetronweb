@@ -241,7 +241,12 @@ const DashboardExistingBrokersContent = () => {
     }, []);
 
     return (
-        <>
+        <Box sx={{
+            height: "100vh",
+            overflow: "hidden",
+            overflowY: "auto",
+            paddingBottom: "110px"
+        }}>
             <PageTitleWrapper>
                 <h1>Select Your Broker</h1>
             </PageTitleWrapper>
@@ -267,11 +272,11 @@ const DashboardExistingBrokersContent = () => {
                     </Button>
                 )}
             </Box>
-            <Box p={5}>
+            <Box p={5} >
                 {renderBrokerContent()}
             </Box>
             <Footer />
-        </>
+        </Box>
     );
 };
 

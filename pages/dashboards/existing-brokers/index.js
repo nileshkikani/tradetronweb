@@ -11,7 +11,7 @@ function DashboardReports() {
   return (
     <>
       <Head>
-        <title>Select your brokerss</title>
+        <title>Select your brokers</title>
       </Head>
       <DashboardExistingBrokersContent />
     </>

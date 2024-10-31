@@ -36,6 +36,15 @@ export const combinedSchema = Yup.object().shape({
     }),
   days: Yup.array().min(1, 'At least 1 day must be selected'),
   do_repeat: Yup.boolean(),
+  do_trade_in_live: Yup.boolean(),
+  
+  broker_name: Yup.string()
+    .when('do_trade_in_live', {
+      is: true,
+      then: Yup.string().required('Broker name is required when trading live'),
+      otherwise: Yup.string().notRequired()
+    }),
+    
   exit_HH: Yup.number().required('Exit hour is required'),
   exit_MM: Yup.number().required('Exit minute is required'),
 });

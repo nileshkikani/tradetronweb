@@ -128,11 +128,15 @@ function DashboardDeployedContent() {
     }, []);
 
     return (
-        <>
+        <Box sx={{
+            height: "100vh",
+            overflow: "hidden",
+            overflowY: "auto",
+        }}>
             <PageTitleWrapper>
                 <h1>Deployed</h1>
             </PageTitleWrapper>
-            <Box className='min-h-screen p-4' p={4}>
+            <Box  p={4}>
                 <Box display="flex" gap={2} pb={2}>
                     <Select value={selectedStrategyId} onChange={handleStrategyChange} displayEmpty>
                         <MenuItem value="">Select a strategy</MenuItem>
@@ -211,7 +215,7 @@ function DashboardDeployedContent() {
                 order={selectedOrder}
             />
             <Footer />
-        </>
+        </Box>
     );
 }
 
