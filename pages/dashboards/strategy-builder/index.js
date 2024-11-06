@@ -430,7 +430,7 @@ function DashboardStrategyBuilderContent() {
           </Box>
         </Fade>
       </Modal>
-     
+      
       <Footer/>
     </Box>
   );

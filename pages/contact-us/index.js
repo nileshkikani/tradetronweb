@@ -10,6 +10,7 @@ import {
   Box,
 } from '@mui/material';
 import { contactUsValidations } from '../../src/validation-schema/contactUsSchema';
+import Footer from 'src/components/Footer';
 
 const ContactUs = () => {
   const initialValues = {
@@ -25,6 +26,11 @@ const ContactUs = () => {
   };
 
   return (
+    <Box sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      minHeight: '100vh',
+  }}>
     <Box 
       sx={{ 
         display: 'flex',
@@ -114,6 +120,9 @@ const ContactUs = () => {
           </Form> 
         )}
       </Formik>
+    </Box>
+
+    <Footer />
     </Box>
   );
 };
