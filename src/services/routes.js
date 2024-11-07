@@ -1,11 +1,13 @@
 export const API_ROUTER = {
-    // -----------AUTH ROUTES--------
+    // -----------AUTH AND USER ROUTES--------
     LOG_IN: "user/login/",
     REGISTER: "user/register-user/",
     VERIFY_CODE: "user/verify-user/",
     FORGOT_PASSWORD: "user/request-password-reset/",
     RESET_PASSWORD_CODE:"user/password-reset/",
     CHANGE_PASSWORD :"user/change-password/",
+    USER_PROFILE:"user/profile/",
+    USER_CONTACTUS:"user/contact-us/",
   
 
     SYMBOLS: 'stocks/get-symbols/',
@@ -18,6 +20,8 @@ export const API_ROUTER = {
     STRATEGY_CREATE: 'strategy/create/',
     STRATEGY_PREBUILD:(name)=>(name?`/strategy/pre-build/?name=${name}`: '/strategy/pre-build/'),
     STRATEGY_UPDATE: (id) => (id ? `strategy/update/${id}/` : 'strategy/update/'), //wokrs with delete also
+    STRATEGY_STATUS:(strategyId)=>(`strategy/status/${strategyId}/`),
+    STRATEGY_ON_OFF_ALL:'strategy/on-off-all/',
 
     
     ORDER_DATE_LIST: (id) => (`orders/dates/${id}/`),
@@ -28,7 +32,6 @@ export const API_ROUTER = {
 
 
     ADD_BROKER:'broker/add/',
-
     //get method to get broker data, patch method for update, delete for delete (provider)
     UPDATE_BROKER:'broker/update/',
 };
