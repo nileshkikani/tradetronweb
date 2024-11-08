@@ -63,6 +63,7 @@ function DashboardDeployedContent() {
     const handleStrategyChange = (event) => {
         const selectedId = event.target.value;
         setSelectedStrategyId(selectedId);
+        setSelectedDate('');
         setOrderList([]);
         if (selectedId) {
             getData(selectedId);
