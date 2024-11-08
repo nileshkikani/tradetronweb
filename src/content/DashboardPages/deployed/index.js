@@ -206,8 +206,9 @@ function DashboardDeployedContent() {
                                     <TableBody>
                                         {orderList.map((order) => {
                                             const closePrice = order.close_price === null ? getLivePrice(order.token) : order.close_price;
-                                            const profit = closePrice ? (closePrice - order.open_price) * order.quantity : 0;
-
+                                            const profit = order.order_type === 'SELL' 
+                                                ? (order.open_price - closePrice) * order.quantity
+                                                : 0;
                                             return (
                                                 <TableRow key={order.id}>
                                                     <TableCell>{new Date(order.created_at).toLocaleString()}</TableCell>
@@ -225,16 +226,14 @@ function DashboardDeployedContent() {
                                         })}
                                     </TableBody>
                                     <TableFooter>
-    <TableRow>
-        <TableCell colSpan={5} align="right"><strong>Total PnL:</strong></TableCell>
-        <TableCell>
-            {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(selectedTotalPL)}
-        </TableCell>
-        <TableCell colSpan={2}></TableCell>
-    </TableRow>
-</TableFooter>
-
-
+                                        <TableRow>
+                                            <TableCell colSpan={5} align="right"><strong>Total PnL:</strong></TableCell>
+                                            <TableCell>
+                                                {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(selectedTotalPL)}
+                                            </TableCell>
+                                            <TableCell colSpan={2}></TableCell>
+                                        </TableRow>
+                                    </TableFooter>
                                 </Table>
                             </TableContainer>
                         )}
