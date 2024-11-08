@@ -208,7 +208,7 @@ function DashboardDeployedContent() {
                                             const closePrice = order.close_price === null ? getLivePrice(order.token) : order.close_price;
                                             const profit = order.order_type === 'SELL' 
                                                 ? (order.open_price - closePrice) * order.quantity
-                                                : 0;
+                                                : (closePrice - order.open_price) * order.quantity;
                                             return (
                                                 <TableRow key={order.id}>
                                                     <TableCell>{new Date(order.created_at).toLocaleString()}</TableCell>
