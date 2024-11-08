@@ -120,7 +120,6 @@ const ContactUs = () => {
           )}
         </Formik>
       </Box>
-
       <Footer />
     </Box>
   );

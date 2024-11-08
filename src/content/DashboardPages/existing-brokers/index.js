@@ -14,6 +14,7 @@ import {
     Button,
     Paper,
     TextField,
+    Dialog, DialogActions, DialogContent, DialogTitle 
 } from '@mui/material';
 import axiosInstance from 'src/utils/axios';
 import { API_ROUTER } from 'src/services/routes';
@@ -23,15 +24,15 @@ import { useSelector } from "react-redux";
 const DashboardExistingBrokersContent = () => {
     const authState = useSelector((state) => state.auth.authState);
     const [selectedBroker, setSelectedBroker] = useState('');
+    const [openModal, setOpenModal] = useState(false);
+    const [brokerToDelete, setBrokerToDelete] = useState('');
     const [formData, setFormData] = useState({ accounts: {} });
     const { showToast } = useToast();
 
-    const key = process.env.ENCRYPTION_KEY;
-
-    const { decryptField } = useDecryption(key);
+    const { decryptField } = useDecryption();
     const headers = { Authorization: `Bearer ${authState}`, "Content-Type": "application/json" };
 
-    const { encryptAngelCredentials, encryptKotakCredentials } = useEncryption(key);
+    const { encryptAngelCredentials, encryptKotakCredentials } = useEncryption();
 
     // get broker data api
     const getBrokerData = async () => {
@@ -57,6 +58,8 @@ const DashboardExistingBrokersContent = () => {
                 };
             }
 
+            // console.log('ddddddd',decryptedData)
+
             if (data.accounts.angel) {
                 decryptedData.accounts.angel = {
                     client_code: decryptField(data.accounts.angel.client_code),
@@ -65,13 +68,15 @@ const DashboardExistingBrokersContent = () => {
                     api_key: decryptField(data.accounts.angel.api_key),
                 };
             }
-            console.log('decr',decryptedData);
-            console.log('decr2',data);
+            // console.log('decr',decryptedData);
+            // console.log('decr2',data);
             setFormData(decryptedData);
         } catch (error) {
             showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
         }
     };
+
+    // console.log('fff',formData);
 
     // update broker api
     const updateBroker = async () => {
@@ -141,7 +146,7 @@ const DashboardExistingBrokersContent = () => {
                         <Button variant="contained" onClick={updateBroker}>
                             Update
                         </Button>
-                        <Button variant="outlined" color="error" onClick={deleteBroker}>
+                        <Button variant="outlined" color="error" onClick={() => handleDeleteClick(selectedBroker)}>
                             Delete
                         </Button>
                     </Box>
@@ -158,7 +163,7 @@ const DashboardExistingBrokersContent = () => {
                     <Button variant="contained" onClick={updateBroker} >
                         Update
                     </Button>
-                    <Button variant="outlined" color="error" onClick={deleteBroker} >
+                    <Button variant="outlined" color="error" onClick={() => handleDeleteClick(selectedBroker)} >
                         Delete
                     </Button>
                     </Box>
@@ -182,7 +187,10 @@ const DashboardExistingBrokersContent = () => {
         return null; 
     };
     
-    
+    const handleDeleteClick = (broker) => {
+        setBrokerToDelete(broker);
+        setOpenModal(true);
+    };
 
     const renderFields = (accountData) => {
         const fields = {
@@ -223,15 +231,15 @@ const DashboardExistingBrokersContent = () => {
     
         setFormData(prev => {
             const updatedData = {
-                accounts: {
-                    ...prev.accounts,
-                    [selectedBroker]: {
-                        ...prev.accounts[selectedBroker],
-                        [fieldName]: value,
-                    },
+            accounts: {
+                ...prev.accounts,
+                [selectedBroker]: {
+                    ...prev.accounts[selectedBroker],
+                    [fieldName]: value,
                 },
+            },
             };
-            console.log("Updated FormData:", updatedData);
+            // console.log("Updated FormData:", updatedData);
             return updatedData;
         });
     };
@@ -272,6 +280,28 @@ const DashboardExistingBrokersContent = () => {
                     </Button>
                 )}
             </Box>
+
+            <Dialog open={openModal} onClose={() => setOpenModal(false)}>
+                <DialogTitle>Confirm Deletion</DialogTitle>
+                <DialogContent>
+                    <Typography>Are you sure you want to delete this broker?</Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenModal(false)} color="primary">
+                        No
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            deleteBroker(brokerToDelete);
+                            setOpenModal(false);
+                        }}
+                        color="primary"
+                    >
+                        Yes
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
             <Box p={5} >
                 {renderBrokerContent()}
             </Box>

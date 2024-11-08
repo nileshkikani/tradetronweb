@@ -45,8 +45,16 @@ function DashboardDeployedContent() {
             const strategies = data?.map((e) => ({
                 id: e.id,
                 strategy_name: e.strategy_name,
+                strategy_status: e.strategy_status,
             }));
+
             setStrategyNames(strategies);
+            setStrategyStatus(
+                strategies.reduce((acc, strategy) => {
+                    acc[strategy.id] = strategy.strategy_status;
+                    return acc;
+                }, {})
+            );
         } catch (error) {
             showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
         }
@@ -69,13 +77,13 @@ function DashboardDeployedContent() {
         if (selectedStrategyId && selectedParam) {
             try {
                 const { data } = await axiosInstance.get(API_ROUTER.ORDER_LIST(selectedStrategyId, selectedParam), { headers });
-                const openOrderTokens = data.filter(item => item.close_price === null).map(item => item.token);
+                // const openOrderTokens = data.filter(item => item.close_price === null).map(item => item.token);
                 setOrderList(data);
 
                 const selectedData = datas.find(item => item.date === selectedParam);
                 setSelectedTotalPL(selectedData ? selectedData.total_pl : 0);
 
-                initializeWebSocket(setLivePrices, openOrderTokens, socketRef);
+                initializeWebSocket(setLivePrices, socketRef);
             } catch (error) {
                 showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
             }
@@ -109,7 +117,6 @@ function DashboardDeployedContent() {
         try {
             const response = await axiosInstance.get(
                 API_ROUTER.STRATEGY_STATUS(strategyId),
-                // { status: currentStatus ? 'inactive' : 'active' },
                 { headers }
             );
             showToast(response.data.details || TOAST_ALERTS.STRATEGY_STATUS, TOAST_TYPES.SUCCESS);
@@ -120,7 +127,7 @@ function DashboardDeployedContent() {
         } catch (error) {
             showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
         }
-    };
+    }
 
     useEffect(() => {
         getStrategyList();
@@ -154,11 +161,10 @@ function DashboardDeployedContent() {
                 </Tabs>
 
                 {selectedTab === 0 ? (
-                    // Render Deployed Strategies content
                     <>
                         <Box display="flex" gap={2} pb={2}>
                             <Select value={selectedStrategyId} onChange={handleStrategyChange} displayEmpty>
-                                <MenuItem value="">Select a strategy</MenuItem>
+                                <MenuItem value="" disabled>Select a strategy</MenuItem>
                                 {strategyNames.map((item) => (
                                     <MenuItem key={item.id} value={item.id}>
                                         {item.strategy_name}
@@ -168,7 +174,7 @@ function DashboardDeployedContent() {
 
                             {datas.length > 0 && (
                                 <Select value={selectedDate} onChange={handleDateChange} displayEmpty>
-                                    <MenuItem value="">Select a date</MenuItem>
+                                    <MenuItem value="" disabled>Select a date</MenuItem>
                                     {datas.map((item, index) => {
                                         const day = item.date.split('-')[2];
                                         return (
@@ -191,44 +197,49 @@ function DashboardDeployedContent() {
                                             <TableCell>Order Type</TableCell>
                                             <TableCell>Open Price</TableCell>
                                             <TableCell>Close Price</TableCell>
-                                            <TableCell>Profit</TableCell>
+                                            <TableCell>Profit/Loss</TableCell>
                                             <TableCell>Quantity</TableCell>
                                             <TableCell>Order Status</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {orderList.map((order) => (
-                                            <TableRow key={order.id}>
-                                                <TableCell>{new Date(order.created_at).toLocaleString()}</TableCell>
-                                                <TableCell onClick={() => handleSymbolClick(order)} style={{ cursor: 'pointer', color: 'lightblue', textDecoration: 'underline' }}>
-                                                    {order.symbol}
-                                                </TableCell>
-                                                <TableCell>{order.order_type}</TableCell>
-                                                <TableCell>{order.open_price}</TableCell>
-                                                <TableCell>
-                                                    {order.close_price === null ? getLivePrice(order.token) : order.close_price}
-                                                </TableCell>
-                                                <TableCell>{order.profit}</TableCell>
-                                                <TableCell>{order.quantity}</TableCell>
-                                                <TableCell>{order.order_status}</TableCell>
-                                            </TableRow>
-                                        ))}
+                                        {orderList.map((order) => {
+                                            const closePrice = order.close_price === null ? getLivePrice(order.token) : order.close_price;
+                                            const profit = closePrice ? (closePrice - order.open_price) * order.quantity : 0;
+
+                                            return (
+                                                <TableRow key={order.id}>
+                                                    <TableCell>{new Date(order.created_at).toLocaleString()}</TableCell>
+                                                    <TableCell onClick={() => handleSymbolClick(order)} style={{ cursor: 'pointer', color: 'lightblue', textDecoration: 'underline' }}>
+                                                        {order.symbol}
+                                                    </TableCell>
+                                                    <TableCell>{order.order_type}</TableCell>
+                                                    <TableCell>{order.open_price}</TableCell>
+                                                    <TableCell>{closePrice}</TableCell>
+                                                    <TableCell>{new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(profit)}</TableCell>
+                                                    <TableCell>{order.quantity}</TableCell>
+                                                    <TableCell>{order.order_status}</TableCell>
+                                                </TableRow>
+                                            );
+                                        })}
                                     </TableBody>
                                     <TableFooter>
-                                        <TableRow>
-                                            <TableCell colSpan={5} align="right"><strong>Total PnL:</strong></TableCell>
-                                            <TableCell>
-                                                {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(selectedTotalPL)}
-                                            </TableCell>
-                                            <TableCell colSpan={2}></TableCell>
-                                        </TableRow>
-                                    </TableFooter>
+    <TableRow>
+        <TableCell colSpan={5} align="right"><strong>Total PnL:</strong></TableCell>
+        <TableCell>
+            {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(selectedTotalPL)}
+        </TableCell>
+        <TableCell colSpan={2}></TableCell>
+    </TableRow>
+</TableFooter>
+
+
                                 </Table>
                             </TableContainer>
                         )}
                     </>
                 ) : (
-                    // Render "My Strategies" content
+                    // --------MY STRATEGY PART 
                     <Box>
                         <TableContainer component={Paper}>
                             <Table>
@@ -248,7 +259,10 @@ function DashboardDeployedContent() {
                                                 </Typography>
                                             </TableCell>
                                             <TableCell>
-                                                <Typography variant="body2" color={strategyStatus[strategy.id] ? 'green' : 'red'}>
+                                                <Typography
+                                                    variant="body2"
+                                                    color={strategyStatus[strategy.id] ? 'green' : 'red'}
+                                                >
                                                     {strategyStatus[strategy.id] ? 'Active' : 'Inactive'}
                                                 </Typography>
                                             </TableCell>

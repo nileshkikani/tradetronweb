@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useFormik } from 'formik';
 import Footer from 'src/components/Footer';
 import PageTitleWrapper from 'src/components/PageTitleWrapper';
 import ExtendedSidebarLayout from 'src/layouts/ExtendedSidebarLayout';
@@ -7,7 +8,6 @@ import Image from 'next/image';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import useToast from 'src/hooks/useToast';
 import useEncryption from 'src/hooks/useEncryption';
-// import useDecryption from 'src/hooks/useDecryption';
 import {
     Box,
     Typography,
@@ -20,38 +20,50 @@ import { API_ROUTER } from 'src/services/routes';
 import { TOAST_ALERTS, TOAST_TYPES } from 'src/constants/keywords';
 import { useSelector } from "react-redux";
 
+import { getBrokerValidationSchema } from 'src/validation-schema/brokerCredsSchema';
+
 const DashboardBrokersContent = () => {
     const authState = useSelector((state) => state.auth.authState);
     const [selectedBroker, setSelectedBroker] = useState('');
-    const [formData, setFormData] = useState({});
     const [isAngelAdded, setIsAngelAdded] = useState(false);
     const [isKotakAdded, setIsKotakAdded] = useState(false);
 
     const { showToast } = useToast();
-
-    const key = process.env.ENCRYPTION_KEY;
-
-    const { encryptAngelCredentials, encryptKotakCredentials } = useEncryption(key);
-    // const { decryptField } = useDecryption(key);
-
+    const { encryptAngelCredentials, encryptKotakCredentials } = useEncryption();
     const headers = { Authorization: `Bearer ${authState}`, "Content-Type": "application/json" };
 
-    const addBroker = async () => {
-        try {
-            const encryptedData = {
-                accounts: {
-                    provider: selectedBroker,
-                    creds: selectedBroker === 'kotak'
-                        ? encryptKotakCredentials(formData)
-                        : encryptAngelCredentials(formData),
-                },
-            };
-            await axiosInstance.post(API_ROUTER.ADD_BROKER, encryptedData, { headers });
-            showToast(TOAST_ALERTS.STRATEGY_SAVED, TOAST_TYPES.SUCCESS);
-        } catch (error) {
-            showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
-        }
-    };
+    const formik = useFormik({
+        initialValues: {
+            client_code: '',
+            password: '',
+            totp: '',
+            api_key: '',
+            consumer_key: '',
+            consumer_secret: '',
+            username: '',
+            neo_fin_key: '',
+            mobile_no: '',
+            login_password: '',
+            mpin: ''
+        },
+        validationSchema: getBrokerValidationSchema(selectedBroker),
+        onSubmit: async (values) => {
+            try {
+                const encryptedData = {
+                    accounts: {
+                        provider: selectedBroker,
+                        creds: selectedBroker === 'kotak'
+                            ? encryptKotakCredentials(values)
+                            : encryptAngelCredentials(values),
+                    },
+                };
+                await axiosInstance.post(API_ROUTER.ADD_BROKER, encryptedData, { headers });
+                showToast(TOAST_ALERTS.STRATEGY_SAVED, TOAST_TYPES.SUCCESS);
+            } catch (error) {
+                showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
+            }
+        },
+    });
 
     const getBrokerData = async () => {
         try {
@@ -71,23 +83,12 @@ const DashboardBrokersContent = () => {
 
     const handleOpen = (broker) => {
         setSelectedBroker(broker);
-        if (broker === 'angel') {
-            setFormData(formData.accounts?.angel || {});
-        } else if (broker === 'kotak') {
-            setFormData(formData.accounts?.kotak || {});
-        }
+        formik.resetForm();
     };
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        if (name === 'mobile_no' && value.length > 10) {
-            return;
-        }
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
-    };
+    useEffect(() => {
+        getBrokerData();
+    }, []);
 
     const renderFields = () => {
         const fields = {
@@ -117,79 +118,56 @@ const DashboardBrokersContent = () => {
                 type={field.type || 'text'}
                 fullWidth
                 margin="normal"
-                onChange={handleChange}
-                value={formData[field.name] || ''}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values[field.name] || ''}
+                error={formik.touched[field.name] && Boolean(formik.errors[field.name])}
+                helperText={formik.touched[field.name] && formik.errors[field.name]}
                 inputProps={{ maxLength: field.name === 'mobile_no' ? 10 : undefined }}
             />
         )) || <Typography>No broker added, Please add</Typography>;
     };
 
-    useEffect(() => {
-        getBrokerData();
-    }, []);
-
     return (
-        <Box
-            // display="flex"
-            // flexDirection="column"
-            // minHeight="100vh"
-            height="100vh"
-        >
-            <Box style={{ height: "100vh" }}>
-
-                <PageTitleWrapper>
-                    <h1>Add Your Broker</h1>
-                </PageTitleWrapper>
-                <Box display="flex" justifyContent="space-around" p={2}>
-                    <Button
-                        variant="outlined"
-                        onClick={() => handleOpen('angel')}
-                        startIcon={<Image src="/angel.png" alt="Angel" width={60} height={60} />}
-                        endIcon={selectedBroker === 'angel' ? <CheckCircleIcon color="success" /> : null}
-                    >
-                        Angel One
-                    </Button>
-                    <Button
-                        variant="outlined"
-                        onClick={() => handleOpen('kotak')}
-                        startIcon={<Image src="/kotak_neo.png" alt="Kotak" width={60} height={60} />}
-                        endIcon={selectedBroker === 'kotak' ? <CheckCircleIcon color="success" /> : null}
-                    >
-                        Kotak Neo
-                    </Button>
-                </Box>
-                <Box p={5} sx={{
-                    height: "calc(100vh - 302px)",
-                    overflow: "hidden",
-                    overflowY: "auto",
-                    paddingBottom: "110px"
-                }}   >
-                    {selectedBroker === 'angel' && isAngelAdded ? (
-                        <Typography variant="caption">
-                            {selectedBroker} already added
-                        </Typography>
-                    ) : selectedBroker === 'kotak' && isKotakAdded ? (
-                        <Typography variant="caption">
-                            {selectedBroker} already added
-                        </Typography>
-                    ) : (
-                        selectedBroker && (
-                            <Paper style={{ padding: 20, marginTop: '20px' }}>
-                                <Typography variant="h4">
-                                    Please Enter {selectedBroker} Credentials
-                                </Typography>
-                                {renderFields()}
-                                <Button variant="contained" onClick={addBroker} style={{ marginTop: '16px' }}>
-                                    Submit
-                                </Button>
-                            </Paper>
-                        )
-                    )}
-                </Box>
-                <Footer />
+        <Box height="100vh">
+            <PageTitleWrapper>
+                <h1>Add Your Broker</h1>
+            </PageTitleWrapper>
+            <Box display="flex" justifyContent="space-around" p={2}>
+                <Button
+                    variant="outlined"
+                    onClick={() => handleOpen('angel')}
+                    startIcon={<Image src="/angel.png" alt="Angel" width={60} height={60} />}
+                    endIcon={selectedBroker === 'angel' ? <CheckCircleIcon color="success" /> : null}
+                >
+                    Angel One
+                </Button>
+                <Button
+                    variant="outlined"
+                    onClick={() => handleOpen('kotak')}
+                    startIcon={<Image src="/kotak_neo.png" alt="Kotak" width={60} height={60} />}
+                    endIcon={selectedBroker === 'kotak' ? <CheckCircleIcon color="success" /> : null}
+                >
+                    Kotak Neo
+                </Button>
             </Box>
+            <Box p={5} sx={{ height: "calc(100vh - 302px)", overflow: "hidden", overflowY: "auto", paddingBottom: "110px" }}>
+                {selectedBroker && (selectedBroker === 'angel' && isAngelAdded || selectedBroker === 'kotak' && isKotakAdded) ? (
+                    <Typography variant="caption">{selectedBroker} already added</Typography>
+                ) : (
+                    selectedBroker && (
+                        <Paper style={{ padding: 20, marginTop: '20px' }}>
+                            <Typography variant="h4">Please Enter {selectedBroker} Credentials</Typography>
+                            <form onSubmit={formik.handleSubmit}>
+                                {renderFields()}
+                                <Button variant="contained" type="submit" style={{ marginTop: '16px' }}>Submit</Button>
+                            </form>
+                        </Paper>
+                    )
+                )}
+            </Box>
+            <Footer />
         </Box>
-        // </Box>
     );
 };
 

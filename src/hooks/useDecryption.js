@@ -1,7 +1,8 @@
 import CryptoJS from 'crypto-js';
 
-const useDecryption = (encryptionKey) => {
-    const secretKey = CryptoJS.enc.Utf8.parse(encryptionKey);
+const useDecryption = () => {
+    const key = process.env.ENCRYPTION_KEY;
+    const secretKey = CryptoJS.enc.Utf8.parse(key);
 
     const decryptField = (encryptedField) => {
         const decrypted = CryptoJS.AES.decrypt(encryptedField, secretKey, {

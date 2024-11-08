@@ -1,7 +1,8 @@
 import CryptoJS from 'crypto-js';
 
-const useEncryption = (encryptionKey) => {
-    const secretKey = CryptoJS.enc.Utf8.parse(encryptionKey);
+const useEncryption = () => {
+    const key = process.env.ENCRYPTION_KEY;
+    const secretKey = CryptoJS.enc.Utf8.parse(key);
 
     const encryptField = (field) => {
         return CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(field), secretKey, {
@@ -12,7 +13,6 @@ const useEncryption = (encryptionKey) => {
 
     // angle creds encryption
     const encryptAngelCredentials = (data) => {
-        console.log('ddddd',data)
         return {
             client_code: encryptField(data.client_code),
             password: encryptField(data.password),
