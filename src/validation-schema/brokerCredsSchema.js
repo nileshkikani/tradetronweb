@@ -11,7 +11,7 @@ export const getBrokerValidationSchema = (broker) => {
         password: Yup.string().required('Password is required'),
         totp: Yup.string().required('TOTP is required'),
         api_key: Yup.string().required('API Key is required'),
-        mobile_no: mobileNoValidation,
+        mobile_no: broker === 'kotak' ? mobileNoValidation : Yup.string(),
     };
 
     const kotakSchema = {

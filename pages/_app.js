@@ -1,3 +1,5 @@
+// pages/_app.js
+
 import Head from 'next/head';
 import Router from 'next/router';
 import nProgress from 'nprogress';
@@ -8,7 +10,7 @@ import { CacheProvider } from '@emotion/react';
 import createEmotionCache from 'src/createEmotionCache';
 import { appWithTranslation } from 'next-i18next';
 import { SidebarProvider } from 'src/contexts/SidebarContext';
-// import { Provider as ReduxProvider } from 'react-redux';
+// import Layout from 'src/components/Layout';
 import Loader from 'src/components/Loader';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
@@ -42,32 +44,34 @@ function TokyoApp(props) {
         />
       </Head>
       <ReduxProvider store={store}>
-              <AuthProvider>
-        <SidebarProvider>
-          <ThemeProvider>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <SnackbarProvider
-                  maxSnack={6}
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right'
-                  }}
-                >
-                  <CssBaseline />
-                  <AuthConsumer>
-                    {(auth) =>
-                      !auth.isInitialized ? (
-                        <Loader />
-                      ) : (
-                        getLayout(<Component {...pageProps} />)
-                      )
-                    }
-                  </AuthConsumer>
-                </SnackbarProvider>
-            </LocalizationProvider>
-          </ThemeProvider>
-        </SidebarProvider>
-              </AuthProvider>
+          <AuthProvider>
+            <SidebarProvider>
+              <ThemeProvider>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <SnackbarProvider
+                    maxSnack={6}
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'right'
+                    }}
+                    >
+                    <CssBaseline />
+                    {/* <Layout> */}
+                    <AuthConsumer>
+                      {(auth) =>
+                        !auth.isInitialized ? (
+                          <Loader />
+                        ) : (
+                          getLayout(<Component {...pageProps} />)
+                        )
+                      }
+                    </AuthConsumer>
+        {/* </Layout> */}
+                  </SnackbarProvider>
+                </LocalizationProvider>
+              </ThemeProvider>
+            </SidebarProvider>
+          </AuthProvider>
       </ReduxProvider>
     </CacheProvider>
   );

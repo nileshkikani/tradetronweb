@@ -53,7 +53,7 @@ const minuteOptions =
 
   return (
     <Box border={2} sx={{ borderColor: 'primary.main', borderRadius: '8px', padding: '16px', margin: '16px' }}>
-      <h1 className="titles">Entry Settings</h1>
+      <h2 className="titles">Entry Settings</h2>
       <Box display="flex" flexDirection="row" gap={2}>
         <FormControl variant="outlined" error={touched.entry_HH && Boolean(errors.entry_HH)} style={{ width: '100px' }}>
           <InputLabel>Hours</InputLabel>

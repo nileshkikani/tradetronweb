@@ -1,13 +1,13 @@
-const initializeWebSocket = async (setLivePrices, additionalTokens, socketRef) => {
+const initializeWebSocket = async (setLivePrices, socketRef) => {
 
     const webSocketUrl = process.env.NEXT_PUBLIC_SOCKET_URL;
     socketRef.current = new WebSocket(webSocketUrl);
 
     socketRef.current.onopen = () => {
         console.log('WebSocket connected');
-        additionalTokens.forEach(token => {
-            socketRef.current.send(JSON.stringify({ action: 'subscribe', token }));
-        });
+        // additionalTokens.forEach(token => {
+        //     socketRef.current.send(JSON.stringify({ action: 'subscribe', token }));
+        // });
     };
 
     socketRef.current.onmessage = (event) => {

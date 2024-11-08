@@ -50,7 +50,19 @@ function Overview() {
             >
               <Box />
               <Box>
-              <Link
+              {/* <Link
+                    href="/privacy-policy"
+                    style={{ cursor: 'pointer', marginRight: '16px' }}
+                  >
+                    {t('Privacy policy')}
+                  </Link> */}
+                  <Link
+                    href="/affiliates"
+                    style={{ cursor: 'pointer', marginRight: '16px' }}
+                  >
+                    {t('Affiliates')}
+                  </Link>
+                <Link
                   href="/contact-us"
                   style={{ cursor: 'pointer' }}
                 >
@@ -78,7 +90,7 @@ function Overview() {
         </Container>
       </HeaderWrapper>
       <Hero />
-      <Highlights />
+      {/* <Highlights /> */}
       <Footer />
     </OverviewWrapper>
   );

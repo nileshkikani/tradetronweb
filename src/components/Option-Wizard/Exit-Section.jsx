@@ -107,7 +107,7 @@ const Exitsection = ({ brokers }) => {
         margin: "16px",
       }}
     >
-      <h1 className="titles">Exit Setting</h1>
+      <h2 className="titles">Exit Setting</h2>
       <Box display="flex" flexDirection="row" gap={5}>
         <FormControl
           variant="outlined"

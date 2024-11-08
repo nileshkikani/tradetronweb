@@ -10,6 +10,7 @@ import Link from 'src/components/Link';
 import { useTranslation } from 'react-i18next';
 
 
+
 import Image from 'next/image';
 
 const LogoWrapper = styled(Link)(
@@ -136,14 +137,16 @@ function Logo() {
           overlap="circular"
           color="success"
         >
-          <Box sx={{ position: 'relative', width: 83, height: 58 }}>
-            <Image 
-              src="/bull_logo.png" 
-              alt="Bull Logo" 
-              layout="fill" 
-              objectFit="contain" 
-            />
-          </Box>
+           <Link href="/" passHref>
+      <Box sx={{ position: 'relative', width: 83, height: 58, cursor: 'pointer' }}>
+        <Image 
+          src="/bull_logo.png" 
+          alt="Bull Logo" 
+          layout="fill" 
+          objectFit="contain" 
+        />
+      </Box>
+    </Link>
         </Badge>
     </>
   );

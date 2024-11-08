@@ -414,7 +414,7 @@ function DashboardOptionWizardContent() {
                                     margin: '16px',
                                 }}
                             >
-                                <h1 className='titles'>Positions</h1>
+                                <h2 className='titles'>Positions</h2>
                                 <FieldArray name="positions">
                                     {({ push, remove }) => (
                                         <>
