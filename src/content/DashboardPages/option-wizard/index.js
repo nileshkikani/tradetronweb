@@ -52,6 +52,17 @@ const initialFormStateObj = {
     do_trade_in_live: false
 }
 
+const stockslistForIndex = [
+    "HDFCBANK", "ICICIBANK", "KOTAKBANK", "AXISBANK", "SBIN", "BAJFINANCE",
+    "TCS", "INFY", "HCLTECH", "WIPRO", "TECHM", "HINDUNILVR", "ITC",
+    "ASIANPAINT", "TITAN", "MARUTI", "BAJAJ-AUTO", "EICHERMOT", "HEROMOTOCO",
+    "DRREDDY", "CIPLA", "DIVISLAB", "BHARTIARTL", "RELIANCE", "NTPC",
+    "POWERGRID", "JSWSTEEL", "TATASTEEL", "HINDALCO", "ULTRACEMCO", "SHREECEM",
+    "LT", "ONGC", "BRITANNIA", "NESTLEIND", "APOLLOHOSP", "ADANIPORTS", "GRASIM",
+    "UPL", "SBILIFE", "HDFCLIFE", "BPCL", "IOC", "COALINDIA", "GAIL", "M&M",
+    "SUNPHARMA"
+];
+
 function DashboardOptionWizardContent() {
     const [showForm, setShowForm] = useState(false);
     const [strategyNames, setStrategyName] = useState([]);
@@ -264,6 +275,9 @@ function DashboardOptionWizardContent() {
         }
     };
 
+
+
+
     // console.log('brokers',brokers)
     useEffect(() => {
         getStrategyList();
@@ -352,6 +366,11 @@ function DashboardOptionWizardContent() {
                                                 <MenuItem value="MIDCPNIFTY">NIFTY MID SELECT</MenuItem>
                                                 <MenuItem value="CRUDEOIL">CRUDE OIL</MenuItem>
                                                 <MenuItem value="CRUDEOILM">CRUDE OIL MINI</MenuItem>
+                                                {stockslistForIndex.map((stock) => (
+                                                    <MenuItem key={stock} value={stock}>
+                                                        {stock}
+                                                    </MenuItem>
+                                                ))}
                                             </Field>
                                             <FormHelperText>
                                                 {touched.index_name && <ErrorMessage name="index_name" component="span" className="error" />}
@@ -469,7 +488,7 @@ function DashboardOptionWizardContent() {
                             </Box>
 
                             <Entrysection />
-                            <Exitsection brokers={brokers}/>
+                            <Exitsection brokers={brokers} />
                             <Box display="flex" alignItems="center" justifyContent="center" gap={2} >
                                 <Button
                                     type='submit'

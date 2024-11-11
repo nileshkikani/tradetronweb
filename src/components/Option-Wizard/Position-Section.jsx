@@ -15,6 +15,17 @@ import {
 const PositionSection = ({ push }) => {
   const { values, setFieldError, errors, touched } = useFormikContext();
 
+  const lotSizes = {
+    BANKNIFTY: 15,
+    NIFTY: 25,
+    FINNIFTY: 40,
+    CRUDEOIL: 100,
+    CRUDEOILM: 10,
+    MIDCPNIFTY: 75,
+  };
+
+  const lotsDisplay = lotSizes[values.index_name];
+
   const getOptionSegmentType = () => {
     const itmOptions = Array.from({ length: 20 }, (_, i) => `ITM_${(20 - i).toString()}`);
     const otmOptions = Array.from({ length: 20 }, (_, i) => `OTM_${(i + 1).toString()}`);
@@ -49,16 +60,14 @@ const PositionSection = ({ push }) => {
     }
   };
 
-  const lotSizes = {
-    BANKNIFTY: 15,
-    NIFTY: 25,
-    FINNIFTY: 40,
-    CRUDEOIL: 100,
-    CRUDEOILM: 10,
-    MIDCPNIFTY: 75,
-  };
 
-  const lotsDisplay = lotSizes[values.index_name];
+    const allowedIndexNames = ['BANKNIFTY', 'NIFTY', 'FINNIFTY', 'MIDCPNIFTY', 'CRUDEOIL', 'CRUDEOILM'];
+
+    // define expiry options based on index_name
+    const expiryOptions = allowedIndexNames.includes(values.index_name)
+      ? ['CURRENT_WEEK', 'NEXT_WEEK', 'CURRENT_MONTH', 'NEXT_MONTH']
+      : ['CURRENT_MONTH'];
+
 
   return (
     <Box className="position-section-dropdowns" display="flex" flexDirection="row" flexWrap="wrap" gap={2}  >
@@ -75,10 +84,8 @@ const PositionSection = ({ push }) => {
         },
         { 
           name: 'expiry', 
-          label: 'Expiry', 
-          options: values.index_name === "CRUDEOIL" || values.index_name === "CRUDEOILM" 
-            ? ['CURRENT_MONTH'] 
-            : ['CURRENT_WEEK', 'NEXT_WEEK', 'CURRENT_MONTH', 'NEXT_MONTH'] 
+          label: 'Expiry',
+          options: expiryOptions, 
         },
       ].map(({ name, label, options, disabled }) => (
         <Box key={name} display="flex" flexDirection="row" flex={1} minWidth="100px" >

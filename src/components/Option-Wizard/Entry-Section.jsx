@@ -70,7 +70,7 @@ const minuteOptions =
 
         <FormControl variant="outlined" error={touched.entry_MM && Boolean(errors.entry_MM)} style={{ width: '100px' }}>
           <InputLabel>Minutes</InputLabel>
-          <Field as={Select} name="entry_MM" label="Minutes" value={values.entry_MM || ""} onChange={handleTimeChange}>
+          <Field as={Select} name="entry_MM" label="Minutes"  value={values.entry_MM !== undefined ? values.entry_MM : ""} onChange={handleTimeChange}>
             <MenuItem value="" disabled>minutes</MenuItem>
             {minuteOptions.map((minute) => (
               <MenuItem key={minute} value={minute}>{minute}</MenuItem>

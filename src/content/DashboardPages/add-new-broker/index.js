@@ -6,6 +6,7 @@ import ExtendedSidebarLayout from 'src/layouts/ExtendedSidebarLayout';
 import { Authenticated } from 'src/components/Authenticated';
 import Image from 'next/image';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import GppGoodOutlinedIcon from '@mui/icons-material/GppGoodOutlined';
 import useToast from 'src/hooks/useToast';
 import useEncryption from 'src/hooks/useEncryption';
 import {
@@ -133,6 +134,16 @@ const DashboardBrokersContent = () => {
             <PageTitleWrapper>
                 <h1>Add Your Broker</h1>
             </PageTitleWrapper>
+            <Typography
+                variant="h6"
+                align="left"
+                color="textSecondary"
+                gutterBottom
+                sx={{ paddingX: 2, display: 'inline-flex', alignItems: 'center' }}
+            >
+                <GppGoodOutlinedIcon sx={{ marginRight: 1 }} />
+                your data is encrypted in transit
+            </Typography>
             <Box display="flex" justifyContent="space-around" p={2}>
                 <Button
                     variant="outlined"

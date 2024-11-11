@@ -255,7 +255,7 @@ const Exitsection = ({ brokers }) => {
                 as={Select}
                 name="exit_MM"
                 label="Minutes"
-                value={values.exit_MM || ""}
+                value={values.exit_MM !== undefined ? values.exit_MM : ""}
                 onChange={handleTimeChange}
               >
                 <MenuItem value="" disabled>
