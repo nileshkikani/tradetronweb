@@ -51,6 +51,7 @@ const initialFormStateObj = {
     broker_name: '',
     do_trade_in_live: false
 }
+// console.log(initialFormStateObj?.entry_MM, "ghghghghghg")
 
 const stockslistForIndex = [
     "HDFCBANK", "ICICIBANK", "KOTAKBANK", "AXISBANK", "SBIN", "BAJFINANCE",
@@ -274,7 +275,6 @@ function DashboardOptionWizardContent() {
             }
         }
     };
-
 
 
 

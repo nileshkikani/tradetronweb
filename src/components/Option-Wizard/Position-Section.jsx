@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Field, ErrorMessage, useFormikContext } from "formik";
 import { positionSchema } from "src/validation-schema/strategySchema";
 import {
@@ -10,25 +10,31 @@ import {
   Button,
   Box,
   FormHelperText,
-} from '@mui/material';
+} from "@mui/material";
+import axiosInstance from "src/utils/axios";
+import { useSelector } from "react-redux";
+import { API_ROUTER } from "src/services/routes";
 
 const PositionSection = ({ push }) => {
   const { values, setFieldError, errors, touched } = useFormikContext();
+  const [lotSizes, setLotSizes] = useState({});
 
-  const lotSizes = {
-    BANKNIFTY: 15,
-    NIFTY: 25,
-    FINNIFTY: 40,
-    CRUDEOIL: 100,
-    CRUDEOILM: 10,
-    MIDCPNIFTY: 75,
-  };
+  const authState = useSelector((state) => state.auth.authState);
+
+  //bear token for api calling
+  const headers = { Authorization: `Bearer ${authState}` };
 
   const lotsDisplay = lotSizes[values.index_name];
 
   const getOptionSegmentType = () => {
-    const itmOptions = Array.from({ length: 20 }, (_, i) => `ITM_${(20 - i).toString()}`);
-    const otmOptions = Array.from({ length: 20 }, (_, i) => `OTM_${(i + 1).toString()}`);
+    const itmOptions = Array.from(
+      { length: 20 },
+      (_, i) => `ITM_${(20 - i).toString()}`
+    );
+    const otmOptions = Array.from(
+      { length: 20 },
+      (_, i) => `OTM_${(i + 1).toString()}`
+    );
 
     if (values.option_type === "CE") {
       return [...itmOptions, "ATM_0", ...otmOptions];
@@ -60,36 +66,83 @@ const PositionSection = ({ push }) => {
     }
   };
 
+  const allowedIndexNames = [
+    "BANKNIFTY",
+    "NIFTY",
+    "FINNIFTY",
+    "MIDCPNIFTY",
+    "CRUDEOIL",
+    "CRUDEOILM",
+  ];
 
-    const allowedIndexNames = ['BANKNIFTY', 'NIFTY', 'FINNIFTY', 'MIDCPNIFTY', 'CRUDEOIL', 'CRUDEOILM'];
+  // define expiry options based on index_name
+  const expiryOptions = allowedIndexNames.includes(values.index_name)
+    ? ["CURRENT_WEEK", "NEXT_WEEK", "CURRENT_MONTH", "NEXT_MONTH"]
+    : ["CURRENT_MONTH"];
 
-    // define expiry options based on index_name
-    const expiryOptions = allowedIndexNames.includes(values.index_name)
-      ? ['CURRENT_WEEK', 'NEXT_WEEK', 'CURRENT_MONTH', 'NEXT_MONTH']
-      : ['CURRENT_MONTH'];
+  // get lot size accordingly
+  const getLotSize = async () => {
+    await axiosInstance
+      .get(API_ROUTER.LOT_SIZES, { headers })
+      .then((response) => setLotSizes(response.data))
+      .catch((response) =>
+        console.log("error getting stock lot data", response.error)
+      );
+  };
 
+  useEffect(() => {
+    getLotSize();
+  }, []);
 
   return (
-    <Box className="position-section-dropdowns" display="flex" flexDirection="row" flexWrap="wrap" gap={2}  >
+    <Box
+      className="position-section-dropdowns"
+      display="flex"
+      flexDirection="row"
+      flexWrap="wrap"
+      gap={2}
+    >
       {[
-        { name: 'option_type', label: 'Segment', options: ['CE', 'PE'], disabled: !values.index_name },
-        { name: 'order_type', label: 'B/S', options: ['BUY', 'SELL'], disabled: !values.option_type },
-        { 
-          name: 'strike_selection', 
-          label: 'Strike Selection', 
-          options: values.index_name === "CRUDEOIL" || values.index_name === "CRUDEOILM" 
-            ? ['ATM_SPOT'] 
-            : ['ATM_SPOT', 'ATM_FUTURE', 'DELTA_LT', 'DELTA_GT'], 
-          disabled: !values.option_type 
+        {
+          name: "option_type",
+          label: "Segment",
+          options: ["CE", "PE"],
+          disabled: !values.index_name,
         },
-        { 
-          name: 'expiry', 
-          label: 'Expiry',
-          options: expiryOptions, 
+        {
+          name: "order_type",
+          label: "B/S",
+          options: ["BUY", "SELL"],
+          disabled: !values.option_type,
+        },
+        {
+          name: "strike_selection",
+          label: "Strike Selection",
+          options:
+            values.index_name === "CRUDEOIL" ||
+            values.index_name === "CRUDEOILM"
+              ? ["ATM_SPOT"]
+              : ["ATM_SPOT", "ATM_FUTURE", "DELTA_LT", "DELTA_GT"],
+          disabled: !values.option_type,
+        },
+        {
+          name: "expiry",
+          label: "Expiry",
+          options: expiryOptions,
         },
       ].map(({ name, label, options, disabled }) => (
-        <Box key={name} display="flex" flexDirection="row" flex={1} minWidth="100px" >
-          <FormControl variant="outlined" error={touched[name] && Boolean(errors[name])} fullWidth>
+        <Box
+          key={name}
+          display="flex"
+          flexDirection="row"
+          flex={1}
+          minWidth="100px"
+        >
+          <FormControl
+            variant="outlined"
+            error={touched[name] && Boolean(errors[name])}
+            fullWidth
+          >
             <InputLabel>{label}</InputLabel>
             <Field
               as={Select}
@@ -98,9 +151,13 @@ const PositionSection = ({ push }) => {
               disabled={disabled}
               fullWidth
             >
-              <MenuItem value="" disabled>Select</MenuItem>
-              {options.map(option => (
-                <MenuItem key={option} value={option}>{option}</MenuItem>
+              <MenuItem value="" disabled>
+                Select
+              </MenuItem>
+              {options.map((option) => (
+                <MenuItem key={option} value={option}>
+                  {option}
+                </MenuItem>
               ))}
             </Field>
             <FormHelperText>
@@ -113,7 +170,8 @@ const PositionSection = ({ push }) => {
       <Box display="flex" flexDirection="row" flex={1} minWidth="200px">
         <FormControl error={touched.value && Boolean(errors.value)} fullWidth>
           <InputLabel>Value</InputLabel>
-          {(['ATM_FUTURE', 'ATM_SPOT'].includes(values.strike_selection) && ['CE', 'PE'].includes(values.option_type)) ? (
+          {["ATM_FUTURE", "ATM_SPOT"].includes(values.strike_selection) &&
+          ["CE", "PE"].includes(values.option_type) ? (
             <Field
               name="value"
               as={Select}
@@ -121,12 +179,20 @@ const PositionSection = ({ push }) => {
               disabled={!values.strike_selection}
               fullWidth
             >
-              <MenuItem value="" disabled>Select value</MenuItem>
-              {getOptionSegmentType() && getOptionSegmentType().map(option => (
-                <MenuItem key={option} value={option}>
-                  {option.replace(/ITM_|OTM_/, match => `${match.replace("_", "")} `).replace("ATM_0", "ATM")}
-                </MenuItem>
-              ))}
+              <MenuItem value="" disabled>
+                Select value
+              </MenuItem>
+              {getOptionSegmentType() &&
+                getOptionSegmentType().map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option
+                      .replace(
+                        /ITM_|OTM_/,
+                        (match) => `${match.replace("_", "")} `
+                      )
+                      .replace("ATM_0", "ATM")}
+                  </MenuItem>
+                ))}
             </Field>
           ) : (
             <Field
@@ -146,24 +212,37 @@ const PositionSection = ({ push }) => {
         </FormControl>
       </Box>
 
-      <Box display="flex" flexDirection="row" flex={1} minWidth="100px">
+      <Box display="flex" flexDirection="row" flex={1} minWidth="200px">
         <FormControl error={touched.lots && Boolean(errors.lots)} fullWidth>
           <InputLabel>
-            Lots
-            {values.index_name && ` (lot = ${lotsDisplay !== undefined && lotsDisplay})`}
+            {lotsDisplay &&
+              `Lots ( 1 lot=${
+                lotsDisplay !== undefined ? lotsDisplay : "Loading..."
+              })`}
           </InputLabel>
           <Field
             as={Select}
             name="lots"
             fullWidth
-            label='lots'
+            label={`Lots ( 1 lot=${
+              lotsDisplay !== undefined ? lotsDisplay : "Loading..."
+            })`}
+            disabled={!lotsDisplay}
           >
-            <MenuItem value="" disabled>Select Lot</MenuItem>
-            {[1, 2, 3, 4, 5, 6, 7, 8].map(e => (
-              <MenuItem key={e} value={e}>
-                {e}
+            <MenuItem value="" disabled>
+              Select Lot
+            </MenuItem>
+            {lotsDisplay ? (
+              Array.from({ length: 8 }, (_, index) => index + 1).map((lot) => (
+                <MenuItem key={lot} value={lot}>
+                  {lot}
+                </MenuItem>
+              ))
+            ) : (
+              <MenuItem value="" disabled>
+                No lot sizes available
               </MenuItem>
-            ))}
+            )}
           </Field>
           <FormHelperText>
             <ErrorMessage name="lots" component="span" />
@@ -172,7 +251,11 @@ const PositionSection = ({ push }) => {
       </Box>
 
       <Box display="flex" justifyContent="center">
-        <Button variant="contained" onClick={handleAddPosition} className="create-own-strategy-btn">
+        <Button
+          variant="contained"
+          onClick={handleAddPosition}
+          className="create-own-strategy-btn"
+        >
           Add
         </Button>
       </Box>

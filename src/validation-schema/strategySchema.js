@@ -39,11 +39,12 @@ export const combinedSchema = Yup.object().shape({
   do_trade_in_live: Yup.boolean(),
   
   broker_name: Yup.string()
-    .when('do_trade_in_live', {
-      is: true,
-      then: Yup.string().required('Broker name is required when trading live'),
-      otherwise: Yup.string().notRequired()
-    }),
+  .when('do_trade_in_live', {
+    is: true,
+    then: Yup.string().required('Broker name is required when trading live'),
+    otherwise: Yup.string().notRequired().nullable(),
+  }),
+
     
   exit_HH: Yup.number().required('Exit hour is required'),
   exit_MM: Yup.number().required('Exit minute is required'),
