@@ -9,7 +9,7 @@ import {
   ListItemText,
   Box,
   FormHelperText,
-} from '@mui/material';
+} from "@mui/material";
 
 const Entrysection = () => {
   const { setFieldValue, values, errors, touched } = useFormikContext();
@@ -28,6 +28,7 @@ const Entrysection = () => {
 
     if (values.entry_HH && values.entry_MM) {
       const entryTime = `${values.entry_HH}:${values.entry_MM}`;
+      // console.log(entryTime);
       setFieldValue("start_time", entryTime);
     }
   };
@@ -37,30 +38,52 @@ const Entrysection = () => {
     setFieldValue("days", selectedDays);
   };
 
-  // const hourOptions = Array.from({ length: 7 }, (_, i) => i + 9); 
-  // const minuteOptions = Array.from({ length: 60 }, (_, i) => i); 
+  // const hourOptions = Array.from({ length: 7 }, (_, i) => i + 9);
+  // const minuteOptions = Array.from({ length: 60 }, (_, i) => i);
 
   const hourOptions =
-  values.index_name === 'CRUDEOIL' || values.index_name === 'CRUDEOILM'
-    ? Array.from({ length: 15 }, (_, i) => i + 9)
-    : Array.from({ length: 7 }, (_, i) => i + 9);
+    values.index_name === "CRUDEOIL" || values.index_name === "CRUDEOILM"
+      ? Array.from({ length: 15 }, (_, i) => i + 9)
+      : Array.from({ length: 7 }, (_, i) => i + 9);
 
-const minuteOptions =
-  values.entry_HH == 15 && 
-  !(values.index_name === 'CRUDEOIL' || values.index_name === 'CRUDEOILM')
-    ? Array.from({ length: 30 }, (_, i) => i) 
-    : Array.from({ length: 60 }, (_, i) => i); 
+  const minuteOptions =
+    values.entry_HH == 15 &&
+    !(values.index_name === "CRUDEOIL" || values.index_name === "CRUDEOILM")
+      ? Array.from({ length: 29 }, (_, i) => i+1)
+      : Array.from({ length: 59 }, (_, i) => i+1);
 
   return (
-    <Box border={2} sx={{ borderColor: 'primary.main', borderRadius: '8px', padding: '16px', margin: '16px' }}>
+    <Box
+      border={2}
+      sx={{
+        borderColor: "primary.main",
+        borderRadius: "8px",
+        padding: "16px",
+        margin: "16px",
+      }}
+    >
       <h2 className="titles">Entry Settings</h2>
       <Box display="flex" flexDirection="row" gap={2}>
-        <FormControl variant="outlined" error={touched.entry_HH && Boolean(errors.entry_HH)} style={{ width: '100px' }}>
+        <FormControl
+          variant="outlined"
+          error={touched.entry_HH && Boolean(errors.entry_HH)}
+          style={{ width: "100px" }}
+        >
           <InputLabel>Hours</InputLabel>
-          <Field as={Select} name="entry_HH" label="Hours" value={values.entry_HH || ""} onChange={handleTimeChange}>
-            <MenuItem value="" disabled>hours</MenuItem>
+          <Field
+            as={Select}
+            name="entry_HH"
+            label="Hours"
+            value={values.entry_HH || ""}
+            onChange={handleTimeChange}
+          >
+            <MenuItem value="" disabled>
+              hours
+            </MenuItem>
             {hourOptions.map((hour) => (
-              <MenuItem key={hour} value={hour}>{hour}</MenuItem>
+              <MenuItem key={hour} value={hour}>
+                {hour}
+              </MenuItem>
             ))}
           </Field>
           <FormHelperText>
@@ -68,12 +91,27 @@ const minuteOptions =
           </FormHelperText>
         </FormControl>
 
-        <FormControl variant="outlined" error={touched.entry_MM && Boolean(errors.entry_MM)} style={{ width: '100px' }}>
+        <FormControl
+          variant="outlined"
+          error={touched.entry_MM && Boolean(errors.entry_MM)}
+          style={{ width: "100px" }}
+        >
           <InputLabel>Minutes</InputLabel>
-          <Field as={Select} name="entry_MM" label="Minutes" value={values.entry_MM || ""} onChange={handleTimeChange}>
-            <MenuItem value="" disabled>minutes</MenuItem>
+          <Field
+            as={Select}
+            name="entry_MM"
+            label="Minutes"
+            value={values.entry_MM ?? "0"}
+            onChange={handleTimeChange}
+          >
+            <MenuItem value="0" disabled>
+              minutes
+            </MenuItem>
+            <MenuItem value="0">0</MenuItem>
             {minuteOptions.map((minute) => (
-              <MenuItem key={minute} value={minute}>{minute}</MenuItem>
+              <MenuItem key={minute} value={minute}>
+                {minute}
+              </MenuItem>
             ))}
           </Field>
           <FormHelperText>
@@ -81,9 +119,21 @@ const minuteOptions =
           </FormHelperText>
         </FormControl>
 
-        <FormControl variant="outlined" error={touched.days && Boolean(errors.days)} style={{ width: '250px' }}>
+        <FormControl
+          variant="outlined"
+          error={touched.days && Boolean(errors.days)}
+          style={{ width: "250px" }}
+        >
           <InputLabel>Days</InputLabel>
-          <Field as={Select} multiple name="days" value={values.days || []} onChange={handleDayChange} renderValue={(selected) => selected.join(', ')} label="Days">
+          <Field
+            as={Select}
+            multiple
+            name="days"
+            value={values.days || []}
+            onChange={handleDayChange}
+            renderValue={(selected) => selected.join(", ")}
+            label="Days"
+          >
             {options.map((option) => (
               <MenuItem key={option.value} value={option.value}>
                 <Checkbox checked={values.days?.includes(option.value)} />

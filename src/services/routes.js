@@ -18,6 +18,7 @@ export const API_ROUTER = {
 
     STRATEGY_LIST: 'strategy/',
     STRATEGY_CREATE: 'strategy/create/',
+    LOT_SIZES:'strategy/get-symbols/', //for lot sizes according to stock
     STRATEGY_PREBUILD:(name)=>(name?`/strategy/pre-build/?name=${name}`: '/strategy/pre-build/'),
     STRATEGY_UPDATE: (id) => (id ? `strategy/update/${id}/` : 'strategy/update/'), //wokrs with delete also
     STRATEGY_STATUS:(strategyId)=>(`strategy/status/${strategyId}/`),

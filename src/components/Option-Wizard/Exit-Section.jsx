@@ -94,8 +94,8 @@ const Exitsection = ({ brokers }) => {
   const minuteOptions =
     values.exit_HH === 15 &&
     !(values.index_name === "CRUDEOIL" || values.index_name === "CRUDEOILM")
-      ? Array.from({ length: 30 }, (_, i) => i)
-      : Array.from({ length: 60 }, (_, i) => i);
+      ? Array.from({ length: 29 }, (_, i) => i+1)
+      : Array.from({ length: 59 }, (_, i) => i+1);
 
   return (
     <Box
@@ -255,12 +255,13 @@ const Exitsection = ({ brokers }) => {
                 as={Select}
                 name="exit_MM"
                 label="Minutes"
-                value={values.exit_MM || ""}
+                value={values.exit_MM !== undefined ? values.exit_MM : ""}
                 onChange={handleTimeChange}
               >
                 <MenuItem value="" disabled>
                   minutes
                 </MenuItem>
+                <MenuItem value="0">0</MenuItem>
                 {minuteOptions.map((minute) => (
                   <MenuItem key={minute} value={minute}>
                     {minute}
