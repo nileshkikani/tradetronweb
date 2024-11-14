@@ -38,8 +38,6 @@ const Entrysection = () => {
     setFieldValue("days", selectedDays);
   };
 
-  // const hourOptions = Array.from({ length: 7 }, (_, i) => i + 9);
-  // const minuteOptions = Array.from({ length: 60 }, (_, i) => i);
 
   const hourOptions =
     values.index_name === "CRUDEOIL" || values.index_name === "CRUDEOILM"
@@ -104,7 +102,7 @@ const Entrysection = () => {
             value={values.entry_MM ?? "0"}
             onChange={handleTimeChange}
           >
-            <MenuItem value="0" disabled>
+            <MenuItem disabled>
               minutes
             </MenuItem>
             <MenuItem value="0">0</MenuItem>
