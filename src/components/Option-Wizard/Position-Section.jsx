@@ -58,12 +58,12 @@ const PositionSection = ({ push,indexAndStocksNames }) => {
   };
 
   const allowedIndexNames = [
-    "BANKNIFTY",
+    // "BANKNIFTY",
     "NIFTY",
-    "FINNIFTY",
-    "MIDCPNIFTY",
-    "CRUDEOIL",
-    "CRUDEOILM",
+    // "FINNIFTY",
+    // "MIDCPNIFTY",
+    // "CRUDEOIL",
+    // "CRUDEOILM",
   ];
 
   // define expiry options based on index_name
