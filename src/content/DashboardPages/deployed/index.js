@@ -15,7 +15,7 @@ import useToast from 'src/hooks/useToast';
 function DashboardDeployedContent() {
     const [datas, setDatas] = useState([]);
     const [strategyNames, setStrategyNames] = useState([]);
-    const [selectedStrategyId, setSelectedStrategyId] = useState('');
+    const [selectedStrategyId, setSelectedStrategyId] = useState(localStorage.getItem('selectedStrategyId') || '');
     const [selectedDate, setSelectedDate] = useState('');
     const [orderList, setOrderList] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,7 +30,10 @@ function DashboardDeployedContent() {
 
     const headers = { Authorization: `Bearer ${authState}` };
 
+    // Function to fetch order dates based on strategy ID
     const getData = async (id) => {
+        if (!id) return;
+
         try {
             const { data } = await axiosInstance.get(API_ROUTER.ORDER_DATE_LIST(id), { headers });
             setDatas(data);
@@ -39,6 +42,7 @@ function DashboardDeployedContent() {
         }
     };
 
+    // Function to fetch strategy list
     const getStrategyList = async () => {
         try {
             const { data } = await axiosInstance.get(API_ROUTER.STRATEGY_LIST, { headers });
@@ -65,6 +69,8 @@ function DashboardDeployedContent() {
         setSelectedStrategyId(selectedId);
         setSelectedDate('');
         setOrderList([]);
+        localStorage.setItem('selectedStrategyId', selectedId);
+
         if (selectedId) {
             getData(selectedId);
         } else {
@@ -75,10 +81,11 @@ function DashboardDeployedContent() {
     const handleDateChange = async (event) => {
         const selectedParam = event.target.value;
         setSelectedDate(selectedParam);
+        // localStorage.setItem('selectedDate', selectedParam);
+        
         if (selectedStrategyId && selectedParam) {
             try {
                 const { data } = await axiosInstance.get(API_ROUTER.ORDER_LIST(selectedStrategyId, selectedParam), { headers });
-                // const openOrderTokens = data.filter(item => item.close_price === null).map(item => item.token);
                 setOrderList(data);
 
                 const selectedData = datas.find(item => item.date === selectedParam);
@@ -131,6 +138,11 @@ function DashboardDeployedContent() {
     }
 
     useEffect(() => {
+        const storedStrategyId = localStorage.getItem('selectedStrategyId');
+        if (storedStrategyId) {
+            setSelectedStrategyId(storedStrategyId);
+            getData(storedStrategyId);
+        }
         getStrategyList();
 
         return () => {
@@ -164,7 +176,9 @@ function DashboardDeployedContent() {
                 {selectedTab === 0 ? (
                     <>
                         <Box display="flex" gap={2} pb={2}>
-                            <Select value={selectedStrategyId} onChange={handleStrategyChange} displayEmpty>
+                            {datas.length>0 &&(
+
+                                <Select value={selectedStrategyId} onChange={handleStrategyChange} displayEmpty>
                                 <MenuItem value="" disabled>Select a strategy</MenuItem>
                                 {strategyNames.map((item) => (
                                     <MenuItem key={item.id} value={item.id}>
@@ -172,6 +186,7 @@ function DashboardDeployedContent() {
                                     </MenuItem>
                                 ))}
                             </Select>
+                            )}
 
                             {datas.length > 0 && (
                                 <Select value={selectedDate} onChange={handleDateChange} displayEmpty>

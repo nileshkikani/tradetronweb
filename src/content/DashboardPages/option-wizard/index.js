@@ -329,20 +329,33 @@ function DashboardOptionWizardContent() {
             <Dialog open={openModal} onClose={() => setOpenModal(false)}>
                 <DialogTitle>Confirm Deletion</DialogTitle>
                 <DialogContent>
-                    <Typography>Are you sure ?</Typography>
+                    <Typography>Are you sure you want to delete this strategy ?</Typography>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setOpenModal(false)} color="primary">
-                        No
+                    <Button onClick={() => setOpenModal(false)} color="primary" >
+                        Cancel
                     </Button>
                     <Button
                         onClick={() => {
                             handleDeleteStrategy(Number(selectedStrategy))
                             setOpenModal(false);
                         }}
-                        color="primary"
+                        color="error"
+                        // variant='outlined'
+                        // sx={{
+                        //     padding: '8px 20px',
+                        //     borderRadius: '5px',
+                        //     fontSize: '12px',
+                        //     boxShadow: 1,
+                        //     transition: '0.1s',
+                        //     '&:hover': {
+                        //         backgroundColor: 'error.main',
+                        //         color: 'white',
+                        //     }
+                        // }}
+                        
                     >
-                        Yes
+                        Delete
                     </Button>
                 </DialogActions>
             </Dialog>
