@@ -6,8 +6,6 @@ import { Authenticated } from 'src/components/Authenticated';
 import DashboardBrokersContent from '../../../src/content/DashboardPages/add-new-broker/index';
 
 
-
-
 function DashboardReports() {
   return (
     <>
