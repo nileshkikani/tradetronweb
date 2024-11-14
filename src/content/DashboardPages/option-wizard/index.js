@@ -19,7 +19,7 @@ import {
     MenuItem,
     TextField,
     FormHelperText,
-    Box
+    Box,Dialog, DialogActions, DialogContent, DialogTitle ,Typography
 } from '@mui/material';
 import { API_ROUTER } from 'src/services/routes';
 import { TOAST_ALERTS, TOAST_TYPES } from 'src/constants/keywords';
@@ -71,6 +71,7 @@ function DashboardOptionWizardContent() {
     const [initialValues, setInitialValues] = useState(initialFormStateObj);
     const [preBuild, setPreBuild] = useState([]);
     const [brokers, setBrokers] = useState([]);
+    const [openModal, setOpenModal] = useState(false);
     const [indexAndStocksNames, setIndexAndStocksNames] = useState([])
     const authState = useSelector((state) => state.auth.authState);
 
@@ -324,6 +325,28 @@ function DashboardOptionWizardContent() {
                 getSpecificStrategy={getSpecificStrategy}
             //  getStrategyList={getStrategyList}
             />
+            {/* dialog box for delete confirmation */}
+            <Dialog open={openModal} onClose={() => setOpenModal(false)}>
+                <DialogTitle>Confirm Deletion</DialogTitle>
+                <DialogContent>
+                    <Typography>Are you sure ?</Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenModal(false)} color="primary">
+                        No
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            handleDeleteStrategy(Number(selectedStrategy))
+                            setOpenModal(false);
+                        }}
+                        color="primary"
+                    >
+                        Yes
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
             {showForm && (
                 <Formik
                     initialValues={initialValues}
@@ -528,7 +551,7 @@ function DashboardOptionWizardContent() {
                                             variant="outlined"
                                             color="error"
                                             className='delete-btn'
-                                            onClick={() => handleDeleteStrategy(Number(selectedStrategy))}
+                                            onClick={() => setOpenModal(true)}
                                             sx={{
                                                 padding: '10px 20px',
                                                 borderRadius: '5px',
