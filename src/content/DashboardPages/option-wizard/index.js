@@ -341,18 +341,6 @@ function DashboardOptionWizardContent() {
                             setOpenModal(false);
                         }}
                         color="error"
-                        // variant='outlined'
-                        // sx={{
-                        //     padding: '8px 20px',
-                        //     borderRadius: '5px',
-                        //     fontSize: '12px',
-                        //     boxShadow: 1,
-                        //     transition: '0.1s',
-                        //     '&:hover': {
-                        //         backgroundColor: 'error.main',
-                        //         color: 'white',
-                        //     }
-                        // }}
                         
                     >
                         Delete

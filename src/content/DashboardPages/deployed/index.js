@@ -6,7 +6,7 @@ import { Authenticated } from 'src/components/Authenticated';
 import axiosInstance from 'src/utils/axios';
 import { API_ROUTER } from 'src/services/routes';
 import { useSelector } from 'react-redux';
-import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Paper, Tabs, Tab, Select, MenuItem, TableFooter } from '@mui/material';
+import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Paper, Tabs, Tab, Select, MenuItem, TableFooter, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import CustomModal from 'src/components/Deployed/DeployedModal';
 import { TOAST_ALERTS, TOAST_TYPES } from 'src/constants/keywords';
 import { initializeWebSocket } from 'src/utils/socket';
@@ -23,14 +23,14 @@ function DashboardDeployedContent() {
     const [selectedTotalPL, setSelectedTotalPL] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
     const [strategyStatus, setStrategyStatus] = useState({});
+    const [openDeactivationModal, setOpenDeactivationModal] = useState(false); // State for deactivation modal
+    const [selectedStrategyForDeactivation, setSelectedStrategyForDeactivation] = useState(null); // Strategy to deactivate
     const socketRef = useRef(null);
     const [livePrices, setLivePrices] = useState({});
     const authState = useSelector((state) => state.auth.authState);
     const { showToast } = useToast();
 
     const headers = { Authorization: `Bearer ${authState}` };
-
-    console.log('opopop',strategyNames)
 
     // Function to fetch order dates based on strategy ID
     const getData = async (id) => {
@@ -82,7 +82,6 @@ function DashboardDeployedContent() {
     const handleDateChange = async (event) => {
         const selectedParam = event.target.value;
         setSelectedDate(selectedParam);
-        // localStorage.setItem('selectedDate', selectedParam);
         
         if (selectedStrategyId && selectedParam) {
             try {
@@ -123,20 +122,48 @@ function DashboardDeployedContent() {
     };
 
     const handleToggleChange = async (strategyId, currentStatus) => {
+        if (currentStatus) {
+            // Show confirmation modal before deactivating
+            setSelectedStrategyForDeactivation(strategyId);
+            setOpenDeactivationModal(true);
+        } else {
+            // Deactivate immediately
+            try {
+                const response = await axiosInstance.get(
+                    API_ROUTER.STRATEGY_STATUS(strategyId),
+                    { headers }
+                );
+                showToast(response.data.details || TOAST_ALERTS.STRATEGY_STATUS, TOAST_TYPES.SUCCESS);
+                setStrategyStatus((prevState) => ({
+                    ...prevState,
+                    [strategyId]: !currentStatus,
+                }));
+            } catch (error) {
+                showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
+            }
+        }
+    };
+
+    const handleConfirmDeactivation = async () => {
+        if (!selectedStrategyForDeactivation) return;
+        
         try {
             const response = await axiosInstance.get(
-                API_ROUTER.STRATEGY_STATUS(strategyId),
+                API_ROUTER.STRATEGY_STATUS(selectedStrategyForDeactivation),
                 { headers }
             );
             showToast(response.data.details || TOAST_ALERTS.STRATEGY_STATUS, TOAST_TYPES.SUCCESS);
             setStrategyStatus((prevState) => ({
                 ...prevState,
-                [strategyId]: !currentStatus,
+                [selectedStrategyForDeactivation]: false,
             }));
         } catch (error) {
             showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
         }
-    }
+
+        // Close modal after deactivation
+        setOpenDeactivationModal(false);
+    };
 
     useEffect(() => {
         const storedStrategyId = localStorage.getItem('selectedStrategyId');
@@ -159,11 +186,7 @@ function DashboardDeployedContent() {
     };
 
     return (
-        <Box sx={{
-            height: "100vh",
-            overflow: "hidden",
-            overflowY: "auto",
-        }}>
+        <Box sx={{ height: "100vh", overflow: "hidden", overflowY: "auto" }}>
             <PageTitleWrapper>
                 <h1>{selectedTab === 0 ? 'Deployed Strategies' : 'My Strategies'}</h1>
             </PageTitleWrapper>
@@ -176,30 +199,25 @@ function DashboardDeployedContent() {
 
                 {selectedTab === 0 ? (
                     <>
+                        {/* Deployed strategies content */}
                         <Box display="flex" gap={2} pb={2}>
-                            {/* {datas.length>0 &&( */}
-
-                                <Select value={selectedStrategyId} onChange={handleStrategyChange} displayEmpty>
+                            <Select value={selectedStrategyId} onChange={handleStrategyChange} displayEmpty>
                                 <MenuItem value="" disabled>Select a strategy</MenuItem>
-                                {strategyNames && strategyNames?.map((item) => (
+                                {strategyNames?.map((item) => (
                                     <MenuItem key={item.id} value={item.id}>
                                         {item.strategy_name}
                                     </MenuItem>
                                 ))}
                             </Select>
-                            {/* )} */}
 
                             {datas.length > 0 && (
                                 <Select value={selectedDate} onChange={handleDateChange} displayEmpty>
                                     <MenuItem value="" disabled>Select a date</MenuItem>
-                                    {datas.map((item, index) => {
-                                        const day = item.date.split('-')[2];
-                                        return (
-                                            <MenuItem key={index} value={item.date}>
-                                                {day} (total pl: {item.total_pl})
-                                            </MenuItem>
-                                        );
-                                    })}
+                                    {datas.map((item, index) => (
+                                        <MenuItem key={index} value={item.date}>
+                                            {item.date.split('-')[2]} (total pl: {item.total_pl})
+                                        </MenuItem>
+                                    ))}
                                 </Select>
                             )}
                         </Box>
@@ -255,7 +273,7 @@ function DashboardDeployedContent() {
                         )}
                     </>
                 ) : (
-                    // --------MY STRATEGY PART 
+                    // --------MY STRATEGY PART
                     <Box>
                         <TableContainer component={Paper}>
                             <Table>
@@ -270,15 +288,10 @@ function DashboardDeployedContent() {
                                     {strategyNames?.map((strategy) => (
                                         <TableRow key={strategy.id}>
                                             <TableCell>
-                                                <Typography variant="body1">
-                                                    {strategy.strategy_name}
-                                                </Typography>
+                                                <Typography variant="body1">{strategy.strategy_name}</Typography>
                                             </TableCell>
                                             <TableCell>
-                                                <Typography
-                                                    variant="body2"
-                                                    color={strategyStatus[strategy.id] ? 'green' : 'red'}
-                                                >
+                                                <Typography variant="body2" color={strategyStatus[strategy.id] ? 'green' : 'red'}>
                                                     {strategyStatus[strategy.id] ? 'Active' : 'Inactive'}
                                                 </Typography>
                                             </TableCell>
@@ -299,6 +312,20 @@ function DashboardDeployedContent() {
                     </Box>
                 )}
             </Box>
+
+            {/* Confirmation Modal */}
+            <Dialog open={openDeactivationModal} onClose={() => setOpenDeactivationModal(false)}>
+                <DialogTitle>Confirm Deactivation</DialogTitle>
+                <DialogContent>
+                    <Typography>
+                        All open orders with this strategy will be closed. Are you sure you want to deactivate this strategy?
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenDeactivationModal(false)} color="primary">Cancel</Button>
+                    <Button onClick={handleConfirmDeactivation} color="error">Deactivate</Button>
+                </DialogActions>
+            </Dialog>
 
             <CustomModal
                 isOpen={isModalOpen}
