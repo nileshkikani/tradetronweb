@@ -53,16 +53,16 @@ const initialFormStateObj = {
 }
 // console.log(initialFormStateObj?.entry_MM, "ghghghghghg")
 
-const stockslistForIndex = [
-    "HDFCBANK", "ICICIBANK", "KOTAKBANK", "AXISBANK", "SBIN", "BAJFINANCE",
-    "TCS", "INFY", "HCLTECH", "WIPRO", "TECHM", "HINDUNILVR", "ITC",
-    "ASIANPAINT", "TITAN", "MARUTI", "BAJAJ-AUTO", "EICHERMOT", "HEROMOTOCO",
-    "DRREDDY", "CIPLA", "DIVISLAB", "BHARTIARTL", "RELIANCE", "NTPC",
-    "POWERGRID", "JSWSTEEL", "TATASTEEL", "HINDALCO", "ULTRACEMCO", "SHREECEM",
-    "LT", "ONGC", "BRITANNIA", "NESTLEIND", "APOLLOHOSP", "ADANIPORTS", "GRASIM",
-    "UPL", "SBILIFE", "HDFCLIFE", "BPCL", "IOC", "COALINDIA", "GAIL", "M&M",
-    "SUNPHARMA"
-];
+// const stockslistForIndex = [
+//     "HDFCBANK", "ICICIBANK", "KOTAKBANK", "AXISBANK", "SBIN", "BAJFINANCE",
+//     "TCS", "INFY", "HCLTECH", "WIPRO", "TECHM", "HINDUNILVR", "ITC",
+//     "ASIANPAINT", "TITAN", "MARUTI", "BAJAJ-AUTO", "EICHERMOT", "HEROMOTOCO",
+//     "DRREDDY", "CIPLA", "DIVISLAB", "BHARTIARTL", "RELIANCE", "NTPC",
+//     "POWERGRID", "JSWSTEEL", "TATASTEEL", "HINDALCO", "ULTRACEMCO", "SHREECEM",
+//     "LT", "ONGC", "BRITANNIA", "NESTLEIND", "APOLLOHOSP", "ADANIPORTS", "GRASIM",
+//     "UPL", "SBILIFE", "HDFCLIFE", "BPCL", "IOC", "COALINDIA", "GAIL", "M&M",
+//     "SUNPHARMA"
+// ];
 
 function DashboardOptionWizardContent() {
     const [showForm, setShowForm] = useState(false);
@@ -71,6 +71,7 @@ function DashboardOptionWizardContent() {
     const [initialValues, setInitialValues] = useState(initialFormStateObj);
     const [preBuild, setPreBuild] = useState([]);
     const [brokers, setBrokers] = useState([]);
+    const [indexAndStocksNames, setIndexAndStocksNames] = useState([])
     const authState = useSelector((state) => state.auth.authState);
 
     const { showToast } = useToast();
@@ -276,12 +277,22 @@ function DashboardOptionWizardContent() {
         }
     };
 
+    // get index/stocks with lot api call
+    const getLotSize = async () => {
+        await axiosInstance
+            .get(API_ROUTER.LOT_SIZES, { headers })
+            .then((response) => setIndexAndStocksNames(response.data))
+            .catch((response) =>
+                showToast("error getting index names", TOAST_TYPES.ERROR)
+            );
+    };
 
 
     // console.log('brokers',brokers)
     useEffect(() => {
         getStrategyList();
         getBrokerData();
+        getLotSize()
     }, []);
 
     useEffect(() => {
@@ -366,7 +377,7 @@ function DashboardOptionWizardContent() {
                                                 <MenuItem value="MIDCPNIFTY">NIFTY MID SELECT</MenuItem>
                                                 <MenuItem value="CRUDEOIL">CRUDE OIL</MenuItem>
                                                 <MenuItem value="CRUDEOILM">CRUDE OIL MINI</MenuItem>
-                                                {stockslistForIndex.map((stock) => (
+                                                {Object.keys(indexAndStocksNames)?.map((stock) => (
                                                     <MenuItem key={stock} value={stock}>
                                                         {stock}
                                                     </MenuItem>
@@ -437,7 +448,7 @@ function DashboardOptionWizardContent() {
                                 <FieldArray name="positions">
                                     {({ push, remove }) => (
                                         <>
-                                            <PositionSection push={push} />
+                                            <PositionSection push={push} indexAndStocksNames={indexAndStocksNames} />
                                             <hr className='position-line' />
                                             <Box
                                                 className='individual'

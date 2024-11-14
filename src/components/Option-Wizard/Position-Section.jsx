@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Field, ErrorMessage, useFormikContext } from "formik";
 import { positionSchema } from "src/validation-schema/strategySchema";
 import {
@@ -11,20 +11,11 @@ import {
   Box,
   FormHelperText,
 } from "@mui/material";
-import axiosInstance from "src/utils/axios";
-import { useSelector } from "react-redux";
-import { API_ROUTER } from "src/services/routes";
 
-const PositionSection = ({ push }) => {
+const PositionSection = ({ push,indexAndStocksNames }) => {
   const { values, setFieldError, errors, touched } = useFormikContext();
-  const [lotSizes, setLotSizes] = useState({});
 
-  const authState = useSelector((state) => state.auth.authState);
-
-  //bear token for api calling
-  const headers = { Authorization: `Bearer ${authState}` };
-
-  const lotsDisplay = lotSizes[values.index_name];
+  const lotsDisplay = indexAndStocksNames[values.index_name];
 
   const getOptionSegmentType = () => {
     const itmOptions = Array.from(
@@ -80,19 +71,6 @@ const PositionSection = ({ push }) => {
     ? ["CURRENT_WEEK", "NEXT_WEEK", "CURRENT_MONTH", "NEXT_MONTH"]
     : ["CURRENT_MONTH"];
 
-  // get lot size accordingly
-  const getLotSize = async () => {
-    await axiosInstance
-      .get(API_ROUTER.LOT_SIZES, { headers })
-      .then((response) => setLotSizes(response.data))
-      .catch((response) =>
-        console.log("error getting stock lot data", response.error)
-      );
-  };
-
-  useEffect(() => {
-    getLotSize();
-  }, []);
 
   return (
     <Box
