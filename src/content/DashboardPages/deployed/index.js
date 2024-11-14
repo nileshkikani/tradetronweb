@@ -30,10 +30,11 @@ function DashboardDeployedContent() {
 
     const headers = { Authorization: `Bearer ${authState}` };
 
+    console.log('opopop',strategyNames)
+
     // Function to fetch order dates based on strategy ID
     const getData = async (id) => {
         if (!id) return;
-
         try {
             const { data } = await axiosInstance.get(API_ROUTER.ORDER_DATE_LIST(id), { headers });
             setDatas(data);
@@ -176,17 +177,17 @@ function DashboardDeployedContent() {
                 {selectedTab === 0 ? (
                     <>
                         <Box display="flex" gap={2} pb={2}>
-                            {datas.length>0 &&(
+                            {/* {datas.length>0 &&( */}
 
                                 <Select value={selectedStrategyId} onChange={handleStrategyChange} displayEmpty>
                                 <MenuItem value="" disabled>Select a strategy</MenuItem>
-                                {strategyNames.map((item) => (
+                                {strategyNames && strategyNames?.map((item) => (
                                     <MenuItem key={item.id} value={item.id}>
                                         {item.strategy_name}
                                     </MenuItem>
                                 ))}
                             </Select>
-                            )}
+                            {/* )} */}
 
                             {datas.length > 0 && (
                                 <Select value={selectedDate} onChange={handleDateChange} displayEmpty>
@@ -266,7 +267,7 @@ function DashboardDeployedContent() {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {strategyNames.map((strategy) => (
+                                    {strategyNames?.map((strategy) => (
                                         <TableRow key={strategy.id}>
                                             <TableCell>
                                                 <Typography variant="body1">
