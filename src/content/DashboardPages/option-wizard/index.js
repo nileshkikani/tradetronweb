@@ -33,9 +33,9 @@ const initialFormStateObj = {
     index_name: '',
     capital: 100000,
     strategy_type: '',
-    entry_HH: '',//this is just for storing value and make sure validations,
-    entry_MM: '', //concatination entry_HH + entry_MM will be goes to start_time param , 
-    start_time: '',//same with exit_HH + exit_MM goes to exit_time param.
+    entry_HH: '',
+    entry_MM: '',
+    start_time: '',
     order_take_profit_type: '',
     order_stop_loss_type: '',
     positions: [],
@@ -51,18 +51,6 @@ const initialFormStateObj = {
     broker_name: '',
     do_trade_in_live: false
 }
-// console.log(initialFormStateObj?.entry_MM, "ghghghghghg")
-
-// const stockslistForIndex = [
-//     "HDFCBANK", "ICICIBANK", "KOTAKBANK", "AXISBANK", "SBIN", "BAJFINANCE",
-//     "TCS", "INFY", "HCLTECH", "WIPRO", "TECHM", "HINDUNILVR", "ITC",
-//     "ASIANPAINT", "TITAN", "MARUTI", "BAJAJ-AUTO", "EICHERMOT", "HEROMOTOCO",
-//     "DRREDDY", "CIPLA", "DIVISLAB", "BHARTIARTL", "RELIANCE", "NTPC",
-//     "POWERGRID", "JSWSTEEL", "TATASTEEL", "HINDALCO", "ULTRACEMCO", "SHREECEM",
-//     "LT", "ONGC", "BRITANNIA", "NESTLEIND", "APOLLOHOSP", "ADANIPORTS", "GRASIM",
-//     "UPL", "SBILIFE", "HDFCLIFE", "BPCL", "IOC", "COALINDIA", "GAIL", "M&M",
-//     "SUNPHARMA"
-// ];
 
 function DashboardOptionWizardContent() {
     const [showForm, setShowForm] = useState(false);
@@ -264,9 +252,6 @@ function DashboardOptionWizardContent() {
     const getBrokerData = async () => {
         try {
             const { data } = await axiosInstance.get(API_ROUTER.UPDATE_BROKER, { headers });
-            // setIsAngelAdded(data.accounts.angel);
-            // setIsKotakAdded(data.accounts.kotak);
-            // setSelectedBroker(data.accounts.kotak ? 'kotak' : (data.accounts.angel ? 'angel' : ''));
             setBrokers(data.accounts)
         } catch (error) {
             if (error.response && error.response.status === 400) {
