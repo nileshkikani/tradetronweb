@@ -11,6 +11,7 @@ import CustomModal from 'src/components/Deployed/DeployedModal';
 import { TOAST_ALERTS, TOAST_TYPES } from 'src/constants/keywords';
 import { initializeWebSocket } from 'src/utils/socket';
 import useToast from 'src/hooks/useToast';
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
 function DashboardDeployedContent() {
     const [datas, setDatas] = useState([]);
@@ -25,8 +26,10 @@ function DashboardDeployedContent() {
     const [strategyStatus, setStrategyStatus] = useState({});
     const [openDeactivationModal, setOpenDeactivationModal] = useState(false);
     const [selectedStrategyForDeactivation, setSelectedStrategyForDeactivation] = useState(null);
+    const [selectedStrategyForDeletion, setSelectedStrategyForDeletion] = useState(null);
     const socketRef = useRef(null);
     const [livePrices, setLivePrices] = useState({});
+    const [openModal, setOpenModal] = useState(false);
     const authState = useSelector((state) => state.auth.authState);
     const { showToast } = useToast();
 
@@ -95,7 +98,7 @@ function DashboardDeployedContent() {
                 initializeWebSocket(setLivePrices, socketRef);
             } catch (error) {
                 showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
-            }finally {
+            } finally {
                 setIsLoading(false);
             }
         }
@@ -194,6 +197,19 @@ function DashboardDeployedContent() {
         }
     }
 
+
+    const handleDeleteStrategy = async (id) => {
+        try {
+            await axiosInstance.delete(API_ROUTER.STRATEGY_UPDATE(id), { headers });
+            showToast(TOAST_ALERTS.STRATEGY_DELETED_SUCCESS, TOAST_TYPES.SUCCESS);
+
+            getStrategyList();
+            setShowForm(false)
+        } catch (error) {
+            // showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
+        }
+    };
+
     return (
         <Box sx={{ height: "100vh", overflow: "hidden", overflowY: "auto" }}>
             <PageTitleWrapper>
@@ -239,76 +255,76 @@ function DashboardDeployedContent() {
 
                         {orderList.length > 0 && (
                             <TableContainer component={Paper}>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Created At</TableCell>
-                                        <TableCell>Symbol</TableCell>
-                                        <TableCell>Order Type</TableCell>
-                                        <TableCell>Open Price</TableCell>
-                                        <TableCell>Close Price</TableCell>
-                                        <TableCell>Profit/Loss</TableCell>
-                                        <TableCell>Quantity</TableCell>
-                                        <TableCell>Order Status</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {isLoading ? (
-                                        [...Array(orderList.length || 3)].map((_, index) => (
-                                            <TableRow key={index}>
-                                                <TableCell><Skeleton variant="text" width="100%" /></TableCell>
-                                                <TableCell><Skeleton variant="text" width="100%" /></TableCell>
-                                                <TableCell><Skeleton variant="text" width="100%" /></TableCell>
-                                                <TableCell><Skeleton variant="text" width="100%" /></TableCell>
-                                                <TableCell><Skeleton variant="text" width="100%" /></TableCell>
-                                                <TableCell><Skeleton variant="text" width="100%" /></TableCell>
-                                                <TableCell><Skeleton variant="text" width="100%" /></TableCell>
-                                                <TableCell><Skeleton variant="text" width="100%" /></TableCell>
-                                            </TableRow>
-                                        ))
-                                    ) : (
-                                        orderList.map((order) => {
-                                            const closePrice = order.close_price === null ? getLivePrice(order.token) : order.close_price;
-                                            const profit = order.order_type === 'SELL'
-                                                ? (order.open_price - closePrice) * order.quantity
-                                                : (closePrice - order.open_price) * order.quantity;
-                                            return (
-                                                <TableRow key={order.id}>
-                                                    <TableCell>{new Date(order.created_at).toLocaleString()}</TableCell>
-                                                    <TableCell onClick={() => handleSymbolClick(order)} style={{ cursor: 'pointer', color: 'lightblue', textDecoration: 'underline' }}>
-                                                        {order.symbol}
-                                                    </TableCell>
-                                                    <TableCell>{order.order_type}</TableCell>
-                                                    <TableCell>{order.open_price}</TableCell>
-                                                    <TableCell>{closePrice}</TableCell>
-                                                    <TableCell>{new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(profit)}</TableCell>
-                                                    <TableCell>{order.quantity}</TableCell>
-                                                    <TableCell>{order.order_status}</TableCell>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Created At</TableCell>
+                                            <TableCell>Symbol</TableCell>
+                                            <TableCell>Order Type</TableCell>
+                                            <TableCell>Open Price</TableCell>
+                                            <TableCell>Close Price</TableCell>
+                                            <TableCell>Profit/Loss</TableCell>
+                                            <TableCell>Quantity</TableCell>
+                                            <TableCell>Order Status</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {isLoading ? (
+                                            [...Array(orderList.length || 3)].map((_, index) => (
+                                                <TableRow key={index}>
+                                                    <TableCell><Skeleton variant="text" width="100%" /></TableCell>
+                                                    <TableCell><Skeleton variant="text" width="100%" /></TableCell>
+                                                    <TableCell><Skeleton variant="text" width="100%" /></TableCell>
+                                                    <TableCell><Skeleton variant="text" width="100%" /></TableCell>
+                                                    <TableCell><Skeleton variant="text" width="100%" /></TableCell>
+                                                    <TableCell><Skeleton variant="text" width="100%" /></TableCell>
+                                                    <TableCell><Skeleton variant="text" width="100%" /></TableCell>
+                                                    <TableCell><Skeleton variant="text" width="100%" /></TableCell>
                                                 </TableRow>
-                                            );
-                                        })
-                                    )}
-                                </TableBody>
-                                <TableFooter>
-                                    <TableRow>
-                                        <TableCell colSpan={5} align="right"><strong>Total PnL:</strong></TableCell>
-                                        <TableCell>
-                                            {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
-                                                orderList.reduce((total, order) => {
-                                                    const closePrice = order.close_price === null ? getLivePrice(order.token) : order.close_price;
-                                                    const profit = order.order_type === 'SELL'
-                                                        ? (order.open_price - closePrice) * order.quantity
-                                                        : (closePrice - order.open_price) * order.quantity;
-                                                    return total + profit;
-                                                }, 0)
-                                            )}
-                                        </TableCell>
-                                        <TableCell colSpan={2}></TableCell>
-                                    </TableRow>
-                                </TableFooter>
-                            </Table>
-                        </TableContainer>
-                        
+                                            ))
+                                        ) : (
+                                            orderList.map((order) => {
+                                                const closePrice = order.close_price === null ? getLivePrice(order.token) : order.close_price;
+                                                const profit = order.order_type === 'SELL'
+                                                    ? (order.open_price - closePrice) * order.quantity
+                                                    : (closePrice - order.open_price) * order.quantity;
+                                                return (
+                                                    <TableRow key={order.id}>
+                                                        <TableCell>{new Date(order.created_at).toLocaleString()}</TableCell>
+                                                        <TableCell onClick={() => handleSymbolClick(order)} style={{ cursor: 'pointer', color: 'lightblue', textDecoration: 'underline' }}>
+                                                            {order.symbol}
+                                                        </TableCell>
+                                                        <TableCell>{order.order_type}</TableCell>
+                                                        <TableCell>{order.open_price}</TableCell>
+                                                        <TableCell>{closePrice}</TableCell>
+                                                        <TableCell>{new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(profit)}</TableCell>
+                                                        <TableCell>{order.quantity}</TableCell>
+                                                        <TableCell>{order.order_status}</TableCell>
+                                                    </TableRow>
+                                                );
+                                            })
+                                        )}
+                                    </TableBody>
+                                    <TableFooter>
+                                        <TableRow>
+                                            <TableCell colSpan={5} align="right"><strong>Total PnL:</strong></TableCell>
+                                            <TableCell>
+                                                {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
+                                                    orderList.reduce((total, order) => {
+                                                        const closePrice = order.close_price === null ? getLivePrice(order.token) : order.close_price;
+                                                        const profit = order.order_type === 'SELL'
+                                                            ? (order.open_price - closePrice) * order.quantity
+                                                            : (closePrice - order.open_price) * order.quantity;
+                                                        return total + profit;
+                                                    }, 0)
+                                                )}
+                                            </TableCell>
+                                            <TableCell colSpan={2}></TableCell>
+                                        </TableRow>
+                                    </TableFooter>
+                                </Table>
+                            </TableContainer>
+
                         )}
                     </>
 
@@ -322,6 +338,7 @@ function DashboardDeployedContent() {
                                         <TableCell>Strategy Name</TableCell>
                                         <TableCell>Status</TableCell>
                                         <TableCell>Action</TableCell>
+                                        <TableCell>Delete</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -343,6 +360,16 @@ function DashboardDeployedContent() {
                                                 >
                                                     {strategyStatus[strategy.id] ? 'Deactivate' : 'Activate'}
                                                 </Button>
+                                                {/* <Button onClick={() => {
+                                                    setSelectedStrategyForDeletion(strategy.id);
+                                                    setOpenModal(true);
+                                                }}><DeleteOutlineOutlinedIcon color='error' /></Button> */}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Button onClick={() => {
+                                                    setSelectedStrategyForDeletion(strategy.id);
+                                                    setOpenModal(true);
+                                                }}><DeleteOutlineOutlinedIcon color='error' /></Button>
                                             </TableCell>
                                         </TableRow>
                                     ))}
@@ -364,6 +391,30 @@ function DashboardDeployedContent() {
                 <DialogActions>
                     <Button onClick={() => setOpenDeactivationModal(false)} color="primary">Cancel</Button>
                     <Button onClick={handleConfirmDeactivation} color="error">Deactivate</Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* delete strategy dialog box */}
+            <Dialog open={openModal} onClose={() => setOpenModal(false)}>
+                <DialogTitle>Confirm Deletion</DialogTitle>
+                <DialogContent>
+                    <Typography>Are you sure you want to delete this strategy ?</Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenModal(false)} color="primary" >
+                        Cancel
+                    </Button>
+                    <Button
+                         onClick={() => {
+                            if (selectedStrategyForDeletion !== null) {
+                                handleDeleteStrategy(selectedStrategyForDeletion);
+                            }
+                            setOpenModal(false);
+                        }}
+                        color="error"
+                    >
+                        Delete
+                    </Button>
                 </DialogActions>
             </Dialog>
 
