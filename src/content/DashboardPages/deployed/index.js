@@ -6,7 +6,7 @@ import { Authenticated } from 'src/components/Authenticated';
 import axiosInstance from 'src/utils/axios';
 import { API_ROUTER } from 'src/services/routes';
 import { useSelector } from 'react-redux';
-import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Paper, Tabs, Tab, Select, MenuItem, TableFooter, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { Box, Skeleton, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Paper, Tabs, Tab, Select, MenuItem, TableFooter, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import CustomModal from 'src/components/Deployed/DeployedModal';
 import { TOAST_ALERTS, TOAST_TYPES } from 'src/constants/keywords';
 import { initializeWebSocket } from 'src/utils/socket';
@@ -20,11 +20,11 @@ function DashboardDeployedContent() {
     const [orderList, setOrderList] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
-    const [selectedTotalPL, setSelectedTotalPL] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
     const [selectedTab, setSelectedTab] = useState(0);
     const [strategyStatus, setStrategyStatus] = useState({});
-    const [openDeactivationModal, setOpenDeactivationModal] = useState(false); // State for deactivation modal
-    const [selectedStrategyForDeactivation, setSelectedStrategyForDeactivation] = useState(null); // Strategy to deactivate
+    const [openDeactivationModal, setOpenDeactivationModal] = useState(false);
+    const [selectedStrategyForDeactivation, setSelectedStrategyForDeactivation] = useState(null);
     const socketRef = useRef(null);
     const [livePrices, setLivePrices] = useState({});
     const authState = useSelector((state) => state.auth.authState);
@@ -82,18 +82,21 @@ function DashboardDeployedContent() {
     const handleDateChange = async (event) => {
         const selectedParam = event.target.value;
         setSelectedDate(selectedParam);
-        
+        setIsLoading(true);
+
         if (selectedStrategyId && selectedParam) {
             try {
                 const { data } = await axiosInstance.get(API_ROUTER.ORDER_LIST(selectedStrategyId, selectedParam), { headers });
                 setOrderList(data);
 
-                const selectedData = datas.find(item => item.date === selectedParam);
-                setSelectedTotalPL(selectedData ? selectedData.total_pl : 0);
+                // const selectedData = datas.find(item => item.date === selectedParam);
+                // setSelectedTotalPL(selectedData ? selectedData.total_pl : 0);
 
                 initializeWebSocket(setLivePrices, socketRef);
             } catch (error) {
                 showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
+            }finally {
+                setIsLoading(false);
             }
         }
     };
@@ -146,7 +149,7 @@ function DashboardDeployedContent() {
 
     const handleConfirmDeactivation = async () => {
         if (!selectedStrategyForDeactivation) return;
-        
+
         try {
             const response = await axiosInstance.get(
                 API_ROUTER.STRATEGY_STATUS(selectedStrategyForDeactivation),
@@ -185,6 +188,12 @@ function DashboardDeployedContent() {
         setSelectedTab(newValue);
     };
 
+    const refreshbutton = () => {
+        if (selectedDate) {
+            handleDateChange({ target: { value: selectedDate } });
+        }
+    }
+
     return (
         <Box sx={{ height: "100vh", overflow: "hidden", overflowY: "auto" }}>
             <PageTitleWrapper>
@@ -198,89 +207,111 @@ function DashboardDeployedContent() {
                 </Tabs>
 
                 {selectedTab === 0 ? (
-                   <>
-                   {/* Deployed strategies content */}
-                   <Box display="flex" gap={2} pb={2}>
-                       <Select value={selectedStrategyId} onChange={handleStrategyChange} displayEmpty>
-                           <MenuItem value="" disabled>Select a strategy</MenuItem>
-                           {strategyNames?.map((item) => (
-                               <MenuItem key={item.id} value={item.id}>
-                                   {item.strategy_name}
-                               </MenuItem>
-                           ))}
-                       </Select>
-               
-                       {datas.length > 0 && (
-                           <Select value={selectedDate} onChange={handleDateChange} displayEmpty>
-                               <MenuItem value="" disabled>Select a date</MenuItem>
-                               {datas.map((item, index) => (
-                                   <MenuItem key={index} value={item.date}>
-                                       {item.date.split('-')[2]} (total pl: {item.total_pl})
-                                   </MenuItem>
-                               ))}
-                           </Select>
-                       )}
-                   </Box>
-               
-                   {orderList.length > 0 && (
-                       <TableContainer component={Paper}>
-                           <Table>
-                               <TableHead>
-                                   <TableRow>
-                                       <TableCell>Created At</TableCell>
-                                       <TableCell>Symbol</TableCell>
-                                       <TableCell>Order Type</TableCell>
-                                       <TableCell>Open Price</TableCell>
-                                       <TableCell>Close Price</TableCell>
-                                       <TableCell>Profit/Loss</TableCell>
-                                       <TableCell>Quantity</TableCell>
-                                       <TableCell>Order Status</TableCell>
-                                   </TableRow>
-                               </TableHead>
-                               <TableBody>
-                                   {orderList.map((order) => {
-                                       const closePrice = order.close_price === null ? getLivePrice(order.token) : order.close_price;
-                                       const profit = order.order_type === 'SELL' 
-                                           ? (order.open_price - closePrice) * order.quantity
-                                           : (closePrice - order.open_price) * order.quantity;
-                                       return (
-                                           <TableRow key={order.id}>
-                                               <TableCell>{new Date(order.created_at).toLocaleString()}</TableCell>
-                                               <TableCell onClick={() => handleSymbolClick(order)} style={{ cursor: 'pointer', color: 'lightblue', textDecoration: 'underline' }}>
-                                                   {order.symbol}
-                                               </TableCell>
-                                               <TableCell>{order.order_type}</TableCell>
-                                               <TableCell>{order.open_price}</TableCell>
-                                               <TableCell>{closePrice}</TableCell>
-                                               <TableCell>{new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(profit)}</TableCell>
-                                               <TableCell>{order.quantity}</TableCell>
-                                               <TableCell>{order.order_status}</TableCell>
-                                           </TableRow>
-                                       );
-                                   })}
-                               </TableBody>
-                               <TableFooter>
-                                   <TableRow>
-                                       <TableCell colSpan={5} align="right"><strong>Total PnL:</strong></TableCell>
-                                       <TableCell>
-                                           {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
-                                               orderList.reduce((total, order) => {
-                                                   const closePrice = order.close_price === null ? getLivePrice(order.token) : order.close_price;
-                                                   const profit = order.order_type === 'SELL' 
-                                                       ? (order.open_price - closePrice) * order.quantity
-                                                       : (closePrice - order.open_price) * order.quantity;
-                                                   return total + profit;
-                                               }, 0)
-                                           )}
-                                       </TableCell>
-                                       <TableCell colSpan={2}></TableCell>
-                                   </TableRow>
-                               </TableFooter>
-                           </Table>
-                       </TableContainer>
-                   )}
-               </>
-               
+                    <>
+                        {/* Deployed strategies content */}
+                        <Box display="flex" gap={2} pb={2}>
+                            <Select value={selectedStrategyId} onChange={handleStrategyChange} displayEmpty>
+                                <MenuItem value="" disabled>Select a strategy</MenuItem>
+                                {strategyNames?.map((item) => (
+                                    <MenuItem key={item.id} value={item.id}>
+                                        {item.strategy_name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+
+                            {datas.length > 0 && (
+                                <Select value={selectedDate} onChange={handleDateChange} displayEmpty>
+                                    <MenuItem value="" disabled>Select a date</MenuItem>
+                                    {datas.map((item, index) => (
+                                        <MenuItem key={index} value={item.date}>
+                                            {item.date.split('-')[2]} (total pl: {item.total_pl})
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            )}
+                            <Button onClick={() => refreshbutton()}
+                                color="primary"
+                                variant="contained"
+                                size="small">
+                                Refresh
+                            </Button>
+                        </Box>
+
+                        {orderList.length > 0 && (
+                            <TableContainer component={Paper}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Created At</TableCell>
+                                        <TableCell>Symbol</TableCell>
+                                        <TableCell>Order Type</TableCell>
+                                        <TableCell>Open Price</TableCell>
+                                        <TableCell>Close Price</TableCell>
+                                        <TableCell>Profit/Loss</TableCell>
+                                        <TableCell>Quantity</TableCell>
+                                        <TableCell>Order Status</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {isLoading ? (
+                                        [...Array(orderList.length || 3)].map((_, index) => (
+                                            <TableRow key={index}>
+                                                <TableCell><Skeleton variant="text" width="100%" /></TableCell>
+                                                <TableCell><Skeleton variant="text" width="100%" /></TableCell>
+                                                <TableCell><Skeleton variant="text" width="100%" /></TableCell>
+                                                <TableCell><Skeleton variant="text" width="100%" /></TableCell>
+                                                <TableCell><Skeleton variant="text" width="100%" /></TableCell>
+                                                <TableCell><Skeleton variant="text" width="100%" /></TableCell>
+                                                <TableCell><Skeleton variant="text" width="100%" /></TableCell>
+                                                <TableCell><Skeleton variant="text" width="100%" /></TableCell>
+                                            </TableRow>
+                                        ))
+                                    ) : (
+                                        orderList.map((order) => {
+                                            const closePrice = order.close_price === null ? getLivePrice(order.token) : order.close_price;
+                                            const profit = order.order_type === 'SELL'
+                                                ? (order.open_price - closePrice) * order.quantity
+                                                : (closePrice - order.open_price) * order.quantity;
+                                            return (
+                                                <TableRow key={order.id}>
+                                                    <TableCell>{new Date(order.created_at).toLocaleString()}</TableCell>
+                                                    <TableCell onClick={() => handleSymbolClick(order)} style={{ cursor: 'pointer', color: 'lightblue', textDecoration: 'underline' }}>
+                                                        {order.symbol}
+                                                    </TableCell>
+                                                    <TableCell>{order.order_type}</TableCell>
+                                                    <TableCell>{order.open_price}</TableCell>
+                                                    <TableCell>{closePrice}</TableCell>
+                                                    <TableCell>{new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(profit)}</TableCell>
+                                                    <TableCell>{order.quantity}</TableCell>
+                                                    <TableCell>{order.order_status}</TableCell>
+                                                </TableRow>
+                                            );
+                                        })
+                                    )}
+                                </TableBody>
+                                <TableFooter>
+                                    <TableRow>
+                                        <TableCell colSpan={5} align="right"><strong>Total PnL:</strong></TableCell>
+                                        <TableCell>
+                                            {new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
+                                                orderList.reduce((total, order) => {
+                                                    const closePrice = order.close_price === null ? getLivePrice(order.token) : order.close_price;
+                                                    const profit = order.order_type === 'SELL'
+                                                        ? (order.open_price - closePrice) * order.quantity
+                                                        : (closePrice - order.open_price) * order.quantity;
+                                                    return total + profit;
+                                                }, 0)
+                                            )}
+                                        </TableCell>
+                                        <TableCell colSpan={2}></TableCell>
+                                    </TableRow>
+                                </TableFooter>
+                            </Table>
+                        </TableContainer>
+                        
+                        )}
+                    </>
+
                 ) : (
                     // --------MY STRATEGY PART
                     <Box>

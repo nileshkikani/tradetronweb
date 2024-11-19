@@ -446,7 +446,7 @@ function RegisterCover() {
                       : '/auth/login/cover'
                   }
                 >
-                  <b>Sign in here</b>
+                  <b>Login here</b>
                 </Link>
               </Box>
             </Card>

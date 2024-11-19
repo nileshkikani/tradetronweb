@@ -33,7 +33,7 @@ const ContactUs = () => {
         showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
+      // console.error("Error submitting form:", error);
       showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
     }
   };

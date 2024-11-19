@@ -162,7 +162,7 @@ const DashboardBrokersContent = () => {
                     Kotak Neo
                 </Button>
             </Box>
-            <Box p={5} sx={{ height: "calc(100vh - 302px)", overflow: "hidden", overflowY: "auto", paddingBottom: "110px" }}>
+            <Box p={5} sx={{ height: "calc(100vh - 332px)", overflow: "hidden", overflowY: "auto" }}>
                 {selectedBroker && (selectedBroker === 'angel' && isAngelAdded || selectedBroker === 'kotak' && isKotakAdded) ? (
                     <Typography variant="caption">{selectedBroker} already added</Typography>
                 ) : (

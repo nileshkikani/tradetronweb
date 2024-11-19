@@ -1,3 +1,4 @@
+'use client'
 import { createContext, useEffect, useReducer } from 'react';
 import PropTypes from 'prop-types';
 // import { decode } from '../utils/jwt';
@@ -5,6 +6,8 @@ import { useDispatch } from 'react-redux';
 import axiosInstance from 'src/utils/axios';
 import { API_ROUTER } from 'src/services/routes';
 import { setAuth } from 'src/redux/reducers/authSlice';
+// import useToast from 'src/hooks/useToast';
+// import { TOAST_ALERTS, TOAST_TYPES } from 'src/constants/keywords';
 
 const initialAuthState = {
   isAuthenticated: false,
@@ -61,6 +64,7 @@ export const AuthContext = createContext({
 export const AuthProvider = (props) => {
   const { children } = props;
   const [state, dispatch] = useReducer(reducer, initialAuthState);
+  // const { showToast } = useToast();
 
   const dispatchStore = useDispatch();
 
@@ -121,6 +125,7 @@ export const AuthProvider = (props) => {
         payload: { user }
       });
     } catch (error) {
+      // showToast(error.response.non_field_errors[0] || TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
       console.error('Login error:', error);
     }
   };
