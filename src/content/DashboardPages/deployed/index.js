@@ -10,6 +10,7 @@ import { Box, Skeleton, Typography, Table, TableBody, TableCell, TableContainer,
 import CustomModal from 'src/components/Deployed/DeployedModal';
 import { TOAST_ALERTS, TOAST_TYPES } from 'src/constants/keywords';
 import { initializeWebSocket } from 'src/utils/socket';
+import { useAuth } from 'src/hooks/useAuth';
 import useToast from 'src/hooks/useToast';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
@@ -34,6 +35,7 @@ function DashboardDeployedContent() {
     const { showToast } = useToast();
 
     const headers = { Authorization: `Bearer ${authState}` };
+    const { handleResponceError } = useAuth();
 
     // Function to fetch order dates based on strategy ID
     const getData = async (id) => {
@@ -64,6 +66,7 @@ function DashboardDeployedContent() {
                 }, {})
             );
         } catch (error) {
+            handleResponceError();
             showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
         }
     };

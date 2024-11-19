@@ -151,13 +151,23 @@ export const AuthProvider = (props) => {
     });
   };
 
+  // const handleResponceError = () => {
+  //   localStorage.removeItem('accessToken');
+  //   auth0Client.logout();
+  //   dispatch({
+  //     type: 'LOGOUT'
+  //   });
+  //   router.push('/login');
+  // }
+
   return (
     <AuthContext.Provider
       value={{
         ...state,
         method: 'Auth0',
         loginWithPopup,
-        logout
+        logout,
+        // handleResponceError
       }}
     >
       {children}

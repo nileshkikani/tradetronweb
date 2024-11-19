@@ -26,6 +26,7 @@ import { TOAST_ALERTS, TOAST_TYPES } from 'src/constants/keywords';
 import axiosInstance from 'src/utils/axios';
 import { useSelector } from 'react-redux';
 import useToast from 'src/hooks/useToast';
+import { useAuth } from 'src/hooks/useAuth';
 
 
 const initialFormStateObj = {
@@ -64,6 +65,7 @@ function DashboardOptionWizardContent() {
     const authState = useSelector((state) => state.auth.authState);
 
     const { showToast } = useToast();
+    const { handleResponceError } = useAuth();
 
     //bear token for api calling
     const headers = { Authorization: `Bearer ${authState}` };
@@ -136,6 +138,7 @@ function DashboardOptionWizardContent() {
             }));
             setStrategyName(strategies);
         } catch (error) {
+            handleResponceError();
             showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
         }
     };

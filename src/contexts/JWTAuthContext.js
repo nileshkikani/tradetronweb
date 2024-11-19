@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import axiosInstance from 'src/utils/axios';
 import { API_ROUTER } from 'src/services/routes';
 import { setAuth } from 'src/redux/reducers/authSlice';
+import { useRouter } from 'next/router'
 // import useToast from 'src/hooks/useToast';
 // import { TOAST_ALERTS, TOAST_TYPES } from 'src/constants/keywords';
 
@@ -58,7 +59,8 @@ export const AuthContext = createContext({
   ...initialAuthState,
   method: 'JWT',
   logout: () => Promise.resolve(),
-  register: () => Promise.resolve()
+  register: () => Promise.resolve(),
+  handleResponceError: () => Promise.resolve()
 });
 
 export const AuthProvider = (props) => {
@@ -67,13 +69,14 @@ export const AuthProvider = (props) => {
   // const { showToast } = useToast();
 
   const dispatchStore = useDispatch();
+  const router = useRouter();
 
-  const users = []; 
+  const users = [];
 
   const getUserFromToken = (token) => {
     try {
       const { userId } = decode(token);
-      return users.find(user => user.id === userId); 
+      return users.find(user => user.id === userId);
     } catch (error) {
       console.error('Error decoding token:', error);
       return null;
@@ -106,18 +109,18 @@ export const AuthProvider = (props) => {
 
   const login = async (email, password) => {
     try {
-      const { data } = await axiosInstance.post(API_ROUTER.LOG_IN ,
+      const { data } = await axiosInstance.post(API_ROUTER.LOG_IN,
         JSON.stringify({ email, password }), {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
       );
       // console.log('daraa',data)
       // console.log('axios',axiosInstance)
       const accessToken = data.tokens.access;
-      localStorage.setItem('accessToken', accessToken); 
-      
+      localStorage.setItem('accessToken', accessToken);
+
       const user = getUserFromToken(accessToken);
       dispatchStore(setAuth(accessToken));
       dispatch({
@@ -137,15 +140,15 @@ export const AuthProvider = (props) => {
 
   const register = async (email, full_name, password) => {
     try {
-      const { data } = await axiosInstance.post(API_ROUTER.REGISTER, 
+      const { data } = await axiosInstance.post(API_ROUTER.REGISTER,
         JSON.stringify({ email, full_name, password }), {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
       );
 
-      const accessToken = data.tokens.access; 
+      const accessToken = data.tokens.access;
       localStorage.setItem('accessToken', accessToken);
 
       const newUser = {
@@ -155,7 +158,7 @@ export const AuthProvider = (props) => {
 
       };
 
-      users.push(newUser); 
+      users.push(newUser);
 
       const user = getUserFromToken(accessToken);
       dispatch({
@@ -167,6 +170,15 @@ export const AuthProvider = (props) => {
     }
   };
 
+  const handleResponceError = () => {
+    localStorage.removeItem('accessToken');
+    logout();
+    dispatch({
+      type: 'LOGOUT'
+    });
+    router.push('/login');
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -174,7 +186,8 @@ export const AuthProvider = (props) => {
         method: 'JWT',
         login,
         logout,
-        register
+        register,
+        handleResponceError
       }}
     >
       {children}
