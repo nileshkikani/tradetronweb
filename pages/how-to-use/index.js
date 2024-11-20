@@ -186,6 +186,15 @@ const HowToUse = () => {
             <Typography variant="body1" sx={{ paddingTop: '10px' }}>
                 • Your Broker credentials are full secured and encrypted in transist
             </Typography>
+            <Box sx={{ paddingTop: '30px' }}>
+                <Image
+                    src="/static/images/how-to-use/add-broker.png"
+                    alt="Create Your Own Strategy"
+                    width={900}
+                    height={500}
+                    style={{ width: '100%', maxWidth: '800px', height: 'auto', display: 'block' }}
+                />
+            </Box>
         </Box>
     )
 }
