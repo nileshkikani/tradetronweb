@@ -76,6 +76,15 @@ function Footer() {
             Privacy Policy
             </Link>
           </Box>
+          <Box mx={2}>
+            <Link
+              href="/how-to-use"
+              // onClick={handlePrivacyPolicyClick}
+              passHref
+            >
+            How To Use ?
+            </Link>
+          </Box>
         </Box>
         <Typography sx={{ pt: { xs: 2, md: 0 } }} variant="subtitle1">
           Made in India

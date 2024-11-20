@@ -26,9 +26,9 @@ export const API_ROUTER = {
 
     
     ORDER_DATE_LIST: (id) => (`orders/dates/${id}/`),
-    ORDER_LIST: (id, selectedDate, positionType) => {
+    ORDER_LIST: (id, selectedDate, symbol) => {
         const baseUrl = `orders/${id}/?date=${selectedDate}`;
-        return positionType ? `${baseUrl}&position_type=${positionType}` : baseUrl;
+        return symbol ? `${baseUrl}&symbol=${symbol}` : baseUrl;
       },
 
 

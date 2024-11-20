@@ -108,7 +108,7 @@ function DashboardDeployedContent() {
     };
 
     const handleSymbolClick = async (order) => {
-        const positionType = order.position_type;
+        const positionType = order.symbol;
         if (selectedStrategyId && selectedDate) {
             try {
                 const { data } = await axiosInstance.get(API_ROUTER.ORDER_LIST(selectedStrategyId, selectedDate, positionType), { headers });
