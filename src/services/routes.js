@@ -3,6 +3,7 @@ export const API_ROUTER = {
     LOG_IN: "user/login/",
     REGISTER: "user/register-user/",
     VERIFY_CODE: "user/verify-user/",
+    REFRESH_TOKEN:'user/token-refresh/',
     FORGOT_PASSWORD: "user/request-password-reset/",
     RESET_PASSWORD_CODE:"user/password-reset/",
     CHANGE_PASSWORD :"user/change-password/",

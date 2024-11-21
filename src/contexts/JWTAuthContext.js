@@ -1,14 +1,11 @@
 'use client'
 import { createContext, useEffect, useReducer } from 'react';
 import PropTypes from 'prop-types';
-// import { decode } from '../utils/jwt';
 import { useDispatch } from 'react-redux';
 import axiosInstance from 'src/utils/axios';
 import { API_ROUTER } from 'src/services/routes';
 import { setAuth } from 'src/redux/reducers/authSlice';
 import { useRouter } from 'next/router'
-// import useToast from 'src/hooks/useToast';
-// import { TOAST_ALERTS, TOAST_TYPES } from 'src/constants/keywords';
 
 const initialAuthState = {
   isAuthenticated: false,
@@ -19,7 +16,6 @@ const initialAuthState = {
 const handlers = {
   INITIALIZE: (state, action) => {
     const { isAuthenticated, user } = action.payload;
-
     return {
       ...state,
       isAuthenticated,
@@ -29,7 +25,6 @@ const handlers = {
   },
   LOGIN: (state, action) => {
     const { user } = action.payload;
-
     return {
       ...state,
       isAuthenticated: true,
@@ -43,7 +38,6 @@ const handlers = {
   }),
   REGISTER: (state, action) => {
     const { user } = action.payload;
-
     return {
       ...state,
       isAuthenticated: true,
@@ -66,7 +60,6 @@ export const AuthContext = createContext({
 export const AuthProvider = (props) => {
   const { children } = props;
   const [state, dispatch] = useReducer(reducer, initialAuthState);
-  // const { showToast } = useToast();
 
   const dispatchStore = useDispatch();
   const router = useRouter();
@@ -96,6 +89,17 @@ export const AuthProvider = (props) => {
           user
         }
       });
+
+      // check if the login time is 23 hours ago or more
+      const loginTime = localStorage.getItem('time');
+      const currentTime = Date.now();
+      const timeDiff = currentTime - loginTime;
+
+      // if more than or equal to 23 hours (in milliseconds), refresh the token
+      if (timeDiff >= 23 * 60 * 60 * 1000) {
+        refreshToken();
+      }
+
     } else {
       dispatch({
         type: 'INITIALIZE',
@@ -105,6 +109,15 @@ export const AuthProvider = (props) => {
         }
       });
     }
+
+    // start refreshing the token every 10 seconds after authentication
+    // const intervalId = setInterval(() => {
+      // refreshToken();
+    // },  23 * 60 * 60 * 1000); // 23 hours in milliseconds
+
+    // Cleanup the interval on component unmount
+    // return () => clearInterval(intervalId);
+
   }, []);
 
   const login = async (email, password) => {
@@ -114,12 +127,13 @@ export const AuthProvider = (props) => {
         headers: {
           'Content-Type': 'application/json',
         },
-      }
-      );
-      // console.log('daraa',data)
-      // console.log('axios',axiosInstance)
+      });
+
       const accessToken = data.tokens.access;
+      const refreshToken = data.tokens.refresh;
       localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem('time', Date.now().toString());
 
       const user = getUserFromToken(accessToken);
       dispatchStore(setAuth(accessToken));
@@ -128,13 +142,14 @@ export const AuthProvider = (props) => {
         payload: { user }
       });
     } catch (error) {
-      // showToast(error.response.non_field_errors[0] || TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
       console.error('Login error:', error);
     }
   };
 
   const logout = async () => {
     localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('time');
     dispatch({ type: 'LOGOUT' });
   };
 
@@ -145,8 +160,7 @@ export const AuthProvider = (props) => {
         headers: {
           'Content-Type': 'application/json',
         },
-      }
-      );
+      });
 
       const accessToken = data.tokens.access;
       localStorage.setItem('accessToken', accessToken);
@@ -155,7 +169,6 @@ export const AuthProvider = (props) => {
         id: new Date().getTime().toString(),
         email,
         full_name,
-
       };
 
       users.push(newUser);
@@ -176,8 +189,27 @@ export const AuthProvider = (props) => {
     dispatch({
       type: 'LOGOUT'
     });
-    router.push('/login');
-  }
+    router.push('/');
+  };
+
+  const refreshToken = async () => {
+    const accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+    try {
+      const response = await axiosInstance.post(
+        API_ROUTER.REFRESH_TOKEN,
+        { refresh: refreshToken },
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      );
+      const newAccessToken = response.data.access;
+      if (newAccessToken) {
+        localStorage.setItem('accessToken', newAccessToken);
+        localStorage.setItem('time', Date.now().toString());
+      }
+    } catch (error) {
+      console.error("Error refreshing token", error);
+    }
+  };
 
   return (
     <AuthContext.Provider

@@ -1,11 +1,13 @@
 import React from 'react';
 import { Typography, Box } from '@mui/material';
 import Image from 'next/image';
+import BaseLayout from 'src/layouts/BaseLayout';
 
 
 const HowToUse = () => {
     return (
         <Box sx={{ padding: '20px' }}>
+            {/* <Box  sx={{ flex: 1, padding: '20px' }}> */}
             <Typography variant="h2" gutterBottom>
                 What is TradeOnAir?
             </Typography>
@@ -194,9 +196,14 @@ const HowToUse = () => {
                     height={500}
                     style={{ width: '100%', maxWidth: '800px', height: 'auto', display: 'block' }}
                 />
+            {/* </Box> */}
             </Box>
         </Box>
     )
-}
+};
 
+HowToUse.getLayout = function getLayout(page) {
+    return <BaseLayout>{page}</BaseLayout>;
+  };
+  
 export default HowToUse

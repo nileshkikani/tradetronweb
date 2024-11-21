@@ -1,18 +1,31 @@
-import React from 'react'
-import { Box, Typography } from '@mui/material';
+import React from 'react';
+import { Box, Typography,styled } from '@mui/material';
 import Footer from 'src/components/Footer';
+import BaseLayout from 'src/layouts/BaseLayout';
 
+
+const OverviewWrapper = styled(Box)(
+    ({ theme }) => `
+      overflow: auto;
+      background: ${theme.palette.common.white};
+      flex: 1;
+      overflow-x: hidden;
+  `
+  );
+
+// Define the PrivacyPolicy page content
 const PrivacyPolicy = () => {
   return (
+    // <OverviewWrapper>
     <Box sx={{
         display: 'flex',
         flexDirection: 'column',
-        minHeight: '100vh', 
+        minHeight: '100vh',
     }}>
         <Box sx={{
-            flex: 1, 
+            flex: 1,
             padding: 3,
-            overflowY: 'auto', 
+            overflowY: 'auto',
         }}>
             <Typography variant="h4" gutterBottom>
                 Privacy Policy
@@ -71,10 +84,16 @@ const PrivacyPolicy = () => {
                 If you have pending payments due while requesting for deletion, you will be informed and the deletion process will not take place till you sort out the dues and request for a deletion again after doing so.
             </Typography>
         </Box>
-        
+
         <Footer sx={{ marginTop: 'auto' }} />
     </Box>
-  )
+    // </OverviewWrapper>
+  );
 }
+
+// add the layout wrapper for the PrivacyPolicy page
+PrivacyPolicy.getLayout = function getLayout(page) {
+    return <BaseLayout>{page}</BaseLayout>;
+  };
 
 export default PrivacyPolicy;

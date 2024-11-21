@@ -37,13 +37,14 @@ function DashboardDeployedContent() {
     const headers = { Authorization: `Bearer ${authState}` };
     const { handleResponceError } = useAuth();
 
-    // Function to fetch order dates based on strategy ID
+    // function to fetch order dates based on strategy ID
     const getData = async (id) => {
         if (!id) return;
         try {
             const { data } = await axiosInstance.get(API_ROUTER.ORDER_DATE_LIST(id), { headers });
             setDatas(data);
         } catch (error) {
+            handleResponceError();
             showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
         }
     };
@@ -86,17 +87,17 @@ function DashboardDeployedContent() {
     };
 
     const handleDateChange = async (event) => {
-        const selectedParam = event.target.value;
+        const selectedParam = event?.target?.value || event;
+    
+        if (!selectedParam) return;
         setSelectedDate(selectedParam);
+        localStorage.setItem('selectedDate',selectedParam)
         setIsLoading(true);
 
         if (selectedStrategyId && selectedParam) {
             try {
                 const { data } = await axiosInstance.get(API_ROUTER.ORDER_LIST(selectedStrategyId, selectedParam), { headers });
                 setOrderList(data);
-
-                // const selectedData = datas.find(item => item.date === selectedParam);
-                // setSelectedTotalPL(selectedData ? selectedData.total_pl : 0);
 
                 initializeWebSocket(setLivePrices, socketRef);
             } catch (error) {
@@ -176,9 +177,14 @@ function DashboardDeployedContent() {
 
     useEffect(() => {
         const storedStrategyId = localStorage.getItem('selectedStrategyId');
+        const selectedDate = localStorage.getItem('selectedDate');
         if (storedStrategyId) {
             setSelectedStrategyId(storedStrategyId);
             getData(storedStrategyId);
+        }
+        if(selectedDate){
+            setSelectedDate(selectedDate);
+            handleDateChange(selectedDate)
         }
         getStrategyList();
 
