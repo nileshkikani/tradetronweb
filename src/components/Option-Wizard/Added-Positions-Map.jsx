@@ -19,7 +19,21 @@ const AddedPositions = ({ position, index, remove }) => {
     return null;
   };
 
+  const allowedIndexNames = [
+    // "BANKNIFTY",
+    "NIFTY",
+    // "FINNIFTY",
+    // "MIDCPNIFTY",
+    // "CRUDEOIL",
+    // "CRUDEOILM",
+  ];
+
   const underlying = values.index_name;
+
+  // Define expiry options based on index_name
+  const expiryOptions = allowedIndexNames.includes(underlying)
+    ? ["CURRENT_WEEK", "NEXT_WEEK", "CURRENT_MONTH", "NEXT_MONTH"]
+    : ["CURRENT_MONTH"];
 
   return (
     <Box
@@ -49,9 +63,7 @@ const AddedPositions = ({ position, index, remove }) => {
         { 
           name: `positions[${index}].expiry`, 
           label: 'Expiry', 
-          options: underlying === "CRUDEOIL" || underlying === "CRUDEOILM" 
-            ? ['CURRENT_MONTH'] 
-            : ['CURRENT_WEEK', 'NEXT_WEEK', 'CURRENT_MONTH', 'NEXT_MONTH'] 
+          options: expiryOptions 
         },
       ].map(({ name, label, options }) => (
         <Box key={name} display="flex" flexDirection="column" flex={1} minWidth="100px">
@@ -108,22 +120,23 @@ const AddedPositions = ({ position, index, remove }) => {
 
       {/* Order Take Profit Value */}
       <Box display="flex" flexDirection="column" flex={1} minWidth="100px">
-        <FormControl variant="outlined" fullWidth>
-          {/* <InputLabel>Take Profit Value</InputLabel> */}
-          <Field
-            name={`positions[${index}].order_take_profit_value`}
-            label='take profit value'
-            type="number"
-            as={TextField}
-            variant="outlined"
-            fullWidth
-            InputLabelProps={{ shrink: true }}
-          />
-          <FormHelperText>
-            <ErrorMessage name={`positions[${index}].order_take_profit_value`} component="span" />
-          </FormHelperText>
-        </FormControl>
-      </Box>
+  <FormControl variant="outlined" fullWidth>
+    {/* <InputLabel>Take Profit Value</InputLabel> */}
+    <Field
+      name={`positions[${index}].order_take_profit_value`} 
+      label='Take Profit Value'
+      type="number"
+      as={TextField}
+      variant="outlined"
+      fullWidth
+      InputLabelProps={{ shrink: true }}
+      disabled={values.order_take_profit_type === 'none'}
+    />
+    <FormHelperText>
+      <ErrorMessage name={`positions[${index}].order_take_profit_value`} component="span" />
+    </FormHelperText>
+  </FormControl>
+</Box>
 
       {/* Order Stop Loss Value */}
       <Box display="flex" flexDirection="column" flex={1} minWidth="100px">
@@ -137,6 +150,7 @@ const AddedPositions = ({ position, index, remove }) => {
             variant="outlined"
             fullWidth
             InputLabelProps={{ shrink: true }}
+            disabled={values.order_stop_loss_type === 'none'}
           />
           <FormHelperText>
             <ErrorMessage name={`positions[${index}].order_stop_loss_value`} component="span" />

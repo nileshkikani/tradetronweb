@@ -28,9 +28,10 @@ const DashboardBrokersContent = () => {
     const [selectedBroker, setSelectedBroker] = useState('');
     const [isAngelAdded, setIsAngelAdded] = useState(false);
     const [isKotakAdded, setIsKotakAdded] = useState(false);
+    const [isDhanAdded, setIsDhanAdded] = useState(false);
 
     const { showToast } = useToast();
-    const { encryptAngelCredentials, encryptKotakCredentials } = useEncryption();
+    const { encryptAngelCredentials, encryptKotakCredentials, encryptDhanCredentials } = useEncryption();
     const headers = { Authorization: `Bearer ${authState}`, "Content-Type": "application/json" };
 
     const formik = useFormik({
@@ -45,7 +46,9 @@ const DashboardBrokersContent = () => {
             neo_fin_key: '',
             mobile_no: '',
             login_password: '',
-            mpin: ''
+            mpin: '',
+            client_id:'',
+            access_token:''
         },
         validationSchema: getBrokerValidationSchema(selectedBroker),
         onSubmit: async (values) => {
@@ -55,7 +58,11 @@ const DashboardBrokersContent = () => {
                         provider: selectedBroker,
                         creds: selectedBroker === 'kotak'
                             ? encryptKotakCredentials(values)
-                            : encryptAngelCredentials(values),
+                            : selectedBroker === 'angel'
+                                ? encryptAngelCredentials(values)
+                                : selectedBroker === 'dhan'
+                                    ? encryptDhanCredentials(values)
+                                    : '',
                     },
                 };
                 await axiosInstance.post(API_ROUTER.ADD_BROKER, encryptedData, { headers });
@@ -71,7 +78,13 @@ const DashboardBrokersContent = () => {
             const { data } = await axiosInstance.get(API_ROUTER.UPDATE_BROKER, { headers });
             setIsAngelAdded(data.accounts.angel);
             setIsKotakAdded(data.accounts.kotak);
-            setSelectedBroker(data.accounts.kotak ? 'kotak' : (data.accounts.angel ? 'angel' : ''));
+            setIsDhanAdded(data.accounts.dhan);
+            setSelectedBroker(
+                data.accounts.kotak ? 'kotak' :
+                    data.accounts.angel ? 'angel' :
+                        data.accounts.dhan ? 'dhan' : ''
+            );
+
         } catch (error) {
             if (error.response && error.response.status === 400) {
                 const errorMessage = error.response.data[0] || "You don't have any broker added";
@@ -109,6 +122,10 @@ const DashboardBrokersContent = () => {
                 { name: 'login_password', label: 'Login Password', type: 'password' },
                 { name: 'mpin', label: 'MPIN', type: 'password' },
             ],
+            dhan:[
+                {name:'client_id',label:'Client Id'},
+                {name:'access_token',label:'Access Token'},
+            ]
         };
 
         return fields[selectedBroker]?.map(field => (
@@ -161,9 +178,17 @@ const DashboardBrokersContent = () => {
                 >
                     Kotak Neo
                 </Button>
+                <Button
+                    variant="outlined"
+                    onClick={() => handleOpen('dhan')}
+                    startIcon={<Image src="/dhan.svg" alt="Kotak" width={60} height={60} />}
+                    endIcon={selectedBroker === 'dhan' ? <CheckCircleIcon color="success" /> : null}
+                >
+                    Dhan
+                </Button>
             </Box>
             <Box p={5} sx={{ height: "calc(100vh - 332px)", overflow: "hidden", overflowY: "auto" }}>
-                {selectedBroker && (selectedBroker === 'angel' && isAngelAdded || selectedBroker === 'kotak' && isKotakAdded) ? (
+                {selectedBroker && (selectedBroker === 'angel' && isAngelAdded || selectedBroker === 'kotak' && isKotakAdded || selectedBroker === 'dhan' && isDhanAdded) ? (
                     <Typography variant="caption">{selectedBroker} already added</Typography>
                 ) : (
                     selectedBroker && (

@@ -263,7 +263,8 @@ function DashboardDeployedContent() {
                         </Box>
 
                         {orderList.length > 0 && (
-                            <TableContainer component={Paper}>
+                            // sx={{ height: 'calc(80vh - 300px)' }}
+                            <TableContainer component={Paper} >
                                 <Table>
                                     <TableHead>
                                         <TableRow>
