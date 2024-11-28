@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef,useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import Footer from 'src/components/Footer';
 import PageTitleWrapper from 'src/components/PageTitleWrapper';
 import ExtendedSidebarLayout from 'src/layouts/ExtendedSidebarLayout';
@@ -90,10 +90,10 @@ function DashboardDeployedContent() {
 
     const handleDateChange = async (event) => {
         const selectedParam = event?.target?.value || event;
-    
+
         if (!selectedParam) return;
         setSelectedDate(selectedParam);
-        localStorage.setItem('selectedDate',selectedParam)
+        localStorage.setItem('selectedDate', selectedParam)
         setIsLoading(true);
 
         if (selectedStrategyId && selectedParam) {
@@ -140,7 +140,7 @@ function DashboardDeployedContent() {
                 ...prevState,
                 [strategyId]: true, // Start loading for this strategy
             }));
-    
+
             if (currentStatus) {
                 setSelectedStrategyForDeactivation(strategyId);
                 setOpenDeactivationModal(true);
@@ -159,7 +159,7 @@ function DashboardDeployedContent() {
                     showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
                 }
             }
-    
+
             // Set loading state for the specific strategy to false after the request finishes
             setIsLoadingActivateDeactivate((prevState) => ({
                 ...prevState,
@@ -168,7 +168,7 @@ function DashboardDeployedContent() {
         }, 300),
         []
     );
-    
+
 
     const handleConfirmDeactivation = async () => {
         if (!selectedStrategyForDeactivation) return;
@@ -177,7 +177,7 @@ function DashboardDeployedContent() {
             ...prevState,
             [selectedStrategyForDeactivation]: true,
         }));
-    
+
         try {
             const response = await axiosInstance.get(
                 API_ROUTER.STRATEGY_STATUS(selectedStrategyForDeactivation),
@@ -195,11 +195,11 @@ function DashboardDeployedContent() {
                 ...prevState,
                 [selectedStrategyForDeactivation]: false,
             }));
-    
+
             setOpenDeactivationModal(false);
         }
     };
-    
+
 
     useEffect(() => {
         const storedStrategyId = localStorage.getItem('selectedStrategyId');
@@ -208,7 +208,7 @@ function DashboardDeployedContent() {
             setSelectedStrategyId(storedStrategyId);
             getData(storedStrategyId);
         }
-        if(selectedDate){
+        if (selectedDate) {
             setSelectedDate(selectedDate);
             handleDateChange(selectedDate)
         }
@@ -367,7 +367,13 @@ function DashboardDeployedContent() {
                 ) : (
                     // --------MY STRATEGY PART
                     <Box>
-                        <TableContainer component={Paper}>
+                        <TableContainer component={Paper} sx={{
+                            overflowY: 'auto', height: 'calc(100vh - 400px)', msOverflowStyle: 'none', // To hide scrollbar in IE and Edge
+                            scrollbarWidth: 'none', // To hide scrollbar in Firefox
+                            '&::-webkit-scrollbar': {
+                                display: 'none' // To hide scrollbar in WebKit browsers (Chrome, Safari)
+                            }
+                        }}>
                             <Table>
                                 <TableHead>
                                     <TableRow>
@@ -393,7 +399,7 @@ function DashboardDeployedContent() {
                                                     onClick={() => handleToggleChange(strategy.id, strategyStatus[strategy.id])}
                                                     color="primary"
                                                     size="small"
-                                                    disabled={isLoadingActivateDeactivate?.[strategy.id]} 
+                                                    disabled={isLoadingActivateDeactivate?.[strategy.id]}
                                                 >
                                                     {strategyStatus[strategy.id] ? 'Deactivate' : 'Activate'}
                                                 </Button>
@@ -443,7 +449,7 @@ function DashboardDeployedContent() {
                         Cancel
                     </Button>
                     <Button
-                         onClick={() => {
+                        onClick={() => {
                             if (selectedStrategyForDeletion !== null) {
                                 handleDeleteStrategy(selectedStrategyForDeletion);
                             }
