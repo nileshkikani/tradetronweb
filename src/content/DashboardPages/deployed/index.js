@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef,useCallback } from 'react';
 import Footer from 'src/components/Footer';
 import PageTitleWrapper from 'src/components/PageTitleWrapper';
 import ExtendedSidebarLayout from 'src/layouts/ExtendedSidebarLayout';
@@ -13,6 +13,7 @@ import { initializeWebSocket } from 'src/utils/socket';
 import { useAuth } from 'src/hooks/useAuth';
 import useToast from 'src/hooks/useToast';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import debounce from 'lodash/debounce';
 
 function DashboardDeployedContent() {
     const [datas, setDatas] = useState([]);
@@ -28,6 +29,7 @@ function DashboardDeployedContent() {
     const [openDeactivationModal, setOpenDeactivationModal] = useState(false);
     const [selectedStrategyForDeactivation, setSelectedStrategyForDeactivation] = useState(null);
     const [selectedStrategyForDeletion, setSelectedStrategyForDeletion] = useState(null);
+    const [isLoadingActivateDeactivate, setIsLoadingActivateDeactivate] = useState(null);
     const socketRef = useRef(null);
     const [livePrices, setLivePrices] = useState({});
     const [openModal, setOpenModal] = useState(false);
@@ -131,32 +133,51 @@ function DashboardDeployedContent() {
         return price;
     };
 
-    const handleToggleChange = async (strategyId, currentStatus) => {
-        if (currentStatus) {
-            // Show confirmation modal before deactivating
-            setSelectedStrategyForDeactivation(strategyId);
-            setOpenDeactivationModal(true);
-        } else {
-            // Deactivate immediately
-            try {
-                const response = await axiosInstance.get(
-                    API_ROUTER.STRATEGY_STATUS(strategyId),
-                    { headers }
-                );
-                showToast(response.data.details || TOAST_ALERTS.STRATEGY_STATUS, TOAST_TYPES.SUCCESS);
-                setStrategyStatus((prevState) => ({
-                    ...prevState,
-                    [strategyId]: !currentStatus,
-                }));
-            } catch (error) {
-                showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
+    const handleToggleChange = useCallback(
+        debounce(async (strategyId, currentStatus) => {
+            // Set loading state for the specific strategy to true
+            setIsLoadingActivateDeactivate((prevState) => ({
+                ...prevState,
+                [strategyId]: true, // Start loading for this strategy
+            }));
+    
+            if (currentStatus) {
+                setSelectedStrategyForDeactivation(strategyId);
+                setOpenDeactivationModal(true);
+            } else {
+                try {
+                    const response = await axiosInstance.get(
+                        API_ROUTER.STRATEGY_STATUS(strategyId),
+                        { headers }
+                    );
+                    showToast(response.data.details || TOAST_ALERTS.STRATEGY_STATUS, TOAST_TYPES.SUCCESS);
+                    setStrategyStatus((prevState) => ({
+                        ...prevState,
+                        [strategyId]: !currentStatus,
+                    }));
+                } catch (error) {
+                    showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
+                }
             }
-        }
-    };
+    
+            // Set loading state for the specific strategy to false after the request finishes
+            setIsLoadingActivateDeactivate((prevState) => ({
+                ...prevState,
+                [strategyId]: false,
+            }));
+        }, 300),
+        []
+    );
+    
 
     const handleConfirmDeactivation = async () => {
         if (!selectedStrategyForDeactivation) return;
 
+        setIsLoadingActivateDeactivate((prevState) => ({
+            ...prevState,
+            [selectedStrategyForDeactivation]: true,
+        }));
+    
         try {
             const response = await axiosInstance.get(
                 API_ROUTER.STRATEGY_STATUS(selectedStrategyForDeactivation),
@@ -169,11 +190,16 @@ function DashboardDeployedContent() {
             }));
         } catch (error) {
             showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
+        } finally {
+            setIsLoadingActivateDeactivate((prevState) => ({
+                ...prevState,
+                [selectedStrategyForDeactivation]: false,
+            }));
+    
+            setOpenDeactivationModal(false);
         }
-
-        // Close modal after deactivation
-        setOpenDeactivationModal(false);
     };
+    
 
     useEffect(() => {
         const storedStrategyId = localStorage.getItem('selectedStrategyId');
@@ -367,6 +393,7 @@ function DashboardDeployedContent() {
                                                     onClick={() => handleToggleChange(strategy.id, strategyStatus[strategy.id])}
                                                     color="primary"
                                                     size="small"
+                                                    disabled={isLoadingActivateDeactivate?.[strategy.id]} 
                                                 >
                                                     {strategyStatus[strategy.id] ? 'Deactivate' : 'Activate'}
                                                 </Button>
@@ -400,7 +427,8 @@ function DashboardDeployedContent() {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setOpenDeactivationModal(false)} color="primary">Cancel</Button>
-                    <Button onClick={handleConfirmDeactivation} color="error">Deactivate</Button>
+                    <Button onClick={handleConfirmDeactivation} color="error" disabled={isLoadingActivateDeactivate?.[selectedStrategyForDeactivation]} // Ensure safe access
+                    >Deactivate</Button>
                 </DialogActions>
             </Dialog>
 
