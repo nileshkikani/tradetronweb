@@ -47,8 +47,8 @@ const DashboardBrokersContent = () => {
             mobile_no: '',
             login_password: '',
             mpin: '',
-            client_id:'',
-            access_token:''
+            client_id: '',
+            access_token: ''
         },
         validationSchema: getBrokerValidationSchema(selectedBroker),
         onSubmit: async (values) => {
@@ -122,9 +122,9 @@ const DashboardBrokersContent = () => {
                 { name: 'login_password', label: 'Login Password', type: 'password' },
                 { name: 'mpin', label: 'MPIN', type: 'password' },
             ],
-            dhan:[
-                {name:'client_id',label:'Client Id'},
-                {name:'access_token',label:'Access Token'},
+            dhan: [
+                { name: 'client_id', label: 'Client Id' },
+                { name: 'access_token', label: 'Access Token' },
             ]
         };
 
@@ -187,7 +187,11 @@ const DashboardBrokersContent = () => {
                     Dhan
                 </Button>
             </Box>
-            <Box p={5} sx={{ height: "calc(100vh - 332px)", overflow: "hidden", overflowY: "auto" }}>
+            <Box p={5} sx={{
+                height: selectedBroker === 'angel' ? 'auto' : 'calc(500px - 50px)',
+                overflow: selectedBroker === 'angel' ? 'visible' : 'hidden',
+                overflowY: selectedBroker === 'angel' ? 'visible' : 'auto'
+            }}>
                 {selectedBroker && (selectedBroker === 'angel' && isAngelAdded || selectedBroker === 'kotak' && isKotakAdded || selectedBroker === 'dhan' && isDhanAdded) ? (
                     <Typography variant="caption">{selectedBroker} already added</Typography>
                 ) : (

@@ -10,6 +10,7 @@ import Hero from 'src/content/Overview/Hero';
 import Highlights from 'src/content/Overview/Highlights';
 // import LanguageSwitcher from 'src/layouts/BoxedSidebarLayout/Header/Buttons/LanguageSwitcher';
 import Footer from 'src/components/Footer';
+import Navbar1 from '../src/components/Navbar/index';
 
 const HeaderWrapper = styled(Card)(
   ({ theme }) => `
@@ -39,7 +40,8 @@ function Overview() {
         <title>Trading For Everyone</title>
       </Head>
       <HeaderWrapper>
-        <Container maxWidth="lg">
+        <Navbar1 />
+        {/* <Container maxWidth="lg">
           <Box display="flex" alignItems="center">
             <Logo />
             <Box
@@ -50,18 +52,18 @@ function Overview() {
             >
               <Box />
               <Box>
-              {/* <Link
+                <Link
                     href="/privacy-policy"
                     style={{ cursor: 'pointer', marginRight: '16px' }}
                   >
                     {t('Privacy policy')}
-                  </Link> */}
-                  <Link
-                    href="/affiliates"
-                    style={{ cursor: 'pointer', marginRight: '16px' }}
-                  >
-                    {t('Affiliates')}
                   </Link>
+                <Link
+                  href="/affiliates"
+                  style={{ cursor: 'pointer', marginRight: '16px' }}
+                >
+                  {t('Affiliates')}
+                </Link>
                 <Link
                   href="/contact-us"
                   style={{ cursor: 'pointer' }}
@@ -87,7 +89,7 @@ function Overview() {
               </Box>
             </Box>
           </Box>
-        </Container>
+        </Container> */}
       </HeaderWrapper>
       <Hero />
       {/* <Highlights /> */}
