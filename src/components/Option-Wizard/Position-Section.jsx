@@ -19,11 +19,11 @@ const PositionSection = ({ push,indexAndStocksNames }) => {
 
   const getOptionSegmentType = () => {
     const itmOptions = Array.from(
-      { length: 20 },
-      (_, i) => `ITM_${(20 - i).toString()}`
+      { length: 50 },
+      (_, i) => `ITM_${(50 - i).toString()}`
     );
     const otmOptions = Array.from(
-      { length: 20 },
+      { length: 50 },
       (_, i) => `OTM_${(i + 1).toString()}`
     );
 
