@@ -136,7 +136,12 @@ const AddedPositions = ({ position, index, remove }) => {
         <FormControl variant="outlined" fullWidth>
           <InputLabel>Option Segment Type</InputLabel>
           <Field
-            as={position?.strike_selection === "PREMIUM_GT" ? Input : Select}
+            as={
+              position?.strike_selection === "PREMIUM_GT" ||
+              position?.strike_selection === "PREMIUM_LT"
+                ? Input
+                : Select
+            }
             // position?.strike_selection = ""PREMIUM_GT"" ? Input :
             name={`positions[${index}].value`}
             label="Option Segment Type"
