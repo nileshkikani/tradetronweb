@@ -12,18 +12,20 @@ import {
   FormHelperText,
   Grid,
   IconButton,
+  Input,
 } from "@mui/material";
 
 const AddedPositions = ({ position, index, remove }) => {
+  console.log("🚀 ~ AddedPositions ~ position:", position);
   const { values } = useFormikContext();
 
   const getOptionSegmentType = () => {
     const itmOptions = Array.from(
-      { length: 20 },
-      (_, i) => `ITM_${(20 - i).toString()}`
+      { length: 50 },
+      (_, i) => `ITM_${(50 - i).toString()}`
     );
     const otmOptions = Array.from(
-      { length: 20 },
+      { length: 50 },
       (_, i) => `OTM_${(i + 1).toString()}`
     );
 
@@ -83,7 +85,14 @@ const AddedPositions = ({ position, index, remove }) => {
           options:
             underlying === "CRUDEOIL" || underlying === "CRUDEOILM"
               ? ["ATM_SPOT"]
-              : ["ATM_SPOT", "ATM_FUTURE", "DELTA_LT", "DELTA_GT"],
+              : [
+                  "ATM_SPOT",
+                  "ATM_FUTURE",
+                  "DELTA_LT",
+                  "DELTA_GT",
+                  "PREMIUM_GT",
+                  "PREMIUM_LT",
+                ],
         },
         {
           name: `positions[${index}].expiry`,
@@ -128,6 +137,7 @@ const AddedPositions = ({ position, index, remove }) => {
           <InputLabel>Option Segment Type</InputLabel>
           <Field
             as={Select}
+            // position?.strike_selection = "abc" ? Input :
             name={`positions[${index}].value`}
             label="Option Segment Type"
             fullWidth
@@ -139,12 +149,14 @@ const AddedPositions = ({ position, index, remove }) => {
             position.strike_selection === "ATM_SPOT"
               ? getOptionSegmentType()?.map((option) => (
                   <MenuItem key={option} value={option}>
-                    {option
-                      .replace(
-                        /ITM_|OTM_/,
-                        (match) => `${match.replace("_", "")} `
-                      )
-                      .replace("ATM_0", "ATM")}
+                    {option.includes("ITM_") || option.includes("OTM_")
+                      ? option
+                          .replace(
+                            /ITM_|OTM_/,
+                            (match) => `${match.replace("_", "")} `
+                          )
+                          .replace("ATM_0", "ATM")
+                      : option}
                   </MenuItem>
                 ))
               : null}
