@@ -12,7 +12,7 @@ import {
   FormHelperText,
 } from "@mui/material";
 
-const PositionSection = ({ push,indexAndStocksNames }) => {
+const PositionSection = ({ push, indexAndStocksNames }) => {
   const { values, setFieldError, errors, touched } = useFormikContext();
 
   const lotsDisplay = indexAndStocksNames[values.index_name];
@@ -71,7 +71,6 @@ const PositionSection = ({ push,indexAndStocksNames }) => {
     ? ["CURRENT_WEEK", "NEXT_WEEK", "CURRENT_MONTH", "NEXT_MONTH"]
     : ["CURRENT_MONTH"];
 
-
   return (
     <Box
       className="position-section-dropdowns"
@@ -100,7 +99,14 @@ const PositionSection = ({ push,indexAndStocksNames }) => {
             values.index_name === "CRUDEOIL" ||
             values.index_name === "CRUDEOILM"
               ? ["ATM_SPOT"]
-              : ["ATM_SPOT", "ATM_FUTURE", "DELTA_LT", "DELTA_GT"],
+              : [
+                  "ATM_SPOT",
+                  "ATM_FUTURE",
+                  "DELTA_LT",
+                  "DELTA_GT",
+                  "PREMIUM_GT",
+                  "PREMIUM_LT",
+                ],
           disabled: !values.option_type,
         },
         {
