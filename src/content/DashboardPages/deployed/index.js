@@ -109,6 +109,22 @@ function DashboardDeployedContent() {
             }
         }
     };
+    const confirmLock=async()=>{
+        try {
+            const response = await axiosInstance.post(API_ROUTER.ORDER_CLOSE,{
+                strategy_id: selectedStrategyId
+            }, {headers});
+            console.log("dghsvchgsdvcghdsv")
+            // setOrderList(data);
+
+            // initializeWebSocket(setLivePrices, socketRef);
+        } catch (error) {
+            console.log("dsjbcjsdbv==>>>>",error?.response?.data?.details)
+            showToast(error?.response?.data?.details||TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
+        } finally {
+            setIsLoading(false);
+        }
+}
 
     const handleSymbolClick = async (order) => {
         const positionType = order.symbol;
@@ -285,6 +301,12 @@ function DashboardDeployedContent() {
                                 variant="contained"
                                 size="small">
                                 Refresh
+                            </Button>
+                            <Button onClick={() => confirmLock()}
+                                color="primary"
+                                variant="contained"
+                                size="small">
+                                Close Order
                             </Button>
                         </Box>
 

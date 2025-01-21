@@ -9,7 +9,7 @@ export const API_ROUTER = {
     CHANGE_PASSWORD :"user/change-password/",
     USER_PROFILE:"user/profile/",
     USER_CONTACTUS:"user/contact-us/",
-  
+    ORDER_CLOSE:"orders/close/",
 
     SYMBOLS: 'stocks/get-symbols/',
     GET_FUTURE_EXPIRY:"stocks/get-future-expiry/",

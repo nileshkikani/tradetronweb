@@ -435,7 +435,7 @@ function DashboardOptionWizardContent() {
                                             >
                                                 <MenuItem value="" disabled>Select Type</MenuItem>
                                                 <MenuItem value="INTRADAY">Intraday</MenuItem>
-                                                <MenuItem value="positional" disabled>Positional</MenuItem>
+                                                <MenuItem value="POSITIONAL">Positional</MenuItem>
                                             </Field>
                                             <FormHelperText>
                                                 <ErrorMessage name="strategy_type" component="span" className="error" />
