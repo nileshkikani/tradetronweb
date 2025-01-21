@@ -5,6 +5,6 @@ export default function createEmotionCache() {
   return createCache({
     key: 'css'
     // // @ts-ignore
-    // stylisPlugins: [stylisRTLPlugin]
+     // stylisPlugins: [stylisRTLPlugin]
   });
 }
