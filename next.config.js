@@ -45,7 +45,8 @@ module.exports = withImages(
     env: {
       NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
       NEXT_PUBLIC_SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL,
-      ENCRYPTION_KEY: process.env.ENCRYPTION_KEY
+      ENCRYPTION_KEY: process.env.ENCRYPTION_KEY,
+      EMA_SCALPING_URL: process.env.EMA_SCALPING_URL,
   },
   })
 );

@@ -33,6 +33,5 @@ export const API_ROUTER = {
 
 
     ADD_BROKER:'broker/add/',
-    //get method to get broker data, patch method for update, delete for delete (provider)
     UPDATE_BROKER:'broker/update/',
 };
