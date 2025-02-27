@@ -1,5 +1,5 @@
 // pages/_app.js
-
+import '/src/components/DatePicker/DatePicker.css'
 import Head from 'next/head';
 import Router from 'next/router';
 import nProgress from 'nprogress';

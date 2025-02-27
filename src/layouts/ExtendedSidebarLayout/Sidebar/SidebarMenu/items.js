@@ -26,6 +26,11 @@ const menuItems = [
         link: '/dashboards/strategy-builder'
       },
       {
+        name:'EMA Scalping',
+        icon: ConstructionIcon,
+        link: '/dashboards/ema-scalping'
+      },
+      {
         name: 'Strategy',
         icon: AddchartIcon,
         // link: '/dashboards/banking',
