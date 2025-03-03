@@ -15,6 +15,7 @@ import TableRow from "@mui/material/TableRow";
 import axios from "axios";
 import useToast from 'src/hooks/useToast';
 import CustomDatePicker from 'src/components/DatePicker'
+import Footer from 'src/components/Footer'
 
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -168,6 +169,7 @@ function DashboardReports() {
       .then((res) => {
         if (res?.data.length === 0) {
           showToast("No orders found", "info");
+          setOrderData([])
           return;
         }
         setOrderData(res.data);
@@ -178,25 +180,25 @@ function DashboardReports() {
       });
   };
 
-  // ✅ Fetch data only when component mounts or selectedSymbol changes
-  useEffect(() => {
+useEffect(() => {
     fetchChartData(selectedSymbol);
-  }, [selectedSymbol, selectedDate]);
-
-  useEffect(() => {
     fetchOrder();
   }, [selectedSymbol, selectedDate]);
 
   const handleDateChange = (event) => {
-    const dateString = event.target.value; // Get date as a string (YYYY-MM-DD)
+    const dateString = event.target.value; 
       console.log(dateString);
-      
       setSelectedDate(dateString);
     
   };
+  const handleRefesh = () => {
+    fetchChartData(selectedSymbol)
+    fetchOrder()
+  }
 
   return (
     <>
+
       <h1>EMA Scalping</h1>
       <Select
         labelId="my-strategies-label"
@@ -207,6 +209,7 @@ function DashboardReports() {
       >
         <MenuItem value="NIFTY">NIFTY</MenuItem>
         <MenuItem value="BANKNIFTY">BANKNIFTY</MenuItem>
+        <MenuItem value="SENSEX">SENSEX</MenuItem>
       </Select>
 
       {chartData ? (
@@ -220,43 +223,56 @@ function DashboardReports() {
         <p>Loading Chart...</p>
       )}
       <h1 style={{textAlign: 'center' }}>Order List</h1>
-      <CustomDatePicker
-        value={selectedDate}
-        onChange={handleDateChange}
-      />
-      <TableContainer>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+  {/* Refresh Button on Left */}
+  <Button onClick={handleRefesh} variant="contained" style={{ marginLeft: 6}}>
+    Refresh
+  </Button>
+
+  {/* Date Picker on Right */}
+  <CustomDatePicker value={selectedDate} onChange={handleDateChange} />
+</div>
+<div style={{ display: 'flex', flexDirection: 'column', minHeight: '90vh' }}>
+  <div style={{ flex: 1, overflowY: 'auto' }}>
+    {/* Table and other content */}
+    <TableContainer style={{ maxHeight: '500px', overflowY: 'auto' }}>
+      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <TableHead>
+          <TableRow>
             <TableCell>Order Time</TableCell>
-              <TableCell>Action</TableCell>
-              <TableCell>Entry Price</TableCell>
-              <TableCell>Close Price</TableCell>
-              <TableCell>Profit</TableCell>
-              <TableCell>Symbol</TableCell>
-              <TableCell>Lot Size</TableCell>
-              <TableCell>Option Type</TableCell>
-              <TableCell>Status</TableCell>
+            <TableCell>Action</TableCell>
+            <TableCell>Entry Price</TableCell>
+            <TableCell>Close Price</TableCell>
+            <TableCell>Profit</TableCell>
+            <TableCell>Symbol</TableCell>
+            <TableCell>Lot Size</TableCell>
+            <TableCell>Option Type</TableCell>
+            <TableCell>Status</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {orderData.map((row) => (
+            <TableRow key={row.uuid}>
+              <TableCell>{new Date(row?.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: false })}</TableCell>
+              <TableCell>{row?.order_type}</TableCell>
+              <TableCell>{row?.open_price}</TableCell> 
+              <TableCell>{row?.close_price}</TableCell>
+              <TableCell>{row?.profit}</TableCell>              
+              <TableCell>{row?.symbol}</TableCell>
+              <TableCell>{row?.lots}</TableCell>
+              <TableCell>{row?.symbol?.slice(-2)}</TableCell>
+              <TableCell>{row?.order_status}</TableCell>
             </TableRow>
-          </TableHead>
-          <TableBody>
-            {orderData.map((row) => (
-              <TableRow key={row.uuid}>
-                <TableCell>{new Date(row?.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: false })}</TableCell>
-                <TableCell>{row?.order_type}</TableCell>
-                <TableCell>{row?.open_price}</TableCell> 
-                <TableCell>{row?.close_price}</TableCell>
-                <TableCell>{row?.profit}</TableCell>              
-                <TableCell>{row?.symbol}</TableCell>
-                <TableCell>{row?.lots}</TableCell>
-                <TableCell>{row?.symbol?.slice(-2)}</TableCell>
-                <TableCell>{row?.order_status}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  </div>
+  
+  <Footer style={{ marginTop: '15px' }} />
+</div>
+
+      </>
   );
 }
 
