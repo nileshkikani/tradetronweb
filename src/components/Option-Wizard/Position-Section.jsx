@@ -44,7 +44,8 @@ const PositionSection = ({ push, indexAndStocksNames }) => {
 
   const allowedIndexNames = [
     // "BANKNIFTY",
-    'NIFTY'
+    'NIFTY',
+    'SENSEX'
     // "FINNIFTY",
     // "MIDCPNIFTY",
     // "CRUDEOIL",
