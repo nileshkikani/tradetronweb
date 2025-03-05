@@ -270,12 +270,9 @@ useEffect(() => {
       </Table>
     </TableContainer>
   </div>
-
   <Footer />
 </div>
-
-
-      </>
+</>
   );
 }
 
