@@ -232,10 +232,10 @@ useEffect(() => {
   {/* Date Picker on Right */}
   <CustomDatePicker value={selectedDate} onChange={handleDateChange} />
 </div>
-<div style={{ display: 'flex', flexDirection: 'column', minHeight: '90vh' }}>
-  <div style={{ flex: 1, overflowY: 'auto' }}>
+<div style={{ display: 'flex', flexDirection: 'column', minHeight: '70vh', overflowY: 'auto' }}>
+  <div style={{ flex: 1 }}>
     {/* Table and other content */}
-    <TableContainer style={{ maxHeight: '500px', overflowY: 'auto' }}>
+    <TableContainer>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
@@ -253,11 +253,13 @@ useEffect(() => {
         <TableBody>
           {orderData.map((row) => (
             <TableRow key={row.uuid}>
-              <TableCell>{new Date(row?.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: false })}</TableCell>
+              <TableCell>
+                {new Date(row?.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: false })}
+              </TableCell>
               <TableCell>{row?.order_type}</TableCell>
-              <TableCell>{row?.open_price}</TableCell> 
+              <TableCell>{row?.open_price}</TableCell>
               <TableCell>{row?.close_price}</TableCell>
-              <TableCell>{row?.profit}</TableCell>              
+              <TableCell>{row?.profit}</TableCell>
               <TableCell>{row?.symbol}</TableCell>
               <TableCell>{row?.lots}</TableCell>
               <TableCell>{row?.symbol?.slice(-2)}</TableCell>
@@ -268,9 +270,10 @@ useEffect(() => {
       </Table>
     </TableContainer>
   </div>
-  
-  <Footer style={{ marginTop: '15px' }} />
+
+  <Footer />
 </div>
+
 
       </>
   );
