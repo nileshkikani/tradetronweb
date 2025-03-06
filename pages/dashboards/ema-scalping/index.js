@@ -200,17 +200,7 @@ useEffect(() => {
     <>
 
       <h1>EMA Scalping</h1>
-      <Select
-        labelId="my-strategies-label"
-        value={selectedSymbol}
-        onChange={(e) => setSelectedSymbol(e.target.value)}
-        displayEmpty
-        style={{ minWidth: 200, marginLeft: 6 }}
-      >
-        <MenuItem value="NIFTY">NIFTY</MenuItem>
-        <MenuItem value="BANKNIFTY">BANKNIFTY</MenuItem>
-        <MenuItem value="SENSEX">SENSEX</MenuItem>
-      </Select>
+
 
       {chartData ? (
         <ReactApexChart
@@ -224,17 +214,28 @@ useEffect(() => {
       )}
       <h1 style={{textAlign: 'center' }}>Order List</h1>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
-  {/* Refresh Button on Left */}
-  <Button onClick={handleRefesh} variant="contained" style={{ marginLeft: 6}}>
-    Refresh
-  </Button>
+  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
 
-  {/* Date Picker on Right */}
+    <Select
+      labelId="my-strategies-label"
+      value={selectedSymbol}
+      onChange={(e) => setSelectedSymbol(e.target.value)}
+      displayEmpty
+      style={{ minWidth: 200 }}
+    >
+      <MenuItem value="NIFTY">NIFTY</MenuItem>
+      <MenuItem value="BANKNIFTY">BANKNIFTY</MenuItem>
+      <MenuItem value="SENSEX">SENSEX</MenuItem>
+    </Select>
+    <Button onClick={handleRefesh} variant="contained" style={{marginLeft: 6}}>
+      Refresh
+    </Button>
+  </div>
   <CustomDatePicker value={selectedDate} onChange={handleDateChange} />
 </div>
 <div style={{ display: 'flex', flexDirection: 'column', minHeight: '70vh', overflowY: 'auto' }}>
   <div style={{ flex: 1 }}>
-    {/* Table and other content */}
+
     <TableContainer>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
