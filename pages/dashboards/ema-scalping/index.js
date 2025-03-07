@@ -267,6 +267,20 @@ useEffect(() => {
               <TableCell>{row?.order_status}</TableCell>
             </TableRow>
           ))}
+
+          {
+            orderData.length > 0 ? (  <TableRow>
+              <TableCell><strong>Total P/L</strong></TableCell> 
+              <TableCell colSpan={3}></TableCell>  
+              <TableCell><strong>{orderData.reduce((total, row) => total + (parseFloat(row?.profit) || 0), 0).toFixed(2)}</strong></TableCell> {/* Under "Profit" column */}
+              <TableCell colSpan={4}></TableCell>  
+            </TableRow>
+          ) : (<>
+          
+          </>)
+          }
+
+
         </TableBody>
       </Table>
     </TableContainer>
