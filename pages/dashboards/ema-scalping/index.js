@@ -36,7 +36,7 @@ function DashboardReports() {
   const fetchChartData = async (symbol) => {
     try {
       const response = await axios.get(
-        `${baseUrl}stock/getchart/?symbol=${symbol}`,
+        `${baseUrl}paper_trade/getchart/?symbol=${symbol}`,
         { timeout: 10000 }
       );
       console.log("Chart Data:", response.data);
@@ -165,7 +165,7 @@ function DashboardReports() {
   const [orderData, setOrderData] = useState([])
   const fetchOrder = async () => {
     axios
-      .get(`${baseUrl}stock/getorder?symbol=${selectedSymbol}&date=${selectedDate}`,)
+      .get(`${baseUrl}paper_trade/getorder?symbol=${selectedSymbol}&date=${selectedDate}`,)
       .then((res) => {
         if (res?.data.length === 0) {
           showToast("No orders found", "info");
