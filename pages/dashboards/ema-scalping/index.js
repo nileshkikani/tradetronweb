@@ -234,8 +234,7 @@ useEffect(() => {
   <CustomDatePicker value={selectedDate} onChange={handleDateChange} />
 </div>
 <div style={{ display: 'flex', flexDirection: 'column', minHeight: '70vh', overflowY: 'auto' }}>
-  <div style={{ flex: 1 }}>
-
+  <div style={{ flexGrow: 1, overflow: 'auto' }}>
     <TableContainer>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
@@ -249,6 +248,7 @@ useEffect(() => {
             <TableCell>Lot Size</TableCell>
             <TableCell>Option Type</TableCell>
             <TableCell>Status</TableCell>
+            <TableCell>Strategy Name</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -265,29 +265,24 @@ useEffect(() => {
               <TableCell>{row?.lots}</TableCell>
               <TableCell>{row?.symbol?.slice(-2)}</TableCell>
               <TableCell>{row?.order_status}</TableCell>
+              <TableCell>{row?.strategy_name}</TableCell>
             </TableRow>
           ))}
 
-          {
-            orderData.length > 0 ? (  <TableRow>
+          {orderData.length > 0 && (
+            <TableRow>
               <TableCell><strong>Total P/L</strong></TableCell> 
               <TableCell colSpan={3}></TableCell>  
-              <TableCell><strong>{orderData.reduce((total, row) => total + (parseFloat(row?.profit) || 0), 0).toFixed(2)}</strong></TableCell> {/* Under "Profit" column */}
+              <TableCell><strong>{orderData.reduce((total, row) => total + (parseFloat(row?.profit) || 0), 0).toFixed(2)}</strong></TableCell> 
               <TableCell colSpan={4}></TableCell>  
             </TableRow>
-          ) : (<>
-          
-          </>)
-          }
-
-
+          )}
         </TableBody>
       </Table>
     </TableContainer>
   </div>
-
-  <Footer />
 </div>
+
 
 
       </>
