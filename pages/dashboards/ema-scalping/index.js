@@ -15,6 +15,7 @@ import TableRow from "@mui/material/TableRow";
 import axios from "axios";
 import useToast from 'src/hooks/useToast';
 import CustomDatePicker from 'src/components/DatePicker'
+import MarketTrendCard from 'src/components/MarketTrendCard'
 import Footer from 'src/components/Footer'
 
 
@@ -180,9 +181,34 @@ function DashboardReports() {
       });
   };
 
+const [marketTrend, setMarketTrend] = useState([])
+
+const fetchMarketTrend = async () => {
+  axios
+      .get(`${'http://127.0.0.1:8000/api/'}paper_trade/getmarket?symbol=${selectedSymbol}`,)
+      .then((res) => {
+        if (res?.data.length === 0) {
+          showToast("No orders found", "info");
+          setOrderData([])
+          return;
+        }
+        setMarketTrend(res.data);
+        console.log(res.data);
+        
+      })
+      .catch((error) => {
+        showToast(error?.response?.data?.error || "Something went wrong", "error");
+        console.log(error?.response?.data?.error || error.message);
+      });
+
+}
+
+
+
 useEffect(() => {
     fetchChartData(selectedSymbol);
     fetchOrder();
+    fetchMarketTrend()
   }, [selectedSymbol, selectedDate]);
 
   const handleDateChange = (event) => {
@@ -194,6 +220,7 @@ useEffect(() => {
   const handleRefesh = () => {
     fetchChartData(selectedSymbol)
     fetchOrder()
+    fetchMarketTrend()
   }
 
   return (
@@ -233,6 +260,7 @@ useEffect(() => {
   </div>
   <CustomDatePicker value={selectedDate} onChange={handleDateChange} />
 </div>
+<MarketTrendCard marketData={marketTrend}></MarketTrendCard>
 <div style={{ display: 'flex', flexDirection: 'column', minHeight: '70vh', overflowY: 'auto' }}>
   <div style={{ flexGrow: 1, overflow: 'auto' }}>
     <TableContainer>
@@ -282,9 +310,6 @@ useEffect(() => {
     </TableContainer>
   </div>
 </div>
-
-
-
       </>
   );
 }
