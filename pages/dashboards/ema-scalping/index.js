@@ -260,8 +260,8 @@ useEffect(() => {
   </div>
   <CustomDatePicker value={selectedDate} onChange={handleDateChange} />
 </div>
+<div style={{ display: 'flex', flexDirection: 'column', minHeight: '70vh', overflow: 'hidden', paddingTop: '10px' }}>
 <MarketTrendCard marketData={marketTrend}></MarketTrendCard>
-<div style={{ display: 'flex', flexDirection: 'column', minHeight: '70vh', overflowY: 'auto' }}>
   <div style={{ flexGrow: 1, overflow: 'auto' }}>
     <TableContainer>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
