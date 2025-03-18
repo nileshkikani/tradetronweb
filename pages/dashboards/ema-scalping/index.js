@@ -185,7 +185,7 @@ const [marketTrend, setMarketTrend] = useState([])
 
 const fetchMarketTrend = async () => {
   axios
-      .get(`${'http://127.0.0.1:8000/api/'}paper_trade/getmarket?symbol=${selectedSymbol}`,)
+      .get(`${baseUrl}paper_trade/getmarket?symbol=${selectedSymbol}`,)
       .then((res) => {
         if (res?.data.length === 0) {
           showToast("No orders found", "info");
