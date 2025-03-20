@@ -40,10 +40,9 @@ function DashboardReports() {
         `${baseUrl}paper_trade/getchart/?symbol=${symbol}`,
         { timeout: 10000 }
       );
-      console.log("Chart Data:", response.data);
 
       if (!response.data || response.data.length === 0) {
-        console.error("No data received from API");
+        showToast(error?.response?.data?.error || "Something went wrong", "error");
         return;
       }
 
@@ -188,12 +187,11 @@ const fetchMarketTrend = async () => {
       .get(`${baseUrl}paper_trade/getmarket?symbol=${selectedSymbol}`,)
       .then((res) => {
         if (res?.data.length === 0) {
-          showToast("No orders found", "info");
+          showToast("No marketData found", "info");
           setOrderData([])
           return;
         }
         setMarketTrend(res.data);
-        console.log(res.data);
         
       })
       .catch((error) => {
