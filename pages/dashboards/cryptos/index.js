@@ -1,8 +1,5 @@
-import Head from 'next/head';
 import ExtendedSidebarLayout from 'src/layouts/ExtendedSidebarLayout';
 import { Authenticated } from 'src/components/Authenticated';
-import DashboardExistingBrokersContent from '../../../src/content/DashboardPages/existing-brokers/index';
-import PageTitleWrapper from 'src/components/PageTitleWrapper';
 import { Button, ListItem, Select, MenuItem } from "@mui/material"
 import dynamic from "next/dynamic";
 import { useState, useEffect } from 'react';
@@ -16,7 +13,6 @@ import axios from "axios";
 import useToast from 'src/hooks/useToast';
 import CustomDatePicker from 'src/components/DatePicker'
 import MarketTrendCard from 'src/components/MarketTrendCard'
-import Footer from 'src/components/Footer'
 
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -31,13 +27,13 @@ function DashboardReports() {
   };
   const {showToast} = useToast()
   const [selectedDate, setSelectedDate] = useState(getTodayDate)
-  const [selectedSymbol, setSelectedSymbol] = useState("NIFTY");
+  const [selectedSymbol, setSelectedSymbol] = useState("BTCUSD");
 
 
   const [orderData, setOrderData] = useState([])
   const fetchOrder = async () => {
     axios
-      .get(`${baseUrl}paper_trade/getorder?symbol=${selectedSymbol}&date=${selectedDate}`,)
+      .get(`${baseUrl}crypto_trade/getorder?symbol=${selectedSymbol}&date=${selectedDate}`,)
       .then((res) => {
         if (res?.data.length === 0) {
           showToast("No orders found", "info");
@@ -59,11 +55,12 @@ const fetchMarketTrend = async () => {
       .get(`${baseUrl}paper_trade/getmarket?symbol=${selectedSymbol}`,)
       .then((res) => {
         if (res?.data.length === 0) {
-          showToast("No marketData found", "info");
+          showToast("No orders found", "info");
           setOrderData([])
           return;
         }
         setMarketTrend(res.data);
+        console.log(res.data);
         
       })
       .catch((error) => {
@@ -75,7 +72,7 @@ const fetchMarketTrend = async () => {
 
 
 
-useEffect(() => {
+useEffect(() => {;
     fetchOrder();
     fetchMarketTrend()
   }, [selectedSymbol, selectedDate]);
@@ -94,7 +91,7 @@ useEffect(() => {
   return (
     <>
 
-      <h1>EMA Scalping</h1>
+      <h1>Crypto Orders </h1>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
 
@@ -105,9 +102,8 @@ useEffect(() => {
       displayEmpty
       style={{ minWidth: 200 }}
     >
-      <MenuItem value="NIFTY">NIFTY</MenuItem>
-      <MenuItem value="BANKNIFTY">BANKNIFTY</MenuItem>
-      <MenuItem value="SENSEX">SENSEX</MenuItem>
+      <MenuItem value="BTCUSD">BTCUSD</MenuItem>
+      <MenuItem value="ETHUSD">ETHUSD</MenuItem>
     </Select>
     <Button onClick={handleRefesh} variant="contained" style={{marginLeft: 6}}>
       Refresh
@@ -129,7 +125,6 @@ useEffect(() => {
             <TableCell>Profit</TableCell>
             <TableCell>Symbol</TableCell>
             <TableCell>Lot Size</TableCell>
-            <TableCell>Option Type</TableCell>
             <TableCell>Status</TableCell>
             <TableCell>Strategy Name</TableCell>
           </TableRow>
@@ -141,12 +136,11 @@ useEffect(() => {
                 {new Date(row?.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: false })}
               </TableCell>
               <TableCell>{row?.order_type}</TableCell>
-              <TableCell>{row?.open_price}</TableCell>
+              <TableCell>{row?.entry_price}</TableCell>
               <TableCell>{row?.close_price}</TableCell>
               <TableCell>{row?.profit}</TableCell>
               <TableCell>{row?.symbol}</TableCell>
-              <TableCell>{row?.lots}</TableCell>
-              <TableCell>{row?.symbol?.slice(-2)}</TableCell>
+              <TableCell>{row?.lot_size}</TableCell>
               <TableCell>{row?.order_status}</TableCell>
               <TableCell>{row?.strategy_name}</TableCell>
             </TableRow>
