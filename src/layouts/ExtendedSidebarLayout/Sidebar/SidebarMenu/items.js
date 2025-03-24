@@ -8,6 +8,7 @@ import ConstructionIcon from '@mui/icons-material/Construction';
 import AddchartIcon from '@mui/icons-material/Addchart';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ReceiptTwoToneIcon from '@mui/icons-material/ReceiptTwoTone';
+import CurrencyBitcoinIcon from '@mui/icons-material/CurrencyBitcoin';
 import BackupTableTwoToneIcon from '@mui/icons-material/BackupTableTwoTone';
 import SmartToyTwoToneIcon from '@mui/icons-material/SmartToyTwoTone';
 
@@ -25,10 +26,32 @@ const menuItems = [
         icon: ConstructionIcon,
         link: '/dashboards/strategy-builder'
       },
+      // {
+      //   name:'EMA Scalping',
+      //   icon: ConstructionIcon,
+      //   items: [
+      //     {
+      //       name: 'Orders',
+      //       link: '/dashboards/ema-scalping',
+      //       badge: '',
+      //       // badgeTooltip: 'Dot indicator with example tooltip'
+      //     },
+      //     {
+      //       name: 'My Strategies',
+      //       link: '/dashboards/my-strategies',
+      //       badge: ''
+      //     }
+      //   ]
+      // },
       {
-        name:'EMA Scalping',
+        name: 'EMA Scalping',
         icon: ConstructionIcon,
         link: '/dashboards/ema-scalping'
+      },
+      {
+        name: 'Cryptos',
+        icon: CurrencyBitcoinIcon,
+        link: '/dashboards/cryptos'
       },
       {
         name: 'Strategy',
