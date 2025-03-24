@@ -93,7 +93,6 @@ useEffect(() => {
 
   return (
     <>
-
       <h1>EMA Scalping</h1>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
