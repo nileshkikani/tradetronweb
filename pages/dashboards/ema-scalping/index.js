@@ -16,6 +16,8 @@ import axios from "axios";
 import useToast from 'src/hooks/useToast';
 import CustomDatePicker from 'src/components/DatePicker'
 import MarketTrendCard from 'src/components/MarketTrendCard'
+import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
+import ClearIcon from '@mui/icons-material/Clear';
 import Footer from 'src/components/Footer'
 
 
@@ -133,6 +135,7 @@ useEffect(() => {
             <TableCell>Option Type</TableCell>
             <TableCell>Status</TableCell>
             <TableCell>Strategy Name</TableCell>
+            <TableCell>In Market</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -150,6 +153,7 @@ useEffect(() => {
               <TableCell>{row?.symbol?.slice(-2)}</TableCell>
               <TableCell>{row?.order_status}</TableCell>
               <TableCell>{row?.strategy_name}</TableCell>
+              <TableCell>{row?.in_market ? <CurrencyRupeeIcon/> : <ClearIcon/>}</TableCell>
             </TableRow>
           ))}
 
