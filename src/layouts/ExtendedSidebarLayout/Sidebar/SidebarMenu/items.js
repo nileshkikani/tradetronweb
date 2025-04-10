@@ -26,28 +26,28 @@ const menuItems = [
         icon: ConstructionIcon,
         link: '/dashboards/strategy-builder'
       },
-      // {
-      //   name:'EMA Scalping',
-      //   icon: ConstructionIcon,
-      //   items: [
-      //     {
-      //       name: 'Orders',
-      //       link: '/dashboards/ema-scalping',
-      //       badge: '',
-      //       // badgeTooltip: 'Dot indicator with example tooltip'
-      //     },
-      //     {
-      //       name: 'My Strategies',
-      //       link: '/dashboards/my-strategies',
-      //       badge: ''
-      //     }
-      //   ]
-      // },
       {
-        name: 'EMA Scalping',
+        name:'EMA Scalping',
         icon: ConstructionIcon,
-        link: '/dashboards/ema-scalping'
+        items: [
+          {
+            name: 'Orders',
+            link: '/dashboards/ema-scalping',
+            badge: '',
+            // badgeTooltip: 'Dot indicator with example tooltip'
+          },
+          {
+            name: 'My Strategies',
+            link: '/dashboards/my-strategies',
+            badge: ''
+          }
+        ]
       },
+      // {
+      //   name: 'EMA Scalping',
+      //   icon: ConstructionIcon,
+      //   link: '/dashboards/ema-scalping'
+      // },
       {
         name: 'Cryptos',
         icon: CurrencyBitcoinIcon,
