@@ -111,6 +111,7 @@ useEffect(() => {
       <MenuItem value="NIFTY">NIFTY</MenuItem>
       <MenuItem value="BANKNIFTY">BANKNIFTY</MenuItem>
       <MenuItem value="SENSEX">SENSEX</MenuItem>
+      <MenuItem value="CRUDEOIL">CRUDEOIL</MenuItem>
     </Select>
     <Button onClick={handleRefesh} variant="contained" style={{marginLeft: 6}}>
       Refresh
