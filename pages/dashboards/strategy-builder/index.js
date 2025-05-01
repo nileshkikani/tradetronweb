@@ -33,7 +33,7 @@ import Modal from "@mui/material/Modal";
 import Backdrop from "@mui/material/Backdrop";
 import Fade from "@mui/material/Fade";
 import Typography from "@mui/material/Typography";
-import useToast from 'src/hooks/useToast';
+import useToast from "src/hooks/useToast";
 
 function DashboardStrategyBuilderContent() {
   const authState = useSelector((state) => state.auth.authState);
@@ -203,21 +203,32 @@ function DashboardStrategyBuilderContent() {
     getAllPosition();
   }, []);
   return (
-    <Box sx={{
-      height: "100vh",
-      overflow: "hidden",
-      overflowY: "auto",
-      paddingBottom: "110px"
-  }}>
+    <Box
+      sx={{
+        height: "100vh",
+        overflow: "hidden",
+        overflowY: "auto",
+        paddingBottom: "110px",
+      }}
+    >
       <PageTitleWrapper>
         <h1>Strategy-Builder (Opstra)</h1>
       </PageTitleWrapper>
-      <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+      <FormControl
+        variant="standard"
+        sx={{
+          ml: "28px",
+          mb: "28px",
+          minWidth: 300,
+          gap: "8px",
+        }}
+      >
         <Select
           labelId="demo-simple-select-standard-label"
           id="demo-simple-select-standard"
           value={index}
           onChange={(event) => setIndex(event.target.value)}
+          // fullwidth
         >
           <MenuItem disabled value="">
             <em>Select Index/Stock</em>
@@ -234,6 +245,7 @@ function DashboardStrategyBuilderContent() {
           id="segment-select"
           onChange={(event) => setSegment(event.target.value)}
           value={segment}
+          fullwidth
         >
           <MenuItem disabled value="">
             <em>Select Segment</em>
@@ -247,6 +259,7 @@ function DashboardStrategyBuilderContent() {
           id="expiry-select"
           onChange={(event) => setSelectedExpiryDate(event.target.value)}
           value={selectedExpiryDate}
+          fullwidth
         >
           <MenuItem disabled value="">
             <em>Select Expiry</em>
@@ -266,6 +279,7 @@ function DashboardStrategyBuilderContent() {
               id="strike-select"
               value={selectedStrikePrice}
               onChange={(event) => setSelectedStrikePrice(event.target.value)}
+              fullwidth
             >
               <MenuItem disabled value="">
                 <em>Placeholder</em>
@@ -283,6 +297,7 @@ function DashboardStrategyBuilderContent() {
               id="type-select"
               value={selectedOptionType}
               onChange={(event) => setSelectedOptionType(event.target.value)}
+              fullwidth
             >
               <MenuItem disabled value="">
                 <em>Placeholder</em>
@@ -309,15 +324,34 @@ function DashboardStrategyBuilderContent() {
           <FormControlLabel value="buy" control={<Radio />} label="Buy" />
           <FormControlLabel value="sell" control={<Radio />} label="Sell" />
         </RadioGroup>
-        <Button variant="contained" onClick={addPosition}>
+        <Button
+          variant="contained"
+          onClick={addPosition}
+          /*sx={{mt:"10px"}}*/ sx={{ mt: 2, width: "fit-content" }}
+        >
           Add Position
         </Button>
       </FormControl>
 
-      <TableContainer>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      <TableContainer
+        sx={{
+          padding: "0 16px",
+          overflowX: "auto",
+        }}
+      >
+        <Table
+          sx={{
+            minWidth: 650,
+          }}
+          aria-label="simple table"
+        >
           <TableHead>
-            <TableRow>
+            <TableRow
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
               <TableCell>Position</TableCell>
               <TableCell>Action</TableCell>
               <TableCell>Entry Price</TableCell>
@@ -359,7 +393,6 @@ function DashboardStrategyBuilderContent() {
           </TableBody>
         </Table>
       </TableContainer>
-   
 
       <Modal
         aria-labelledby="transition-modal-title"
@@ -430,8 +463,7 @@ function DashboardStrategyBuilderContent() {
           </Box>
         </Fade>
       </Modal>
-      
-      <Footer/>
+      <Footer />
     </Box>
   );
 }

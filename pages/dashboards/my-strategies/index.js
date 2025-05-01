@@ -14,6 +14,7 @@ import axios from "axios";
 import { Button, ListItem, Select, MenuItem } from "@mui/material"
 import TableLoader from 'src/components/TableLoader'
 
+
 function myStrategies() {
     const baseUrl = process.env.EMA_SCALPING_URL
     const [strategies, setStrategies] = useState([])
@@ -92,9 +93,12 @@ function myStrategies() {
     return (
       <>
         <PageTitleWrapper>
-          <h1>My EMA Strategies</h1>
+          <h1 style={{ margin: "24px 0", paddingLeft: "24px" }}>My EMA Strategies</h1>
         </PageTitleWrapper>
-        <TableContainer>
+        <TableContainer  sx={{
+          padding: "0 16px",
+          overflowX: "auto",
+        }}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
@@ -197,14 +201,22 @@ function myStrategies() {
       {isLoading ? (
         <TableLoader /> // Render the loader if loading is true
       ) : (
-        <>
-          <Button onClick={handleSave}>Save</Button>
-          <Button onClick={() => setEditMode(null)}>Cancel</Button>
-        </>
+        // <>
+        //   <Button onClick={handleSave}>Save</Button>
+        //   <Button onClick={() => setEditMode(null)}>Cancel</Button>
+        // </>
+        <div style={{ display: "flex", gap: 8 }}>
+                      <Button size="small" variant="contained" onClick={handleSave}>
+                        Save
+                      </Button>
+                      <Button size="small" variant="outlined" onClick={() => setEditMode(null)}>
+                        Cancel
+                      </Button>
+                    </div>
       )}
     </>
   ) : (
-    <Button onClick={() => handleEditMode(row.id)}>Edit</Button>
+    <Button size="small" variant="text" onClick={() => handleEditMode(row.id)}>Edit</Button>
   )}
 </TableCell>
 
