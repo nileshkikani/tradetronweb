@@ -1,6 +1,6 @@
-import { createContext, useEffect, useReducer } from 'react';
+import { createContext, useEffect, useReducer, useCallback } from 'react';
 import PropTypes from 'prop-types';
-// import { decode } from '../utils/jwt';
+import { decode } from 'jsonwebtoken';
 import { useDispatch } from 'react-redux';
 import axiosInstance from 'src/utils/axios';
 import { API_ROUTER } from 'src/services/routes';
@@ -55,73 +55,130 @@ export const AuthContext = createContext({
   ...initialAuthState,
   method: 'JWT',
   logout: () => Promise.resolve(),
-  register: () => Promise.resolve()
+  register: () => Promise.resolve(),
+  validateToken: () => Promise.resolve(false)
 });
 
 export const AuthProvider = (props) => {
   const { children } = props;
   const [state, dispatch] = useReducer(reducer, initialAuthState);
-
   const dispatchStore = useDispatch();
 
-  const users = []; 
-
-  const getUserFromToken = (token) => {
+  const isTokenExpired = useCallback((token) => {
+    if (!token) return true;
     try {
-      const { userId } = decode(token);
-      return users.find(user => user.id === userId); 
+      const decoded = decode(token);
+      if (!decoded.exp) return true;
+      return Date.now() >= decoded.exp * 1000;
+    } catch (error) {
+      return true;
+    }
+  }, []);
+
+  const getUserFromToken = useCallback((token) => {
+    try {
+      const decoded = decode(token);
+      return { 
+        id: decoded.userId || decoded.sub,
+        email: decoded.email,
+        name: decoded.name
+      };
     } catch (error) {
       console.error('Error decoding token:', error);
       return null;
     }
-  };
+  }, []);
 
-  useEffect(() => {
-    const accessToken = window.localStorage.getItem('accessToken');
-    const isAuthenticated = !!accessToken;
-
-    if (isAuthenticated) {
+  const validateToken = useCallback(async () => {
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) return false;
+    
+    if (isTokenExpired(accessToken)) {
+      localStorage.removeItem('accessToken');
+      dispatch({ type: 'LOGOUT' });
+      return false;
+    }
+    
+    if (!state.isAuthenticated) {
       const user = getUserFromToken(accessToken);
       dispatch({
         type: 'INITIALIZE',
         payload: {
-          isAuthenticated,
+          isAuthenticated: true,
           user
         }
       });
-    } else {
-      dispatch({
-        type: 'INITIALIZE',
-        payload: {
-          isAuthenticated: false,
-          user: null
-        }
-      });
     }
-  }, []);
+    
+    return true;
+  }, [isTokenExpired, getUserFromToken, state.isAuthenticated]);
+
+  useEffect(() => {
+    const initializeAuth = async () => {
+      try {
+        const accessToken = localStorage.getItem('accessToken');
+        const isValid = !isTokenExpired(accessToken);
+
+        if (isValid && accessToken) {
+          const user = getUserFromToken(accessToken);
+          dispatch({
+            type: 'INITIALIZE',
+            payload: {
+              isAuthenticated: true,
+              user
+            }
+          });
+        } else {
+          if (accessToken) {
+            localStorage.removeItem('accessToken');
+          }
+          dispatch({
+            type: 'INITIALIZE',
+            payload: {
+              isAuthenticated: false,
+              user: null
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+        dispatch({
+          type: 'INITIALIZE',
+          payload: {
+            isAuthenticated: false,
+            user: null
+          }
+        });
+      }
+    };
+
+    initializeAuth();
+  }, [isTokenExpired, getUserFromToken]);
 
   const login = async (email, password) => {
     try {
-      const { data } = await axiosInstance.post(API_ROUTER.LOG_IN ,
+      const { data } = await axiosInstance.post(API_ROUTER.LOG_IN,
         JSON.stringify({ email, password }), {
           headers: {
             'Content-Type': 'application/json',
           },
         }
       );
-      // console.log('daraa',data)
-      // console.log('axios',axiosInstance)
+      
       const accessToken = data.tokens.access;
-      localStorage.setItem('accessToken', accessToken); 
+      localStorage.setItem('accessToken', accessToken);
       
       const user = getUserFromToken(accessToken);
+      // console.log(user);
       dispatchStore(setAuth(accessToken));
       dispatch({
         type: 'LOGIN',
         payload: { user }
       });
+      return true;
     } catch (error) {
       console.error('Login error:', error);
+      throw error;
     }
   };
 
@@ -140,25 +197,18 @@ export const AuthProvider = (props) => {
         }
       );
 
-      const accessToken = data.tokens.access; 
+      const accessToken = data.tokens.access;
       localStorage.setItem('accessToken', accessToken);
-
-      const newUser = {
-        id: new Date().getTime().toString(),
-        email,
-        full_name,
-
-      };
-
-      users.push(newUser); 
 
       const user = getUserFromToken(accessToken);
       dispatch({
         type: 'REGISTER',
         payload: { user }
       });
+      return true;
     } catch (error) {
       console.error('Registration error:', error);
+      throw error;
     }
   };
 
@@ -169,7 +219,8 @@ export const AuthProvider = (props) => {
         method: 'JWT',
         login,
         logout,
-        register
+        register,
+        validateToken
       }}
     >
       {children}

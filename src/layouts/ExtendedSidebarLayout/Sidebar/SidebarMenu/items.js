@@ -21,11 +21,11 @@ const menuItems = [
         icon: AccountCircleIcon,
         link: '/dashboards/profile'
       },
-      {
-        name: 'Builder',
-        icon: ConstructionIcon,
-        link: '/dashboards/strategy-builder'
-      },
+      // {
+      //   name: 'Builder',
+      //   icon: ConstructionIcon,
+      //   link: '/dashboards/strategy-builder'
+      // },
       {
         name:'EMA Scalping',
         icon: ConstructionIcon,
