@@ -11,31 +11,47 @@ export const Authenticated = (props) => {
   const router = useRouter();
   const [verified, setVerified] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
-    if (!router.isReady) {
+    if (!router.isReady || authChecked) {
       return;
     }
 
-    if (!auth.isAuthenticated) {
-      router.push({
-        pathname: '/auth/login/cover',
-        query: { backTo: router.asPath }
-      });
-    } else {
-      setVerified(true);
+    const checkAuth = async () => {
+      try {
+        const isAuthenticated = await auth.validateToken();
+        
+        if (!isAuthenticated) {
+          router.push({
+            pathname: '/auth/login/cover',
+            query: { backTo: router.asPath }
+          });
+          return;
+        }
 
-      enqueueSnackbar('You are successfully authenticated!', {
-        variant: 'success',
-        anchorOrigin: {
-          vertical: 'bottom',
-          horizontal: 'right'
-        },
-        autoHideDuration: 2000,
-        TransitionComponent: Slide
-      });
-    }
-  }, [router.isReady]);
+        setVerified(true);
+        setAuthChecked(true);
+        enqueueSnackbar('You are successfully authenticated!', {
+          variant: 'success',
+          anchorOrigin: {
+            vertical: 'bottom',
+            horizontal: 'right'
+          },
+          autoHideDuration: 2000,
+          TransitionComponent: Slide
+        });
+      } catch (error) {
+        console.error('Authentication check failed:', error);
+        router.push({
+          pathname: '/auth/login/cover',
+          query: { backTo: router.asPath }
+        });
+      }
+    };
+
+    checkAuth();
+  }, [router.isReady, auth, router, authChecked]);
 
   if (!verified) {
     return null;
