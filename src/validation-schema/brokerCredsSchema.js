@@ -25,7 +25,15 @@ export const getBrokerValidationSchema = (broker) => {
         mpin: Yup.string().required('MPIN is required'),
     };
 
+    const dhan = {
+        client_id:Yup.string().required('client id is required'),
+        access_token:Yup.string().required('access token is required'),
+    }
+
     return Yup.object().shape({
-        ...(broker === 'angel' ? commonFields : kotakSchema),
-    });
+        ...(broker === 'angel' ? commonFields : 
+          broker === 'dhan' ? dhan : 
+          kotakSchema),
+      });
+      
 };

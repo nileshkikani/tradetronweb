@@ -19,25 +19,26 @@ import {
     MenuItem,
     TextField,
     FormHelperText,
-    Box,Dialog, DialogActions, DialogContent, DialogTitle ,Typography
+    Box, Dialog, DialogActions, DialogContent, DialogTitle, Typography
 } from '@mui/material';
 import { API_ROUTER } from 'src/services/routes';
 import { TOAST_ALERTS, TOAST_TYPES } from 'src/constants/keywords';
 import axiosInstance from 'src/utils/axios';
 import { useSelector } from 'react-redux';
 import useToast from 'src/hooks/useToast';
+import { useAuth } from 'src/hooks/useAuth';
 
 
 const initialFormStateObj = {
     strategy_name: '',
     index_name: '',
-    capital: 100000,
+    capital: 1000000,
     strategy_type: '',
-    entry_HH: '',//this is just for storing value and make sure validations,
-    entry_MM: '', //concatination entry_HH + entry_MM will be goes to start_time param , 
-    start_time: '',//same with exit_HH + exit_MM goes to exit_time param.
-    order_take_profit_type: '',
-    order_stop_loss_type: '',
+    entry_HH: '',
+    entry_MM: '',
+    start_time: '',
+    order_take_profit_type: 'none',
+    order_stop_loss_type: 'none',
     positions: [],
     days: [],
     exit_HH: '',
@@ -51,18 +52,6 @@ const initialFormStateObj = {
     broker_name: '',
     do_trade_in_live: false
 }
-// console.log(initialFormStateObj?.entry_MM, "ghghghghghg")
-
-// const stockslistForIndex = [
-//     "HDFCBANK", "ICICIBANK", "KOTAKBANK", "AXISBANK", "SBIN", "BAJFINANCE",
-//     "TCS", "INFY", "HCLTECH", "WIPRO", "TECHM", "HINDUNILVR", "ITC",
-//     "ASIANPAINT", "TITAN", "MARUTI", "BAJAJ-AUTO", "EICHERMOT", "HEROMOTOCO",
-//     "DRREDDY", "CIPLA", "DIVISLAB", "BHARTIARTL", "RELIANCE", "NTPC",
-//     "POWERGRID", "JSWSTEEL", "TATASTEEL", "HINDALCO", "ULTRACEMCO", "SHREECEM",
-//     "LT", "ONGC", "BRITANNIA", "NESTLEIND", "APOLLOHOSP", "ADANIPORTS", "GRASIM",
-//     "UPL", "SBILIFE", "HDFCLIFE", "BPCL", "IOC", "COALINDIA", "GAIL", "M&M",
-//     "SUNPHARMA"
-// ];
 
 function DashboardOptionWizardContent() {
     const [showForm, setShowForm] = useState(false);
@@ -76,6 +65,7 @@ function DashboardOptionWizardContent() {
     const authState = useSelector((state) => state.auth.authState);
 
     const { showToast } = useToast();
+    const { handleResponceError } = useAuth();
 
     //bear token for api calling
     const headers = { Authorization: `Bearer ${authState}` };
@@ -96,8 +86,8 @@ function DashboardOptionWizardContent() {
             index_name: values.index_name || null,
             capital: values.capital || null,
             strategy_type: values.strategy_type || null,
-            order_take_profit_type: values.order_take_profit_type || null,
-            order_stop_loss_type: values.order_stop_loss_type || null,
+            order_take_profit_type: values.order_take_profit_type === 'none' ? null : values.order_take_profit_type,
+            order_stop_loss_type: values.order_stop_loss_type === 'none' ? null : values.order_stop_loss_type,
             positions: values.positions.map(position => ({
                 ...position,
                 order_take_profit_value: position.order_take_profit_value || null,
@@ -134,7 +124,7 @@ function DashboardOptionWizardContent() {
                 setSelectedStrategy('')
             }
         } catch (error) {
-            showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
+            showToast(error.response.data?.non_field_errors || TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
         }
     };
 
@@ -148,6 +138,7 @@ function DashboardOptionWizardContent() {
             }));
             setStrategyName(strategies);
         } catch (error) {
+            handleResponceError();
             showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
         }
     };
@@ -222,8 +213,8 @@ function DashboardOptionWizardContent() {
                 index_name: data.index_name || "",
                 capital: data.capital || 0,
                 strategy_type: data.strategy_type || "",
-                order_take_profit_type: data.order_take_profit_type || "",
-                order_stop_loss_type: data.order_stop_loss_type || "",
+                order_take_profit_type: data.order_take_profit_type || "none",
+                order_stop_loss_type: data.order_stop_loss_type || "none",
                 positions:
                     data.positions.map((position) => ({
                         id: position.id,
@@ -264,9 +255,6 @@ function DashboardOptionWizardContent() {
     const getBrokerData = async () => {
         try {
             const { data } = await axiosInstance.get(API_ROUTER.UPDATE_BROKER, { headers });
-            // setIsAngelAdded(data.accounts.angel);
-            // setIsKotakAdded(data.accounts.kotak);
-            // setSelectedBroker(data.accounts.kotak ? 'kotak' : (data.accounts.angel ? 'angel' : ''));
             setBrokers(data.accounts)
         } catch (error) {
             if (error.response && error.response.status === 400) {
@@ -329,20 +317,21 @@ function DashboardOptionWizardContent() {
             <Dialog open={openModal} onClose={() => setOpenModal(false)}>
                 <DialogTitle>Confirm Deletion</DialogTitle>
                 <DialogContent>
-                    <Typography>Are you sure ?</Typography>
+                    <Typography>Are you sure you want to delete this strategy ?</Typography>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setOpenModal(false)} color="primary">
-                        No
+                    <Button onClick={() => setOpenModal(false)} color="primary" >
+                        Cancel
                     </Button>
                     <Button
                         onClick={() => {
                             handleDeleteStrategy(Number(selectedStrategy))
                             setOpenModal(false);
                         }}
-                        color="primary"
+                        color="error"
+
                     >
-                        Yes
+                        Delete
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -394,12 +383,12 @@ function DashboardOptionWizardContent() {
                                                 displayEmpty
                                             >
                                                 {/* <MenuItem value="" disabled>Select Index</MenuItem> */}
-                                                <MenuItem value="BANKNIFTY">NIFTY BANK</MenuItem>
-                                                <MenuItem value="NIFTY">NIFTY 50</MenuItem>
-                                                <MenuItem value="FINNIFTY">NIFTY FIN SERVICE</MenuItem>
-                                                <MenuItem value="MIDCPNIFTY">NIFTY MID SELECT</MenuItem>
-                                                <MenuItem value="CRUDEOIL">CRUDE OIL</MenuItem>
-                                                <MenuItem value="CRUDEOILM">CRUDE OIL MINI</MenuItem>
+                                                {/* <MenuItem value="BANKNIFTY">NIFTY BANK</MenuItem> */}
+                                                {/* <MenuItem value="NIFTY">NIFTY 50</MenuItem> */}
+                                                {/* <MenuItem value="FINNIFTY">NIFTY FIN SERVICE</MenuItem> */}
+                                                {/* <MenuItem value="MIDCPNIFTY">NIFTY MID SELECT</MenuItem> */}
+                                                {/* <MenuItem value="CRUDEOIL">CRUDE OIL</MenuItem> */}
+                                                {/* <MenuItem value="CRUDEOILM">CRUDE OIL MINI</MenuItem> */}
                                                 {Object.keys(indexAndStocksNames)?.map((stock) => (
                                                     <MenuItem key={stock} value={stock}>
                                                         {stock}
@@ -446,7 +435,7 @@ function DashboardOptionWizardContent() {
                                             >
                                                 <MenuItem value="" disabled>Select Type</MenuItem>
                                                 <MenuItem value="INTRADAY">Intraday</MenuItem>
-                                                <MenuItem value="positional" disabled>Positional</MenuItem>
+                                                <MenuItem value="POSITIONAL">Positional</MenuItem>
                                             </Field>
                                             <FormHelperText>
                                                 <ErrorMessage name="strategy_type" component="span" className="error" />
@@ -481,12 +470,12 @@ function DashboardOptionWizardContent() {
                                                 gap={2}
                                             >
                                                 <Box className='dropdown-container' style={{ width: "150px" }}>
-                                                    <label>Target</label>
+                                                    <label>Profit Type</label>
                                                     <FormControl fullWidth error={touched.order_take_profit_type && Boolean(errors.order_take_profit_type)} >
-                                                        <Field as={Select} labelId="target-label" name="order_take_profit_type" onChange={handleChange}>
-                                                            <MenuItem value="" disabled>Select Target</MenuItem>
+                                                        <Field as={Select} labelId="profit type" name="order_take_profit_type" onChange={handleChange} value={values.order_take_profit_type}>
+                                                            <MenuItem value="none">None</MenuItem>
                                                             <MenuItem value="percentage_entry">% Entry Price</MenuItem>
-                                                            <MenuItem value="amount">Points</MenuItem>
+                                                            <MenuItem value="amount">Amount</MenuItem>
                                                         </Field>
                                                         <FormHelperText>
                                                             <ErrorMessage name="order_take_profit_type" component="span" className="error" />
@@ -494,12 +483,13 @@ function DashboardOptionWizardContent() {
                                                     </FormControl>
                                                 </Box>
                                                 <Box className='dropdown-container' style={{ width: "150px" }}>
-                                                    <label>SL</label>
+                                                    <label>Stop Loss type</label>
                                                     <FormControl fullWidth error={touched.order_stop_loss_type && Boolean(errors.order_stop_loss_type)} >
-                                                        <Field as={Select} labelId="sl-label" name="order_stop_loss_type" onChange={handleChange} >
-                                                            <MenuItem value="" disabled>Select StopLoss</MenuItem>
+                                                        
+                                                        <Field as={Select} labelId="sl-label" name="order_stop_loss_type" onChange={handleChange} value={values.order_stop_loss_type}>
+                                                            <MenuItem value="none">None</MenuItem>
                                                             <MenuItem value="percentage_entry">% Entry Price</MenuItem>
-                                                            <MenuItem value="amount">Points</MenuItem>
+                                                            <MenuItem value="amount">Amount</MenuItem>
                                                         </Field>
                                                         <FormHelperText>
                                                             <ErrorMessage name="order_stop_loss_type" component="span" className="error" />

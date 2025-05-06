@@ -1,22 +1,39 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, styled } from '@mui/material';
 import Footer from 'src/components/Footer';
+import Navbar1 from 'src/components/Navbar';
+
+const OverviewWrapper = styled(Box)(
+  ({ theme }) => `
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: ${theme.palette.common.white};
+  `
+);
+
+const ContentWrapper = styled(Box)(
+  ({ theme }) => `
+    flex: 1;
+    overflow-y: auto;
+    padding: ${theme.spacing(3)};
+    background: ${theme.palette.background.default};
+  `
+);
 
 const Affiliates = () => {
   return (
-    <Box sx={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      minHeight: '100vh', 
-    }}>
-      <Box sx={{ flex: 1,padding: '20px' }}>
+    <OverviewWrapper>
+      <Navbar1 />
+
+      <ContentWrapper>
         <Typography variant="h1" gutterBottom>
           Affiliates
         </Typography>
         <Typography variant="body1" paragraph>
           Tradetron is the future of algorithmic trading. An incredibly powerful platform to empower strategy creators by allowing them to automate their quant strategies and sell them to investors and traders the world over. All of this without the hassle of coding. As an affiliate of Tradetron, there is a lot you have to gain.
         </Typography>
-        
+
         <Typography variant="h3" gutterBottom>
           What’s in it for you
         </Typography>
@@ -62,14 +79,12 @@ const Affiliates = () => {
         <Typography variant="h3" gutterBottom>
           Login here to access your affiliate dashboard
         </Typography>
-        
-        <Typography variant="body1" paragraph>
-          Check this video to see how to become an affiliate.
-        </Typography>
-      </Box>
 
+      </ContentWrapper>
+
+      {/* Footer */}
       <Footer />
-    </Box>
+    </OverviewWrapper>
   );
 }
 

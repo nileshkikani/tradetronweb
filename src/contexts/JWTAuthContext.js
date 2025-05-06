@@ -1,10 +1,11 @@
-import { createContext, useEffect, useReducer, useCallback } from 'react';
+import { createContext, useEffect, useReducer } from 'react';
 import PropTypes from 'prop-types';
-import { decode } from 'jsonwebtoken';
+// import { decode } from '../utils/jwt';
 import { useDispatch } from 'react-redux';
 import axiosInstance from 'src/utils/axios';
 import { API_ROUTER } from 'src/services/routes';
 import { setAuth } from 'src/redux/reducers/authSlice';
+import { useRouter } from 'next/router'
 
 const initialAuthState = {
   isAuthenticated: false,
@@ -15,7 +16,6 @@ const initialAuthState = {
 const handlers = {
   INITIALIZE: (state, action) => {
     const { isAuthenticated, user } = action.payload;
-
     return {
       ...state,
       isAuthenticated,
@@ -25,7 +25,6 @@ const handlers = {
   },
   LOGIN: (state, action) => {
     const { user } = action.payload;
-
     return {
       ...state,
       isAuthenticated: true,
@@ -39,7 +38,6 @@ const handlers = {
   }),
   REGISTER: (state, action) => {
     const { user } = action.payload;
-
     return {
       ...state,
       isAuthenticated: true,
@@ -55,34 +53,21 @@ export const AuthContext = createContext({
   ...initialAuthState,
   method: 'JWT',
   logout: () => Promise.resolve(),
-  register: () => Promise.resolve(),
-  validateToken: () => Promise.resolve(false)
+  register: () => Promise.resolve()
 });
 
 export const AuthProvider = (props) => {
   const { children } = props;
   const [state, dispatch] = useReducer(reducer, initialAuthState);
   const dispatchStore = useDispatch();
+  const router = useRouter();
 
-  const isTokenExpired = useCallback((token) => {
-    if (!token) return true;
-    try {
-      const decoded = decode(token);
-      if (!decoded.exp) return true;
-      return Date.now() >= decoded.exp * 1000;
-    } catch (error) {
-      return true;
-    }
-  }, []);
+  const users = []; 
 
   const getUserFromToken = useCallback((token) => {
     try {
-      const decoded = decode(token);
-      return { 
-        id: decoded.userId || decoded.sub,
-        email: decoded.email,
-        name: decoded.name
-      };
+      const { userId } = decode(token);
+      return users.find(user => user.id === userId); 
     } catch (error) {
       console.error('Error decoding token:', error);
       return null;
@@ -104,56 +89,20 @@ export const AuthProvider = (props) => {
       dispatch({
         type: 'INITIALIZE',
         payload: {
-          isAuthenticated: true,
+          isAuthenticated,
           user
         }
       });
-    }
-    
-    return true;
-  }, [isTokenExpired, getUserFromToken, state.isAuthenticated]);
-
-  useEffect(() => {
-    const initializeAuth = async () => {
-      try {
-        const accessToken = localStorage.getItem('accessToken');
-        const isValid = !isTokenExpired(accessToken);
-
-        if (isValid && accessToken) {
-          const user = getUserFromToken(accessToken);
-          dispatch({
-            type: 'INITIALIZE',
-            payload: {
-              isAuthenticated: true,
-              user
-            }
-          });
-        } else {
-          if (accessToken) {
-            localStorage.removeItem('accessToken');
-          }
-          dispatch({
-            type: 'INITIALIZE',
-            payload: {
-              isAuthenticated: false,
-              user: null
-            }
-          });
+    } else {
+      dispatch({
+        type: 'INITIALIZE',
+        payload: {
+          isAuthenticated: false,
+          user: null
         }
-      } catch (error) {
-        console.error('Auth initialization error:', error);
-        dispatch({
-          type: 'INITIALIZE',
-          payload: {
-            isAuthenticated: false,
-            user: null
-          }
-        });
-      }
-    };
-
-    initializeAuth();
-  }, [isTokenExpired, getUserFromToken]);
+      });
+    }
+  }, []);
 
   const login = async (email, password) => {
     try {
@@ -164,9 +113,10 @@ export const AuthProvider = (props) => {
           },
         }
       );
-      
+      // console.log('daraa',data)
+      // console.log('axios',axiosInstance)
       const accessToken = data.tokens.access;
-      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('accessToken', accessToken); 
       
       const user = getUserFromToken(accessToken);
       // console.log(user);
@@ -184,21 +134,31 @@ export const AuthProvider = (props) => {
 
   const logout = async () => {
     localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('time');
     dispatch({ type: 'LOGOUT' });
   };
 
   const register = async (email, full_name, password) => {
     try {
-      const { data } = await axiosInstance.post(API_ROUTER.REGISTER, 
+      const { data } = await axiosInstance.post(API_ROUTER.REGISTER,
         JSON.stringify({ email, full_name, password }), {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
       const accessToken = data.tokens.access;
       localStorage.setItem('accessToken', accessToken);
+
+      const newUser = {
+        id: new Date().getTime().toString(),
+        email,
+        full_name,
+
+      };
+
+      users.push(newUser); 
 
       const user = getUserFromToken(accessToken);
       dispatch({
@@ -212,6 +172,34 @@ export const AuthProvider = (props) => {
     }
   };
 
+  const handleResponceError = () => {
+    localStorage.removeItem('accessToken');
+    logout();
+    dispatch({
+      type: 'LOGOUT'
+    });
+    router.push('/');
+  };
+
+  const refreshToken = async () => {
+    const accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+    try {
+      const response = await axiosInstance.post(
+        API_ROUTER.REFRESH_TOKEN,
+        { refresh: refreshToken },
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      );
+      const newAccessToken = response.data.access;
+      if (newAccessToken) {
+        localStorage.setItem('accessToken', newAccessToken);
+        localStorage.setItem('time', Date.now().toString());
+      }
+    } catch (error) {
+      console.error("Error refreshing token", error);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -219,8 +207,7 @@ export const AuthProvider = (props) => {
         method: 'JWT',
         login,
         logout,
-        register,
-        validateToken
+        register
       }}
     >
       {children}

@@ -37,6 +37,7 @@ const DashboardProfileContent = () => {
         showToast(data.detail, TOAST_TYPES.ERROR);
       } else {
         setUserData(data.user);
+        setButtonState(data.user.cronjobs_current_status);
       }
     } catch (error) {
       setError("An error occurred while fetching user information.");

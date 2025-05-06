@@ -32,7 +32,7 @@ const DashboardExistingBrokersContent = () => {
     const { decryptField } = useDecryption();
     const headers = { Authorization: `Bearer ${authState}`, "Content-Type": "application/json" };
 
-    const { encryptAngelCredentials, encryptKotakCredentials } = useEncryption();
+    const { encryptAngelCredentials, encryptKotakCredentials, encryptDhanCredentials } = useEncryption();
 
     // get broker data api
     const getBrokerData = async () => {
@@ -42,6 +42,7 @@ const DashboardExistingBrokersContent = () => {
                 accounts: {
                     kotak: {},
                     angel: {},
+                    dhan: {}
                 },
             };
 
@@ -58,7 +59,6 @@ const DashboardExistingBrokersContent = () => {
                 };
             }
 
-            // console.log('ddddddd',decryptedData)
 
             if (data.accounts.angel) {
                 decryptedData.accounts.angel = {
@@ -68,7 +68,14 @@ const DashboardExistingBrokersContent = () => {
                     api_key: decryptField(data.accounts.angel.api_key),
                 };
             }
-            // console.log('decr',decryptedData);
+
+            if (data.accounts.dhan) {
+                decryptedData.accounts.dhan = {
+                    client_id: decryptField(data.accounts.dhan.client_id) || '',
+                    access_token: decryptField(data.accounts.dhan.access_token) || '', 
+                };
+            }
+            console.log('decr', decryptedData);
             // console.log('decr2',data);
             setFormData(decryptedData);
         } catch (error) {
@@ -87,6 +94,8 @@ const DashboardExistingBrokersContent = () => {
                 encryptedCreds = encryptKotakCredentials(formData.accounts[selectedBroker]);
             } else if (selectedBroker === 'angel') {
                 encryptedCreds = encryptAngelCredentials(formData.accounts[selectedBroker]);
+            } else if (selectedBroker === 'dhan') {
+                encryptedCreds = encryptDhanCredentials(formData.accounts[selectedBroker]);
             }
 
             const encryptedData = {
@@ -136,7 +145,8 @@ const DashboardExistingBrokersContent = () => {
     const renderBrokerContent = () => {
         const hasAngel = formData.accounts.angel && Object.keys(formData.accounts.angel).length > 0;
         const hasKotak = formData.accounts.kotak && Object.keys(formData.accounts.kotak).length > 0;
-    
+        const hasDhan = formData.accounts.dhan && Object.keys(formData.accounts.dhan).length > 0;
+
         if (selectedBroker === 'angel' && hasAngel) {
             return (
                 <Paper style={{ padding: 20, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -153,40 +163,60 @@ const DashboardExistingBrokersContent = () => {
                 </Paper>
             );
         }
-    
+
         if (selectedBroker === 'kotak' && hasKotak) {
             return (
-                <Paper style={{ padding: 20,display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Paper style={{ padding: 20, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <Typography variant="h4">Kotak Credentials</Typography>
                     {renderFields(formData.accounts.kotak)}
                     <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }} gap={3}>
-                    <Button variant="contained" onClick={updateBroker} >
-                        Update
-                    </Button>
-                    <Button variant="outlined" color="error" onClick={() => handleDeleteClick(selectedBroker)} >
-                        Delete
-                    </Button>
+                        <Button variant="contained" onClick={updateBroker} >
+                            Update
+                        </Button>
+                        <Button variant="outlined" color="error" onClick={() => handleDeleteClick(selectedBroker)} >
+                            Delete
+                        </Button>
                     </Box>
                 </Paper>
             );
         }
-    
+
+        if (selectedBroker === 'dhan' && hasDhan) {
+            return (
+                <Paper style={{ padding: 20, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <Typography variant="h4">Dhan Credentials</Typography>
+                    {renderFields(formData.accounts.dhan)}
+                    <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }} gap={3}>
+                        <Button variant="contained" onClick={updateBroker} >
+                            Update
+                        </Button>
+                        <Button variant="outlined" color="error" onClick={() => handleDeleteClick(selectedBroker)} >
+                            Delete
+                        </Button>
+                    </Box>
+                </Paper>
+            );
+        }
+
         // Handle cases when a broker is selected but has no credentials
         if (selectedBroker === 'angel' && !hasAngel) {
             return <Typography variant="caption">Please select a broker to view credentials.</Typography>;
         }
-    
+
         if (selectedBroker === 'kotak' && !hasKotak) {
             return <Typography variant="caption">Please select a broker to view credentials.</Typography>;
         }
-    
-        if (!hasAngel && !hasKotak) {
+        if (selectedBroker === 'dhan' && !hasDhan) {
+            return <Typography variant="caption">Please select a broker to view credentials.</Typography>;
+        }
+
+        if (!hasAngel && !hasKotak && !hasDhan) {
             return <Typography variant="caption">You have not added any broker.</Typography>;
         }
-    
-        return null; 
+
+        return null;
     };
-    
+
     const handleDeleteClick = (broker) => {
         setBrokerToDelete(broker);
         setOpenModal(true);
@@ -210,8 +240,12 @@ const DashboardExistingBrokersContent = () => {
                 { name: 'login_password', label: 'Login Password', type: 'password' },
                 { name: 'mpin', label: 'MPIN', type: 'password' },
             ],
+            dhan: [
+                { name: 'client_id', label: 'Client Id' },
+                { name: 'access_token', label: 'Access Token' },
+            ]
         };
-    
+
         return fields[selectedBroker]?.map(field => (
             <TextField
                 key={field.name}
@@ -225,25 +259,25 @@ const DashboardExistingBrokersContent = () => {
             />
         ));
     };
-    
+
     const handleInputChange = (e, fieldName) => {
         const value = e.target.value;
-    
+
         setFormData(prev => {
             const updatedData = {
-            accounts: {
-                ...prev.accounts,
-                [selectedBroker]: {
-                    ...prev.accounts[selectedBroker],
-                    [fieldName]: value,
+                accounts: {
+                    ...prev.accounts,
+                    [selectedBroker]: {
+                        ...prev.accounts[selectedBroker],
+                        [fieldName]: value,
+                    },
                 },
-            },
             };
             // console.log("Updated FormData:", updatedData);
             return updatedData;
         });
     };
-    
+
     useEffect(() => {
         getBrokerData();
     }, []);
@@ -277,6 +311,16 @@ const DashboardExistingBrokersContent = () => {
                         endIcon={selectedBroker === 'kotak' ? <CheckCircleIcon color="success" /> : null}
                     >
                         Kotak Neo
+                    </Button>
+                )}
+                {formData.accounts.dhan && Object.keys(formData.accounts.dhan).length > 0 && (
+                    <Button
+                        variant="outlined"
+                        onClick={() => handleOpen('dhan')}
+                        startIcon={<Image src="/dhan.svg" alt="Angel" width={60} height={60} />}
+                        endIcon={selectedBroker === 'dhan' ? <CheckCircleIcon color="success" /> : null}
+                    >
+                        Dhan
                     </Button>
                 )}
             </Box>

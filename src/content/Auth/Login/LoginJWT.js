@@ -144,7 +144,7 @@ export const LoginJWT = (props) => {
         size="large"
         variant="contained"
       >
-        {t('Sign in')}
+        {t('Login')}
       </Button>
     </form>
   );

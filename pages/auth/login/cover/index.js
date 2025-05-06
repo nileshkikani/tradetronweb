@@ -228,7 +228,7 @@ function LoginCover() {
                     mb: 1
                   }}
                 >
-                  {t('Sign in')}
+                  {t('Login')}
                 </Typography>
                 <Typography
                   variant="h4"

@@ -3,12 +3,13 @@ export const API_ROUTER = {
     LOG_IN: "user/login/",
     REGISTER: "user/register-user/",
     VERIFY_CODE: "user/verify-user/",
+    REFRESH_TOKEN:'user/token-refresh/',
     FORGOT_PASSWORD: "user/request-password-reset/",
     RESET_PASSWORD_CODE:"user/password-reset/",
     CHANGE_PASSWORD :"user/change-password/",
     USER_PROFILE:"user/profile/",
     USER_CONTACTUS:"user/contact-us/",
-  
+    ORDER_CLOSE:"orders/close/",
 
     SYMBOLS: 'stocks/get-symbols/',
     GET_FUTURE_EXPIRY:"stocks/get-future-expiry/",
@@ -26,9 +27,9 @@ export const API_ROUTER = {
 
     
     ORDER_DATE_LIST: (id) => (`orders/dates/${id}/`),
-    ORDER_LIST: (id, selectedDate, positionType) => {
+    ORDER_LIST: (id, selectedDate, symbol) => {
         const baseUrl = `orders/${id}/?date=${selectedDate}`;
-        return positionType ? `${baseUrl}&position_type=${positionType}` : baseUrl;
+        return symbol ? `${baseUrl}&symbol=${symbol}` : baseUrl;
       },
 
 

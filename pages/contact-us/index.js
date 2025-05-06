@@ -13,6 +13,7 @@ import { API_ROUTER } from 'src/services/routes';
 import { TOAST_ALERTS, TOAST_TYPES } from 'src/constants/keywords';
 import useToast from 'src/hooks/useToast';
 import { useSelector } from "react-redux";
+import Navbar1 from 'src/components/Navbar';
 
 const ContactUs = () => {
   const initialValues = {
@@ -33,7 +34,7 @@ const ContactUs = () => {
         showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
+      // console.error("Error submitting form:", error);
       showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
     }
   };
@@ -44,6 +45,7 @@ const ContactUs = () => {
       flexDirection: 'column',
       minHeight: '100vh',
     }}>
+       <Navbar1 />
       <Box 
         sx={{ 
           display: 'flex',
@@ -109,14 +111,14 @@ const ContactUs = () => {
                 margin="normal"
               />
               <Button 
-                variant="contained" 
-                color="primary" 
-                type="submit" 
-                sx={{ mt: 2 }}
+                variant="contained"
+                color="primary"
+                type="submit"
+                sx={{ mt: 2, width: '100%' }}
               >
                 Submit
               </Button>
-            </Form> 
+            </Form>
           )}
         </Formik>
       </Box>

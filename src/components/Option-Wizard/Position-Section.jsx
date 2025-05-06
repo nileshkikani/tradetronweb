@@ -1,36 +1,21 @@
-import React from "react";
-import { Field, ErrorMessage, useFormikContext } from "formik";
-import { positionSchema } from "src/validation-schema/strategySchema";
-import {
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  TextField,
-  Button,
-  Box,
-  FormHelperText,
-} from "@mui/material";
+import React from 'react';
+import { Field, ErrorMessage, useFormikContext } from 'formik';
+import { positionSchema } from 'src/validation-schema/strategySchema';
+import { FormControl, InputLabel, Select, MenuItem, TextField, Button, Box, FormHelperText } from '@mui/material';
 
-const PositionSection = ({ push,indexAndStocksNames }) => {
+const PositionSection = ({ push, indexAndStocksNames }) => {
   const { values, setFieldError, errors, touched } = useFormikContext();
 
   const lotsDisplay = indexAndStocksNames[values.index_name];
 
   const getOptionSegmentType = () => {
-    const itmOptions = Array.from(
-      { length: 20 },
-      (_, i) => `ITM_${(20 - i).toString()}`
-    );
-    const otmOptions = Array.from(
-      { length: 20 },
-      (_, i) => `OTM_${(i + 1).toString()}`
-    );
+    const itmOptions = Array.from({ length: 50 }, (_, i) => `ITM_${(50 - i).toString()}`);
+    const otmOptions = Array.from({ length: 50 }, (_, i) => `OTM_${(i + 1).toString()}`);
 
-    if (values.option_type === "CE") {
-      return [...itmOptions, "ATM_0", ...otmOptions];
-    } else if (values.option_type === "PE") {
-      return [...otmOptions.reverse(), "ATM_0", ...itmOptions.reverse()];
+    if (values.option_type === 'CE') {
+      return [...itmOptions, 'ATM_0', ...otmOptions];
+    } else if (values.option_type === 'PE') {
+      return [...otmOptions.reverse(), 'ATM_0', ...itmOptions.reverse()];
     }
     return null;
   };
@@ -42,7 +27,7 @@ const PositionSection = ({ push,indexAndStocksNames }) => {
       strike_selection: values.strike_selection,
       value: values.value,
       expiry: values.expiry,
-      lots: values.lots,
+      lots: values.lots
     };
 
     try {
@@ -58,77 +43,54 @@ const PositionSection = ({ push,indexAndStocksNames }) => {
   };
 
   const allowedIndexNames = [
-    "BANKNIFTY",
-    "NIFTY",
-    "FINNIFTY",
-    "MIDCPNIFTY",
-    "CRUDEOIL",
-    "CRUDEOILM",
+    // "BANKNIFTY",
+    'NIFTY',
+    'SENSEX'
+    // "FINNIFTY",
+    // "MIDCPNIFTY",
+    // "CRUDEOIL",
+    // "CRUDEOILM",
   ];
 
   // define expiry options based on index_name
   const expiryOptions = allowedIndexNames.includes(values.index_name)
-    ? ["CURRENT_WEEK", "NEXT_WEEK", "CURRENT_MONTH", "NEXT_MONTH"]
-    : ["CURRENT_MONTH"];
-
+    ? ['CURRENT_WEEK', 'NEXT_WEEK', 'CURRENT_MONTH', 'NEXT_MONTH']
+    : ['CURRENT_MONTH'];
 
   return (
-    <Box
-      className="position-section-dropdowns"
-      display="flex"
-      flexDirection="row"
-      flexWrap="wrap"
-      gap={2}
-    >
+    <Box className="position-section-dropdowns" display="flex" flexDirection="row" flexWrap="wrap" gap={2}>
       {[
         {
-          name: "option_type",
-          label: "Segment",
-          options: ["CE", "PE"],
-          disabled: !values.index_name,
+          name: 'option_type',
+          label: 'Segment',
+          options: ['CE', 'PE'],
+          disabled: !values.index_name
         },
         {
-          name: "order_type",
-          label: "B/S",
-          options: ["BUY", "SELL"],
-          disabled: !values.option_type,
+          name: 'order_type',
+          label: 'B/S',
+          options: ['BUY', 'SELL'],
+          disabled: !values.option_type
         },
         {
-          name: "strike_selection",
-          label: "Strike Selection",
+          name: 'strike_selection',
+          label: 'Strike Selection',
           options:
-            values.index_name === "CRUDEOIL" ||
-            values.index_name === "CRUDEOILM"
-              ? ["ATM_SPOT"]
-              : ["ATM_SPOT", "ATM_FUTURE", "DELTA_LT", "DELTA_GT"],
-          disabled: !values.option_type,
+            values.index_name === 'CRUDEOIL' || values.index_name === 'CRUDEOILM'
+              ? ['ATM_SPOT']
+              : ['ATM_SPOT', 'ATM_FUTURE', 'DELTA_LT', 'DELTA_GT', 'PREMIUM_GT', 'PREMIUM_LT'],
+          disabled: !values.option_type
         },
         {
-          name: "expiry",
-          label: "Expiry",
-          options: expiryOptions,
-        },
+          name: 'expiry',
+          label: 'Expiry',
+          options: expiryOptions
+        }
       ].map(({ name, label, options, disabled }) => (
-        <Box
-          key={name}
-          display="flex"
-          flexDirection="row"
-          flex={1}
-          minWidth="100px"
-        >
-          <FormControl
-            variant="outlined"
-            error={touched[name] && Boolean(errors[name])}
-            fullWidth
-          >
+        <Box key={name} display="flex" flexDirection="row" flex={1} minWidth="100px">
+          <FormControl variant="outlined" error={touched[name] && Boolean(errors[name])} fullWidth>
             <InputLabel>{label}</InputLabel>
-            <Field
-              as={Select}
-              name={name}
-              label={label}
-              disabled={disabled}
-              fullWidth
-            >
+            <Field as={Select} name={name} label={label} disabled={disabled} fullWidth>
               <MenuItem value="" disabled>
                 Select
               </MenuItem>
@@ -148,27 +110,15 @@ const PositionSection = ({ push,indexAndStocksNames }) => {
       <Box display="flex" flexDirection="row" flex={1} minWidth="200px">
         <FormControl error={touched.value && Boolean(errors.value)} fullWidth>
           <InputLabel>Value</InputLabel>
-          {["ATM_FUTURE", "ATM_SPOT"].includes(values.strike_selection) &&
-          ["CE", "PE"].includes(values.option_type) ? (
-            <Field
-              name="value"
-              as={Select}
-              label="Value"
-              disabled={!values.strike_selection}
-              fullWidth
-            >
+          {['ATM_FUTURE', 'ATM_SPOT'].includes(values.strike_selection) && ['CE', 'PE'].includes(values.option_type) ? (
+            <Field name="value" as={Select} label="Value" disabled={!values.strike_selection} fullWidth>
               <MenuItem value="" disabled>
                 Select value
               </MenuItem>
               {getOptionSegmentType() &&
                 getOptionSegmentType().map((option) => (
                   <MenuItem key={option} value={option}>
-                    {option
-                      .replace(
-                        /ITM_|OTM_/,
-                        (match) => `${match.replace("_", "")} `
-                      )
-                      .replace("ATM_0", "ATM")}
+                    {option.replace(/ITM_|OTM_/, (match) => `${match.replace('_', '')} `).replace('ATM_0', 'ATM')}
                   </MenuItem>
                 ))}
             </Field>
@@ -193,25 +143,20 @@ const PositionSection = ({ push,indexAndStocksNames }) => {
       <Box display="flex" flexDirection="row" flex={1} minWidth="200px">
         <FormControl error={touched.lots && Boolean(errors.lots)} fullWidth>
           <InputLabel>
-            {lotsDisplay &&
-              `Lots ( 1 lot=${
-                lotsDisplay !== undefined ? lotsDisplay : "Loading..."
-              })`}
+            {lotsDisplay && `Lots ( 1 lot=${lotsDisplay !== undefined ? lotsDisplay : 'Loading...'})`}
           </InputLabel>
           <Field
             as={Select}
             name="lots"
             fullWidth
-            label={`Lots ( 1 lot=${
-              lotsDisplay !== undefined ? lotsDisplay : "Loading..."
-            })`}
+            label={`Lots ( 1 lot=${lotsDisplay !== undefined ? lotsDisplay : 'Loading...'})`}
             disabled={!lotsDisplay}
           >
             <MenuItem value="" disabled>
               Select Lot
             </MenuItem>
             {lotsDisplay ? (
-              Array.from({ length: 8 }, (_, index) => index + 1).map((lot) => (
+              Array.from({ length: 10 }, (_, index) => index + 1).map((lot) => (
                 <MenuItem key={lot} value={lot}>
                   {lot}
                 </MenuItem>
@@ -229,11 +174,7 @@ const PositionSection = ({ push,indexAndStocksNames }) => {
       </Box>
 
       <Box display="flex" justifyContent="center">
-        <Button
-          variant="contained"
-          onClick={handleAddPosition}
-          className="create-own-strategy-btn"
-        >
+        <Button variant="contained" onClick={handleAddPosition} className="create-own-strategy-btn">
           Add
         </Button>
       </Box>

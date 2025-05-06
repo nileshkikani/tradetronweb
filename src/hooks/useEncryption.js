@@ -35,7 +35,16 @@ const useEncryption = () => {
         };
     };
 
-    return { encryptAngelCredentials, encryptKotakCredentials };
+
+    // dhan cred encryption
+    const encryptDhanCredentials = (data) => {
+        return {
+            client_id: encryptField(data.client_id),
+            access_token: encryptField(data.access_token),
+        };
+    };
+
+    return { encryptAngelCredentials, encryptKotakCredentials,encryptDhanCredentials };
 };
 
 export default useEncryption;
