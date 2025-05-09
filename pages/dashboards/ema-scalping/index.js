@@ -160,6 +160,7 @@ function DashboardReports() {
             <MenuItem value="BANKNIFTY">BANKNIFTY</MenuItem>
             <MenuItem value="SENSEX">SENSEX</MenuItem>
             <MenuItem value="CRUDEOIL">CRUDEOIL</MenuItem>
+            <MenuItem value="GOLD">GOLD</MenuItem>
           </Select>
           <Button
             onClick={handleRefesh}
