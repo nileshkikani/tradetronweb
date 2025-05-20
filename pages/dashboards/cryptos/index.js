@@ -1,6 +1,16 @@
 import ExtendedSidebarLayout from "src/layouts/ExtendedSidebarLayout";
 import { Authenticated } from "src/components/Authenticated";
-import { Button, ListItem, Select, MenuItem, IconButton } from "@mui/material";
+import {
+  Button,
+  ListItem,
+  Select,
+  MenuItem,
+  IconButton,
+  Paper,
+  Box,
+  Typography,
+  Chip,
+} from "@mui/material";
 import dynamic from "next/dynamic";
 import { useState, useEffect } from "react";
 import Table from "@mui/material/Table";
@@ -197,77 +207,71 @@ function DashboardReports() {
           style={{
             flexGrow: 1,
             overflow: "auto",
-            display: "flex",
-            flexDirection: "column",
-            gap: "16px",
+            borderRadius: "8px",
+            paddingTop: "25px",
           }}
         >
           <TableContainer
-            style={{
-              padding: "16px",
-            }}
+            component={Paper}
+            elevation={0}
+            sx={{ borderRadius: "8px", overflow: "hidden" }}
           >
             {orderData.length > 0 && (
-              <TableRow
-                style={{
+              <Box
+                sx={{
                   display: "flex",
-                  justifyContent: "right",
-                  fontWeight: "bold",
+                  justifyContent: "flex-end",
+                  padding: "12px 24px",
+                  borderBottom: "1px solid rgb(161, 153, 153)",
                 }}
               >
-                <TableCell style={{}}>
-                  <strong>Total P/L:</strong>
-                </TableCell>
-                <TableCell
-                  colSpan={3}
-                  style={{
-                    paddingTop: "12px",
-                    paddingBottom: "12px",
-                  }}
-                ></TableCell>
-                <TableCell
-                  style={{
-                    fontWeight: "bold",
-                    paddingTop: "12px",
-                    paddingBottom: "12px",
-                    fontSize: "1rem",
-                  }}
-                >
-                  <strong>
+                <Typography variant="subtitle1" fontWeight="600">
+                  Total P/L:
+                  <Box
+                    component="span"
+                    sx={{
+                      ml: 1,
+                      color: (theme) => theme.palette.primary.main,
+                      fontWeight: "bold",
+                    }}
+                  >
                     {orderData
                       .reduce(
                         (total, row) => total + (parseFloat(row?.profit) || 0),
                         0
                       )
                       .toFixed(2)}
-                  </strong>
-                </TableCell>
-                <TableCell
-                  colSpan={4}
-                  style={{
-                    paddingTop: "12px",
-                    paddingBottom: "12px",
-                  }}
-                ></TableCell>
-              </TableRow>
+                  </Box>
+                </Typography>
+              </Box>
             )}
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+
+            <Table sx={{ minWidth: 650 }} aria-label="order table">
               <TableHead>
-                <TableRow>
-                  <TableCell>Order Time</TableCell>
-                  <TableCell>Action</TableCell>
-                  <TableCell>Entry Price</TableCell>
-                  <TableCell>Close Price</TableCell>
-                  <TableCell>Profit</TableCell>
-                  <TableCell>Symbol</TableCell>
-                  <TableCell>Lot Size</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Strategy Name</TableCell>
+                <TableRow sx={{ backgroundColor: "rgba(0, 0, 0, 0.02)" }}>
+                  <TableCell sx={{ fontWeight: 600 }}>Order Time</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>Action</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>Entry Price</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>Close Price</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>Profit</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>Symbol</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>Lot Size</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>Strategy Name</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {orderData.map((row) => (
-                  <TableRow key={row.uuid}>
+                  <TableRow
+                    key={row.uuid}
+                    sx={{
+                      "&:nth-of-type(odd)": {
+                        backgroundColor: "rgba(0, 0, 0, 0.01)",
+                      },
+                      "&:hover": { backgroundColor: "rgba(0, 0, 0, 0.04)" },
+                      transition: "background-color 0.2s",
+                    }}
+                  >
                     <TableCell>
                       {new Date(row?.created_at).toLocaleTimeString("en-IN", {
                         hour: "2-digit",
@@ -275,37 +279,55 @@ function DashboardReports() {
                         hour12: false,
                       })}
                     </TableCell>
-                    <TableCell>{row?.order_type}</TableCell>
+                    <TableCell
+                      sx={{
+                        color:
+                          row?.order_type?.toLowerCase() === "buy"
+                            ? "success.main"
+                            : row?.order_type?.toLowerCase() === "sell"
+                            ? "error.main"
+                            : "inherit",
+                      }}
+                    >
+                      {row?.order_type}
+                    </TableCell>
                     <TableCell>{row?.entry_price}</TableCell>
                     <TableCell>{row?.close_price}</TableCell>
-                    <TableCell>{row?.profit}</TableCell>
+                    <TableCell
+                      sx={{
+                        color:
+                          parseFloat(row?.profit) > 0
+                            ? "success.main"
+                            : parseFloat(row?.profit) < 0
+                            ? "error.main"
+                            : "inherit",
+                        fontWeight: 500,
+                      }}
+                    >
+                      {row?.profit}
+                    </TableCell>
                     <TableCell>{row?.symbol}</TableCell>
                     <TableCell>{row?.lot_size}</TableCell>
-                    <TableCell>{row?.order_status}</TableCell>
+                    <TableCell>
+                      <Chip
+                        size="small"
+                        label={row?.order_status}
+                        color={
+                          row?.order_status?.toLowerCase() === "completed"
+                            ? "success"
+                            : row?.order_status?.toLowerCase() === "pending"
+                            ? "warning"
+                            : row?.order_status?.toLowerCase() === "cancelled"
+                            ? "error"
+                            : "default"
+                        }
+                        variant="outlined"
+                        sx={{ fontWeight: 500 }}
+                      />
+                    </TableCell>
                     <TableCell>{row?.strategy_name}</TableCell>
                   </TableRow>
                 ))}
-
-                {/* {orderData.length > 0 && (
-                  <TableRow>
-                    <TableCell>
-                      <strong>Total P/L</strong>
-                    </TableCell>
-                    <TableCell colSpan={3}></TableCell>
-                    <TableCell>
-                      <strong>
-                        {orderData
-                          .reduce(
-                            (total, row) =>
-                              total + (parseFloat(row?.profit) || 0),
-                            0
-                          )
-                          .toFixed(2)}
-                      </strong>
-                    </TableCell>
-                    <TableCell colSpan={4}></TableCell>
-                  </TableRow>
-                )} */}
               </TableBody>
             </Table>
           </TableContainer>
