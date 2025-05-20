@@ -250,7 +250,7 @@ function myStrategies() {
                   {editMode === row.id ? (
                     <>
                       {isLoading ? (
-                        <CircularProgress size={24} />
+                         <TableLoader />
                       ) : (
                         <Box sx={{ display: "flex", gap: 1 }}>
                           <Button
