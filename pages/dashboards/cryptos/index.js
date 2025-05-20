@@ -231,8 +231,16 @@ function DashboardReports() {
                     component="span"
                     sx={{
                       ml: 1,
-                      color: (theme) => theme.palette.primary.main,
-                      fontWeight: "bold",
+                       color: (theme) => {
+                        const totalPL = orderData.reduce(
+                          (total, row) =>
+                            total + (parseFloat(row?.profit) || 0),
+                          0
+                        );
+                        return totalPL >= 0
+                          ? theme.palette.success.main
+                          : theme.palette.error.main;
+                      },
                     }}
                   >
                     {orderData
