@@ -1,5 +1,5 @@
 import { Box, alpha, lighten, useTheme } from '@mui/material';
-import ThemeSettings from 'src/components/ThemeSettings';
+// import ThemeSettings from 'src/components/ThemeSettings';
 import PropTypes from 'prop-types';
 
 import Sidebar from './Sidebar';
@@ -52,7 +52,7 @@ const ExtendedSidebarLayout = ({ children }) => {
           }}
         >
           <Box display="block">{children}</Box>
-          <ThemeSettings />
+          {/* <ThemeSettings /> */}
         </Box>
       </Box>
     </>

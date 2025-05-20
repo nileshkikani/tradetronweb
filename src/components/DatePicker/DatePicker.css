@@ -3,7 +3,8 @@
     width: 200px;
     height: 50px;
     padding: 10px;
-    border: 2px solid rgba(183, 167, 242, 0.278);
+    /* border: 2px solid rgba(183, 167, 242, 0.278); */
+    border:2px solid rgba(167, 242, 183, 0.278);
     background: transparent;
     color: white;
     font-size: 18px;

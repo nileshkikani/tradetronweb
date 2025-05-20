@@ -109,15 +109,15 @@ const ColorSchemeWrapper = styled(Box)(
         }
     }
 
-    &.nebulaFighter {
-        .primary {
-            background: #8C7CF0;
-        }
+    // &.nebulaFighter {
+    //     .primary {
+    //         background: #8C7CF0;
+    //     }
     
-        .secondary {
-            background: #070C27;
-        }
-    }
+    //     .secondary {
+    //         background: #070C27;
+    //     }
+    // }
 
     &.greenFields {
         .primary {
@@ -129,15 +129,15 @@ const ColorSchemeWrapper = styled(Box)(
         }
     }
 
-    &.darkSpaces {
-        .primary {
-            background: #CB3C1D;
-        }
+    // &.darkSpaces {
+    //     .primary {
+    //         background: #CB3C1D;
+    //     }
     
-        .secondary {
-            background: #1C1C1C;
-        }
-    }
+    //     .secondary {
+    //         background: #1C1C1C;
+    //     }
+    // }
 
   `
 );
@@ -184,11 +184,11 @@ const ThemeSettings = () => {
 
   useEffect(() => {
     const curThemeName =
-      window.localStorage.getItem('appTheme') || 'NebulaFighterTheme';
+      window.localStorage.getItem('appTheme') || 'GreenFieldsTheme';
     setTheme(curThemeName);
   }, []);
 
-  const [theme, setTheme] = useState('NebulaFighterTheme');
+  const [theme, setTheme] = useState('GreenFieldsTheme');
 
   const changeTheme = (theme) => {
     setTheme(theme);
@@ -330,7 +330,7 @@ const ThemeSettings = () => {
               Dark color schemes
             </Typography>
             <Stack alignItems="center" spacing={2}>
-              <Tooltip placement="left" title="Nebula Fighter" arrow>
+              {/* <Tooltip placement="left" title="Nebula Fighter" arrow>
                 <ButtonWrapper
                   className={theme === 'NebulaFighterTheme' ? 'active' : ''}
                   onClick={() => {
@@ -347,7 +347,7 @@ const ThemeSettings = () => {
                     <Box className="secondary" />
                   </ColorSchemeWrapper>
                 </ButtonWrapper>
-              </Tooltip>
+              </Tooltip> */}
               <Tooltip placement="left" title="Green Fields" arrow>
                 <ButtonWrapper
                   className={theme === 'GreenFieldsTheme' ? 'active' : ''}
@@ -366,7 +366,7 @@ const ThemeSettings = () => {
                   </ColorSchemeWrapper>
                 </ButtonWrapper>
               </Tooltip>
-              <Tooltip placement="left" title="Dark Spaces" arrow>
+              {/* <Tooltip placement="left" title="Dark Spaces" arrow>
                 <ButtonWrapper
                   className={theme === 'DarkSpacesTheme' ? 'active' : ''}
                   onClick={() => {
@@ -383,7 +383,7 @@ const ThemeSettings = () => {
                     <Box className="secondary" />
                   </ColorSchemeWrapper>
                 </ButtonWrapper>
-              </Tooltip>
+              </Tooltip> */}
             </Stack>
           </ThemeToggleWrapper>
         </Popover>
