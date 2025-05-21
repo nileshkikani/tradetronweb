@@ -564,7 +564,7 @@ function DashboardOptionWizardContent() {
                     )}
                 </Formik>
             )}
-            <Footer />
+            {/* <Footer /> */}
         </Box>
     );
 }
