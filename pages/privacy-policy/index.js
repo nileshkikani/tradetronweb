@@ -1,89 +1,191 @@
 import React from 'react';
-import { Box, Typography, styled } from '@mui/material';
+import { Box, Typography, styled, Container, Paper, useTheme } from '@mui/material';
 import Footer from 'src/components/Footer';
-import BaseLayout from 'src/layouts/BaseLayout';
+// import BaseLayout from 'src/layouts/BaseLayout';
 import Navbar1 from 'src/components/Navbar';
+import { Security, Lock, Cookie, VisibilityOff, DataUsage } from '@mui/icons-material';
+import { Grid } from '@mui/material';
 
 const OverviewWrapper = styled(Box)(
     ({ theme }) => `
       display: flex;
       flex-direction: column;
       height: 100vh;
-      overflow: hidden;
-      background: ${theme.palette.common.white};
+      background: ${theme.palette.background.default};
   `
 );
 
-const ContentWrapper = styled(Box)(
-    ({ theme }) => `
-      flex: 1;
-      overflow-y: auto;
-      padding: ${theme.spacing(3)};
-      background: ${theme.palette.background.default};
-    //   padding-top: ${theme.spacing(10)};
+const ContentWrapper = styled(Container)(
+  ({ theme }) => `
+    flex: 1;
+    padding: ${theme.spacing(6, 0)};
+    overflow-y: auto;
+    max-height: calc(100vh - 186px);
+    scrollbar-width: none;
+  `
+);
+
+
+const PolicySection = styled(Paper)(
+  ({ theme }) => `
+    padding: ${theme.spacing(4)};
+    margin-bottom: ${theme.spacing(4)};
+    border-left: 4px solid ${theme.palette.primary.main};
+    transition: transform 0.3s ease;
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: ${theme.shadows[4]};
+    }
+  `
+);
+
+const SectionHeader = styled(Typography)(
+  ({ theme }) => `
+    margin-bottom: ${theme.spacing(2)};
+    display: flex;
+    align-items: center;
+    color: ${theme.palette.primary.main};
   `
 );
 
 const PrivacyPolicy = () => {
-    return (
-        <OverviewWrapper>
-            <Navbar1 />
-            <ContentWrapper>
-                <Typography variant="h4" gutterBottom>
-                    Privacy Policy
-                </Typography>
-                <Typography variant="h6" paragraph>
-                    We are committed to your privacy
-                </Typography>
-                <Typography paragraph>
-                    The confidentiality and security of information we collect about consumers and customers is something <strong>tradeOnAir</strong> is committed to protecting. Nonpublic information (“Information”) about you will not be shared with third parties without your consent.
-                </Typography>
+  const theme = useTheme();
 
-                <Typography variant="h6" paragraph>
-                    This is how our information is gathered
-                </Typography>
-                <Typography paragraph>
-                    We get most of our Information directly from you. This happens when you apply for, access, and use financial (and related) products and services offered by <strong>tradeOnAir</strong>.
-                </Typography>
+  return (
+    <OverviewWrapper>
+      <Navbar1 />
+      <ContentWrapper>
+        <Box textAlign="center" mb={6}>
+          <Typography 
+            variant="h2" 
+            gutterBottom 
+            sx={{ 
+              fontWeight: 700,
+              color: 'primary.main'
+            }}
+          >
+            Privacy Policy
+          </Typography>
+          <Typography variant="h5" color="text.secondary">
+            Your Data Security is Our Top Priority
+          </Typography>
+        </Box>
 
-                <Typography variant="h6" paragraph>
-                    This is how we protect your information
-                </Typography>
-                <Typography paragraph>
-                    We maintain physical, electronic, and procedural safeguards which are designed to comply with industry rules and regulations. To protect the confidentiality of Information and to comply with our established policies is something our employees are required to do. Information may be accessed by them only when there is an appropriate reason to do so, such as to administer our products or services.
-                </Typography>
+        <PolicySection elevation={2}>
+          <SectionHeader variant="h4">
+            <Security sx={{ mr: 2 }} />
+            Our Commitment to Your Privacy
+          </SectionHeader>
+          <Typography variant="body1" paragraph>
+            At <strong style={{ color: theme.palette.primary.main }}>tradeOnAir</strong>, we are deeply committed to protecting the confidentiality and security of your personal information. We maintain strict policies to ensure that your nonpublic information ("Information") is never shared with third parties without your explicit consent.
+          </Typography>
+        </PolicySection>
 
-                <Typography variant="h6" paragraph>
-                    Password-protection on a secure server
-                </Typography>
-                <Typography paragraph>
-                    Secure Sockets Layer (SSL) encryption is used on a secure server to better protect your information. Any interception by a third party is prevented when SSL encodes and decodes the transmission of personal information. Firewalls and other security technology are also used to protect our network and systems from external attack. In addition to our efforts.
-                </Typography>
+        <PolicySection elevation={2}>
+          <SectionHeader variant="h4">
+            <DataUsage sx={{ mr: 2 }} />
+            Information Collection
+          </SectionHeader>
+          <Typography variant="body1" paragraph>
+            We collect information directly from you when you apply for, access, and use our financial products and services. This includes:
+          </Typography>
+          <Box component="ul" sx={{ pl: 4 }}>
+            <li><Typography variant="body1">Account registration details</Typography></li>
+            <li><Typography variant="body1">Transaction history</Typography></li>
+            <li><Typography variant="body1">Verification documents</Typography></li>
+            <li><Typography variant="body1">Service preferences</Typography></li>
+          </Box>
+        </PolicySection>
 
-                <Typography variant="h6" paragraph>
-                    Cookies
-                </Typography>
-                <Typography paragraph>
-                    Cookies are small pieces of text used to store information on web browsers. The file contains a unique number so that our server knows which PC it is talking to. Some cookies are allocated to the user's PC only for the duration of the user's visit to a website, and these are called session-based cookies.
-                </Typography>
-                <Typography paragraph>
-                    We use cookies to store data such as the country from which the site is being accessed in order to give data in a format specific to that country, e.g., currency type.
-                </Typography>
-                <Typography paragraph>
-                    You can adjust the settings on your computer to decline any cookies if you wish. This can be done by activating the reject cookies setting on your browser.
-                </Typography>
+        <PolicySection elevation={2}>
+          <SectionHeader variant="h4">
+            <Lock sx={{ mr: 2 }} />
+            Security Measures
+          </SectionHeader>
+          <Typography variant="body1" paragraph>
+            We implement robust safeguards to protect your information:
+          </Typography>
+          <Grid container spacing={3} mt={2}>
+            <Grid item xs={12} md={6}>
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>Physical Security</Typography>
+              <Typography variant="body2">
+                Secure data centers with restricted access and 24/7 monitoring
+              </Typography>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>Electronic Protection</Typography>
+              <Typography variant="body2">
+                Advanced encryption (256-bit SSL) for all data transmissions
+              </Typography>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>Access Controls</Typography>
+              <Typography variant="body2">
+                Strict employee access policies and multi-factor authentication
+              </Typography>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>Continuous Monitoring</Typography>
+              <Typography variant="body2">
+                Real-time intrusion detection and prevention systems
+              </Typography>
+            </Grid>
+          </Grid>
+        </PolicySection>
 
-            </ContentWrapper>
+        <PolicySection elevation={2}>
+          <SectionHeader variant="h4">
+            <VisibilityOff sx={{ mr: 2 }} />
+            Data Protection
+          </SectionHeader>
+          <Typography variant="body1" paragraph>
+            We employ bank-level security measures including Secure Sockets Layer (SSL) encryption on all our servers. This technology:
+          </Typography>
+          <Box component="ul" sx={{ pl: 4, mb: 2 }}>
+            <li><Typography variant="body1">Encodes all data transmissions</Typography></li>
+            <li><Typography variant="body1">Prevents third-party interception</Typography></li>
+            <li><Typography variant="body1">Uses firewalls and DDoS protection</Typography></li>
+          </Box>
+          <Typography variant="body1">
+            Our security protocols are regularly audited to ensure compliance with global financial data protection standards.
+          </Typography>
+        </PolicySection>
 
-            {/* Footer */}
-            <Footer sx={{ marginTop: 'auto' }} />
-        </OverviewWrapper>
-    );
+        <PolicySection elevation={2}>
+          <SectionHeader variant="h4">
+            <Cookie sx={{ mr: 2 }} />
+            Cookie Policy
+          </SectionHeader>
+          <Typography variant="body1" paragraph>
+            We use cookies to enhance your browsing experience and provide personalized services:
+          </Typography>
+          <Box component="ul" sx={{ pl: 4, mb: 2 }}>
+            <li><Typography variant="body1"><strong>Session cookies:</strong> Temporary files deleted when you close your browser</Typography></li>
+            <li><Typography variant="body1"><strong>Preference cookies:</strong> Remember your language and display settings</Typography></li>
+            <li><Typography variant="body1"><strong>Analytics cookies:</strong> Help us improve our services</Typography></li>
+          </Box>
+          <Typography variant="body1" paragraph>
+            You can manage cookie preferences in your browser settings, though some features may not function properly without them.
+          </Typography>
+        </PolicySection>
+
+        <Box mt={6} textAlign="center">
+          <Typography variant="h6" gutterBottom>
+            Last Updated: {new Date().toLocaleDateString()}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            For questions about our privacy practices, please contact our Data Protection Officer at privacy@tradeonair.com
+          </Typography>
+        </Box>
+      </ContentWrapper>
+
+      <Footer sx={{ marginTop: 'auto' }} />
+    </OverviewWrapper>
+  );
 };
 
-// Add the layout wrapper for the PrivacyPolicy page
-PrivacyPolicy.getLayout = function getLayout(page) {
-    return <BaseLayout>{page}</BaseLayout>;
-};
+// PrivacyPolicy.getLayout = function getLayout(page) {
+//     return <BaseLayout>{page}</BaseLayout>;
+// };
 
 export default PrivacyPolicy;

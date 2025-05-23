@@ -38,38 +38,73 @@ const ContactUs = () => {
       showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
     }
   };
-
+  
   return (
-    <Box sx={{
-      display: 'flex',
-      flexDirection: 'column',
-      minHeight: '100vh',
-    }}>
-       <Navbar1 />
+  <Box sx={{
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: '100vh',
+    marginTop:"-60px"
+  }}>
+    <Navbar1 />
+    <Box 
+      sx={{ 
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        px: 2,
+        py: 4,
+      }}
+    >
       <Box 
         sx={{ 
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          maxWidth: 400,
-          mx: 'auto',
-          mt: 4,
-          p: 3,
-          border: '1px solid #ccc',
-          borderRadius: '8px',
-          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+          width: '100%',
+          maxWidth: 450,
+          p: 4,
+          backgroundColor:"#232A2E",
+          borderRadius: '12px',
+          boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)',
+          border: '1px solid rgba(0, 0, 0, 0.05)',
+          transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+          '&:hover': {
+            transform: 'translateY(-2px)',
+            boxShadow: '0 12px 35px rgba(0, 0, 0, 0.12)'
+          }
         }}
       >
-        <Typography variant="h4" gutterBottom>
+        <Typography 
+          variant="h4" 
+          gutterBottom 
+          sx={{ 
+            fontWeight: 700,
+            color: 'primary.main',
+            textAlign: 'center',
+            mb: 3,
+            position: 'relative',
+            '&:after': {
+              content: '""',
+              position: 'absolute',
+              bottom: -8,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: '60px',
+              height: '3px',
+              background: 'linear-gradient(90deg, #4caf50, #81c784)',
+              borderRadius: '3px'
+            }
+          }}
+        >
           Contact Us
         </Typography>
+        
         <Formik
           initialValues={initialValues}
           validationSchema={contactUsValidations}
           onSubmit={handleSubmit}
         >
-          {({ values, handleChange, handleBlur, errors, touched }) => (
+          {({ values, handleChange, handleBlur, errors, touched, isSubmitting }) => (
             <Form style={{ width: '100%' }}>
               <TextField
                 fullWidth
@@ -82,7 +117,14 @@ const ContactUs = () => {
                 error={touched.name && Boolean(errors.name)}
                 helperText={touched.name && errors.name}
                 margin="normal"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '8px',
+                  },
+                  mb: 2
+                }}
               />
+              
               <TextField
                 fullWidth
                 variant="outlined"
@@ -95,36 +137,66 @@ const ContactUs = () => {
                 error={touched.email && Boolean(errors.email)}
                 helperText={touched.email && errors.email}
                 margin="normal"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '8px',
+                  },
+                  mb: 2
+                }}
               />
+              
               <TextField
                 fullWidth
                 variant="outlined"
                 label="Message"
                 name="message"
                 multiline
-                rows={4}
+                rows={5}
                 value={values.message}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 error={touched.message && Boolean(errors.message)}
                 helperText={touched.message && errors.message}
                 margin="normal"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '8px',
+                  },
+                  mb: 3
+                }}
               />
+              
               <Button 
                 variant="contained"
                 color="primary"
                 type="submit"
-                sx={{ mt: 2, width: '100%' }}
+                disabled={isSubmitting}
+                sx={{ 
+                  mt: 1,
+                  width: '100%',
+                  py: 1.5,
+                  borderRadius: '8px',
+                  fontWeight: 600,
+                  fontSize: '1rem',
+                  textTransform: 'none',
+                  background: 'primary.main',
+                  boxShadow: '0 4px 6px #232A2E',
+                  '&:hover': {
+                    boxShadow: '0 6px 10px #232A2E',
+                    background: 'primary.main'
+                  }
+                }}
               >
-                Submit
+                  Submit Message
               </Button>
             </Form>
           )}
         </Formik>
       </Box>
-      <Footer />
     </Box>
-  );
+    <Footer />
+  </Box>
+);
 };
 
 export default ContactUs;
