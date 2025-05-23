@@ -109,7 +109,7 @@ function SidebarFooter() {
           </IconButton>
         </Badge>
       </LightTooltip> */}
-      <LightTooltip placement="top" arrow title={t('Logout')}>
+      {/* <LightTooltip placement="top" arrow title={t('Logout')}>
         <IconButton
           sx={{
             background: `${theme.colors.alpha.trueWhite[10]}`,
@@ -125,7 +125,7 @@ function SidebarFooter() {
         >
           <PowerSettingsNewTwoToneIcon fontSize="small" />
         </IconButton>
-      </LightTooltip>
+      </LightTooltip> */}
     </Box>
   );
 }

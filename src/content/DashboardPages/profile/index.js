@@ -3,6 +3,9 @@ import { Authenticated } from 'src/components/Authenticated';
 import ExtendedSidebarLayout from 'src/layouts/ExtendedSidebarLayout';
 import PageTitleWrapper from 'src/components/PageTitleWrapper';
 import useToast from 'src/hooks/useToast';
+import { useAuth } from 'src/hooks/useAuth';
+import { useRouter } from 'next/router';
+
 import {
   Box,
   Typography,
@@ -28,6 +31,8 @@ const DashboardProfileContent = () => {
   const [buttonState, setButtonState] = useState(false);
 
   const headers = { Authorization: `Bearer ${authState}` };
+  const { logout } = useAuth();
+  const router = useRouter();
 
   const getUserInfo = async () => {
     try {
@@ -63,6 +68,15 @@ const DashboardProfileContent = () => {
   useEffect(() => {
     getUserInfo();
   }, []);
+
+    const handleLogout = async () => {
+    try {
+      await logout();
+      router.push('/');
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <>
@@ -110,17 +124,27 @@ const DashboardProfileContent = () => {
         )}
       </Box>
 
-      {userData?.is_superuser && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+      
+        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2,gap:'22px' }}>
+          {userData?.is_superuser && (
+            <Button
+              variant="contained"
+              color={!buttonState ? "success" : "error"}
+              onClick={handleToggleAllStrategies}
+            >
+              {buttonState ? "Disable All Strategies" : "Enable All Strategies"}
+            </Button>
+          )}
+
           <Button
             variant="contained"
-            color={!buttonState ? "success" : "error"}
-            onClick={handleToggleAllStrategies}
+            backgroundColor="#47A47B"
+            onClick={handleLogout}
           >
-            {buttonState ? "Disable All Strategies" : "Enable All Strategies"}
+           Logout
           </Button>
         </Box>
-      )}
+      
     </>
   );
 };
