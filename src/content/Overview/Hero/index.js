@@ -29,6 +29,7 @@ const ImgWrapper = styled(Box)(
     overflow: hidden;
     border-radius: ${theme.general.borderRadiusLg};
     box-shadow: 0 0rem 14rem 0 rgb(255 255 255 / 20%), 0 0.8rem 2.3rem rgb(111 130 156 / 3%), 0 0.2rem 0.7rem rgb(17 29 57 / 15%);
+    border-bottom: 1px solid ${theme.palette.divider};
 
     img {
       display: block;
@@ -52,10 +53,27 @@ const BoxAccent = styled(Box)(
 );
 
 const BoxContent = styled(Box)(
-  () => `
-  width: 150%;
-  position: relative;
-`
+  ({ theme }) => `
+    width: 100%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    video {
+      width: 100%;
+      max-width: 50rem;
+      height: auto;
+      border-radius: ${theme.general.borderRadiusLg};
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    @media (max-width: 768px) {
+      video {
+        max-width: 100%;
+      }
+    }
+  `
 );
 
 const LabelWrapper = styled(Box)(
@@ -147,118 +165,57 @@ function Hero() {
   const { t } = useTranslation();
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3, md: 4 } }} style={{paddingTop:"120px"}}>
       <Grid
         spacing={{ xs: 6, md: 10 }}
         justifyContent="center"
         alignItems="center"
         container
+        sx={{ minHeight: '70vh' }}
       >
-        <Grid item md={6} pr={{ xs: 0, md: 3 }}>
-          <LabelWrapper color="success">{t('Version') + ' 2.0'}</LabelWrapper>
-          <TypographyH1
-            sx={{
-              mb: 2
-            }}
-            variant="h1"
-          >
-            {t('Trading for Everyone')}
-          </TypographyH1>
-          <TypographyH2
-            sx={{
-              lineHeight: 1.5,
-              pb: 4
-            }}
-            variant="h4"
-            color="text.secondary"
-            fontWeight="normal"
-          >
-            {t(" 'TradeOnAir has been created to empower strategy creators. How? By allowing them to automate their quant strategies and sell them to investors and traders the world over. The best part? You never have to write a single bit of code or download clunky algo trading software'")}
-          </TypographyH2>
-          {/* <Button
-            component={Link}
-            href="/dashboards/reports"
-            size="large"
-            variant="contained"
-          >
-            {t('Browse Live Preview')}
-          </Button> */}
-          {/* <Button
-            sx={{
-              ml: 2
-            }}
-            component="a"
-            href="#key-features"
-            size="large"
-            variant="text"
-          >
-            {t('Key Features')}
-          </Button> */}
-          {/* <ListItemWrapper sx={{ mt: 5, mb: 2 }}>
-            <NextJsAvatar>
-              <img src="/static/images/logo/next-js.svg" alt="NextJS" />
-            </NextJsAvatar>
-            <Typography variant="h6">
-              <b>Built with Next.js </b>
-              <Typography component="span" variant="subtitle2">
-                {' '}
-                - Next.js gives you the best developer experience with all the
-                features you need for production.
-              </Typography>
-            </Typography>
-          </ListItemWrapper>
-          <ListItemWrapper
-            sx={{
-              mt: 5,
-              mb: 2
-            }}
-          >
-            <MuiAvatar>
-              <img
-                src="/static/images/logo/material-ui.svg"
-                alt="MUI (Material-UI)"
-              />
-            </MuiAvatar>
-            <Typography variant="h6">
-              <b>Powered by MUI (Material-UI)</b>
-              <Typography component="span" variant="subtitle2">
-                {' '}
-                - A simple and customizable component library to build faster,
-                beautiful, and accessible React apps.
-              </Typography>
-            </Typography>
-          </ListItemWrapper>
-          <ListItemWrapper>
-            <JsAvatar>
-              <img src="/static/images/logo/javascript.svg" alt="Javascript" />
-            </JsAvatar>
-            <Typography variant="h6">
-              <b>Built with Javascript</b>
-              <Typography component="span" variant="subtitle2">
-                {' '}
-                - Tokyo features a modern technology stack and is built with
-                React + Javascript.
-              </Typography>
-            </Typography>
-          </ListItemWrapper> */}
+        <Grid item xs={12} md={6} lg={5} style={{paddingLeft:"170px"}}>
+          <Box sx={{ pr: { xs: 0, md: 3, lg: 4 } }}>
+            <LabelWrapper color="success">{t('Version') + ' 2.0'}</LabelWrapper>
+            <TypographyH1
+              sx={{
+                mb: 2,
+                fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem', lg: '3.5rem' }
+              }}
+              variant="h1"
+            >
+              {t('Trading for Everyone')}
+            </TypographyH1>
+            <TypographyH2
+              sx={{
+                lineHeight: 1.5,
+                pb: 4,
+                fontSize: { xs: '1rem', sm: '1.1rem', md: '1.2rem' }
+              }}
+              variant="h4"
+              color="text.secondary"
+              fontWeight="normal"
+            >
+              {t(" 'TradeOnAir has been created to empower strategy creators. How? By allowing them to automate their quant strategies and sell them to investors and traders the world over. The best part? You never have to write a single bit of code or download clunky algo trading software'")}
+            </TypographyH2>
+          </Box>
         </Grid>
-        <Grid item md={6}>
+        <Grid item xs={12} md={6} lg={7}>
           <BoxContent>
-          <video
-                  className="w-full"
-                  id="bannerVideo"
-                  autoPlay
-                  loop
-                  playsInline
-                  muted
-                  style={{width:'50rem'}}
-                >
-                  <source
-                    src="https://files.tradetron.tech/tt-ad2.mp4"
-                    type="video/mp4"
-                  />
-                  Your browser does not support the video tag.
-                </video>
+            <video
+              className="w-full"
+              id="bannerVideo"
+              autoPlay
+              loop
+              playsInline
+              muted
+              style={{width:'50rem'}}
+            >
+              <source
+                src="https://files.tradetron.tech/tt-ad2.mp4"
+                type="video/mp4"
+              />
+              Your browser does not support the video tag.
+            </video>
           </BoxContent>
         </Grid>
       </Grid>
