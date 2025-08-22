@@ -101,44 +101,58 @@ function DashboardReports() {
     fetchMarketTrend();
   }, [selectedSymbol, selectedDate]);
 
-  // const handleDateChange = (event) => {
-  //   const dateString = event.target.value;
-  //   console.log(dateString);
-  //   setSelectedDate(dateString);
-  // };
   const handleDateChange = (event) => {
-    const dateString = event.target.value;
-    const selectedDate = new Date(dateString);
-    const today = new Date();
-
+    const dateString = event.target.value
+    let selectedDate = new Date(dateString)
+    const today = new Date()
+  
     if (selectedDate > today) {
-      showToast("Future dates are not allowed", "warning");
-    } else {
-      // console.log(dateString);
-      setSelectedDate(dateString);
+      showToast("Future dates are not allowed", "warning")
+      return
     }
-  };
+  
+    const day = selectedDate.getDay()
+    if (day === 6) {
+      selectedDate.setDate(selectedDate.getDate() + 2)
+    } else if (day === 0) {
+      selectedDate.setDate(selectedDate.getDate() + 1)
+    }
+  
+    const adjustedDate = selectedDate.toISOString().split("T")[0]
+  
+    setSelectedDate(adjustedDate)
+  }
 
   const handlePreviousDay = () => {
-    const date = new Date(selectedDate);
+    let date = new Date(selectedDate);
     date.setDate(date.getDate() - 1);
+  
+    while (date.getDay() === 0 || date.getDay() === 6) {
+      date.setDate(date.getDate() - 1);
+    }
+  
     const newDate = date.toISOString().split("T")[0];
     setSelectedDate(newDate);
   };
-
+  
   const handleNextDay = () => {
-    const date = new Date(selectedDate);
+    let date = new Date(selectedDate);
     date.setDate(date.getDate() + 1);
-    const newDate = date.toISOString().split("T")[0];
-
-    // Don't allow selecting future dates
+  
+    while (date.getDay() === 0 || date.getDay() === 6) {
+      date.setDate(date.getDate() + 1);
+    }
+  
     const today = new Date(getTodayDate());
+  
     if (date <= today) {
+      const newDate = date.toISOString().split("T")[0];
       setSelectedDate(newDate);
     } else {
       showToast("Cannot select future dates", "warning");
     }
   };
+  
 
   const handleRefesh = () => {
     fetchOrder();
