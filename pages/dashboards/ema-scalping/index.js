@@ -32,10 +32,13 @@ import Paper from "@mui/material/Paper";
 
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import DatePicker from "react-datepicker";
+import dayjs from "dayjs";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
 });
+
 function DashboardReports() {
   const baseUrl = process.env.EMA_SCALPING_URL;
 
@@ -46,11 +49,14 @@ function DashboardReports() {
     const day = String(today.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
+
   const { showToast } = useToast();
   const [selectedDate, setSelectedDate] = useState(getTodayDate);
   const [selectedSymbol, setSelectedSymbol] = useState("NIFTY");
-
   const [orderData, setOrderData] = useState([]);
+  const [daywisePnL, setDaywisePnL] = useState({});
+  const [calendarMonthYear, setCalendarMonthYear] = useState(new Date());
+
   const fetchOrder = async () => {
     axios
       .get(
@@ -80,8 +86,8 @@ function DashboardReports() {
       .get(`${baseUrl}paper_trade/getmarket?symbol=${selectedSymbol}`)
       .then((res) => {
         if (res?.data.length === 0) {
-          showToast("No orders found", "info");
-          setOrderData([]);
+          showToast("No market data found", "info");
+          setMarketTrend([]);
           return;
         }
         setMarketTrend(res.data);
@@ -96,55 +102,96 @@ function DashboardReports() {
       });
   };
 
+  const fetchDaywisePnL = async (month, year) => {
+    try {
+      const startDate = new Date(year, month - 2, 1);
+      startDate.setDate(startDate.getDate() - startDate.getDay());
+  
+      const endDate = new Date(year, month + 1, 0);
+      endDate.setDate(endDate.getDate() + (6 - endDate.getDay()));
+  
+      const formattedStart = startDate.toISOString().split("T")[0];
+      const formattedEnd = endDate.toISOString().split("T")[0];
+  
+      const response = await axios.get(`${baseUrl}paper_trade/daywise-pnl/`, {
+        params: {
+          index_name: selectedSymbol,
+          start_date: formattedStart,
+          end_date: formattedEnd,
+        },
+      });
+  
+      const pnlMap = {};
+      if (response.data.daywise_pnl) {
+        response.data.daywise_pnl.forEach((item) => {
+          pnlMap[item.date] = item.total_pnl;
+        });
+      }
+      setDaywisePnL(pnlMap);
+    } catch (error) {
+      console.log("Error fetching daywise PnL:", error);
+    }
+  };
+  
+
+
   useEffect(() => {
     fetchOrder();
     fetchMarketTrend();
   }, [selectedSymbol, selectedDate]);
 
-  const handleDateChange = (event) => {
-    const dateString = event.target.value
-    let selectedDate = new Date(dateString)
-    const today = new Date()
-  
-    if (selectedDate > today) {
-      showToast("Future dates are not allowed", "warning")
-      return
+  useEffect(() => {
+    const month = calendarMonthYear.getMonth() + 1;
+    const year = calendarMonthYear.getFullYear();
+    fetchDaywisePnL(month, year);
+  }, [calendarMonthYear, selectedSymbol]);
+
+  const handleDateChange = (date) => {
+    if (!date) return;
+
+    const today = new Date();
+
+    if (date > today) {
+      showToast("Future dates are not allowed", "warning");
+      return;
     }
-  
-    const day = selectedDate.getDay()
+
+    const day = date.getDay();
+    let selectedDate = new Date(date);
+
     if (day === 6) {
-      selectedDate.setDate(selectedDate.getDate() + 2)
+      selectedDate.setDate(selectedDate.getDate() + 2);
     } else if (day === 0) {
-      selectedDate.setDate(selectedDate.getDate() + 1)
+      selectedDate.setDate(selectedDate.getDate() + 1);
     }
-  
-    const adjustedDate = selectedDate.toISOString().split("T")[0]
-  
-    setSelectedDate(adjustedDate)
-  }
+
+    const adjustedDate = selectedDate.toISOString().split("T")[0];
+
+    setSelectedDate(adjustedDate);
+  };
 
   const handlePreviousDay = () => {
     let date = new Date(selectedDate);
     date.setDate(date.getDate() - 1);
-  
+
     while (date.getDay() === 0 || date.getDay() === 6) {
       date.setDate(date.getDate() - 1);
     }
-  
+
     const newDate = date.toISOString().split("T")[0];
     setSelectedDate(newDate);
   };
-  
+
   const handleNextDay = () => {
     let date = new Date(selectedDate);
     date.setDate(date.getDate() + 1);
-  
+
     while (date.getDay() === 0 || date.getDay() === 6) {
       date.setDate(date.getDate() + 1);
     }
-  
+
     const today = new Date(getTodayDate());
-  
+
     if (date <= today) {
       const newDate = date.toISOString().split("T")[0];
       setSelectedDate(newDate);
@@ -152,11 +199,22 @@ function DashboardReports() {
       showToast("Cannot select future dates", "warning");
     }
   };
-  
 
   const handleRefesh = () => {
     fetchOrder();
     fetchMarketTrend();
+  };
+
+  const getPLData = (d) => {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    const key = `${year}-${month}-${day}`;
+    return daywisePnL[key] || null;
+  };
+
+  const handleMonthChange = (date) => {
+    setCalendarMonthYear(date);
   };
 
   return (
@@ -194,13 +252,110 @@ function DashboardReports() {
             Refresh
           </Button>
         </div>
-        {/* <CustomDatePicker value={selectedDate} onChange={handleDateChange} /> */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <IconButton onClick={handlePreviousDay} color="primary">
+
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <IconButton
+            onClick={handlePreviousDay}
+            color="primary"
+            style={{ marginRight: "6px" }}
+          >
             <ArrowBackIosIcon fontSize="small" />
           </IconButton>
 
-          <CustomDatePicker value={selectedDate} onChange={handleDateChange} />
+          <DatePicker
+            toggleCalendarOnIconClick
+            selected={selectedDate ? new Date(selectedDate) : null}
+            onChange={handleDateChange}
+            onMonthChange={handleMonthChange}
+            customInput={
+              <div
+                style={{
+                  border: "1px solid #44a574",
+                  borderRadius: "8px",
+                  padding: "15px",
+                  color: "#ffffff",
+                  fontSize: "18px",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-evenly",
+                  minWidth: "140px",
+                  transition: "all 0.2s ease",
+                  width: "250px",
+                }}
+              >
+                <span>
+                  {selectedDate
+                    ? new Date(selectedDate).toLocaleDateString("en-US", {
+                        month: "2-digit",
+                        day: "2-digit",
+                        year: "numeric",
+                      })
+                    : "Select Date"}
+                </span>
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ marginLeft: "8px", opacity: 0.7 }}
+                >
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+              </div>
+            }
+            renderDayContents={(day, d) => {
+              const pnl = getPLData(d);
+              const isCurrentMonth = d.getMonth() === calendarMonthYear.getMonth();
+            
+              return (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    lineHeight: 1.2,
+                    fontSize: "12px",
+                    width: "100%",
+                    height: "70px",
+
+                  }}
+                >
+                  <span style={{ fontSize: "15px", fontWeight: 600 }}>{day}</span>
+                  {pnl !== null && (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        marginTop: "2px",
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: "13px",
+                          fontWeight: 500,
+                          color: pnl >= 0 ? "#4caf50" : "#f44336",
+                        }}
+                      >
+                        {pnl >= 0 ? `+${pnl.toFixed(2)}` : pnl.toFixed(2)}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              );
+            }}
+            
+          />
 
           <IconButton
             onClick={handleNextDay}
@@ -211,6 +366,7 @@ function DashboardReports() {
           </IconButton>
         </div>
       </div>
+
       <div
         style={{
           display: "flex",
@@ -219,8 +375,6 @@ function DashboardReports() {
           padding: "0 25px 25px",
         }}
       >
-        {/* <MarketTrendCard marketData={marketTrend}></MarketTrendCard> */}
-
         <div style={{ marginBottom: "20px" }}>
           <MarketTrendCard marketData={marketTrend} />
         </div>

@@ -40,7 +40,14 @@ const menuItems = [
             name: 'My Strategies',
             link: '/dashboards/my-strategies',
             badge: ''
+          },
+
+          {
+            name:'Reports',
+            link:'/dashboards/reports',
+            badge:''
           }
+
         ]
       },
       // {
