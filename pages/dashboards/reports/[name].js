@@ -125,9 +125,6 @@ function StrategyDetail() {
     return new Date(dateString).toLocaleDateString();
   };
 
-  const formatCurrency = (value) => {
-    return `${value.toFixed(2)}`;
-  };
 
   return (
     <>
@@ -278,15 +275,15 @@ function StrategyDetail() {
                     <TableRow key={index}>
                       <TableCell>{formatDate(order.created_at)}</TableCell>
                       <TableCell>{order.order_type}</TableCell>
-                      <TableCell>{formatCurrency(order.open_price)}</TableCell>
-                      <TableCell>{formatCurrency(order.close_price)}</TableCell>
+                      <TableCell>{order.open_price}</TableCell>
+                      <TableCell>{order.close_price}</TableCell>
                       <TableCell
                         sx={{
                           color: order.profit >= 0 ? "green" : "red",
                           fontWeight: 500,
                         }}
                       >
-                        {formatCurrency(order.profit)}
+                        {order.profit}
                       </TableCell>
                       <TableCell>{order.symbol}</TableCell>
                       <TableCell>{order.index_name}</TableCell>
