@@ -34,7 +34,7 @@ function StrategyDetail() {
 
   const [isLiveTrade, setIsLiveTrade] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState("ALL");
-  const [selectedDateRange, setSelectedDateRange] = useState(filter);
+  const [selectedDateRange, setSelectedDateRange] = useState(filter || "today");
   const [customStartDate, setCustomStartDate] = useState(startDate || "");
   const [customEndDate, setCustomEndDate] = useState(endDate || "");
 
@@ -45,9 +45,45 @@ function StrategyDetail() {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [totalOrders, setTotalOrders] = useState(0);
+  const [toast, setToast] = useState({
+    open: false,
+    message: "",
+    type: "error",
+  });
 
   const handleBack = () => {
     router.push("/dashboards/reports");
+  };
+
+  const showToast = (message, type = "error") => {
+    setToast({ open: true, message, type });
+    setTimeout(() => {
+      setToast({ open: false, message: "", type: "error" });
+    }, 3000);
+  };
+
+  const validateDates = () => {
+    if (selectedDateRange === "custom") {
+      if (!customStartDate || !customEndDate) {
+        showToast("Please select both start and end dates", "error");
+        return false;
+      }
+
+      const start = new Date(customStartDate);
+      const end = new Date(customEndDate);
+      const today = new Date();
+
+      if (start > end) {
+        showToast("Start date cannot be greater than end date", "error");
+        return false;
+      }
+
+      if (start > today || end > today) {
+        showToast("Future dates are not allowed", "error");
+        return false;
+      }
+    }
+    return true;
   };
 
   const buildQueryParams = (page, size) => {
@@ -75,6 +111,10 @@ function StrategyDetail() {
   };
 
   const fetchOrders = async (page = 0, size = pageSize) => {
+    if (selectedDateRange === "custom" && !validateDates()) {
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
@@ -99,18 +139,22 @@ function StrategyDetail() {
   };
 
   useEffect(() => {
-    if (name && router.isReady) {
+    if (name && router.isReady && selectedDateRange !== "custom") {
       fetchOrders(0, pageSize);
     }
-  }, [
-    name,
-    selectedIndex,
-    isLiveTrade,
-    selectedDateRange,
-    customStartDate,
-    customEndDate,
-    router.isReady,
-  ]);
+  }, [selectedDateRange]);
+
+  useEffect(() => {
+    if (name && router.isReady) {
+      if (selectedDateRange === "custom") {
+        if (customStartDate && customEndDate) {
+          fetchOrders(0, pageSize);
+        }
+      } else {
+        fetchOrders(0, pageSize);
+      }
+    }
+  }, [name, selectedIndex, isLiveTrade, router.isReady]);
 
   const handlePageChange = (event, newPage) => {
     fetchOrders(newPage, pageSize);
@@ -121,10 +165,16 @@ function StrategyDetail() {
     fetchOrders(0, newPageSize);
   };
 
+  const handleFilterClick = () => {
+    fetchOrders(0, pageSize);
+  };
+
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString();
   };
 
+  const isCustomInvalid =
+    selectedDateRange === "custom" && (!customStartDate || !customEndDate);
 
   return (
     <>
@@ -137,6 +187,17 @@ function StrategyDetail() {
         </Button>
       </Box>
       <h1 style={{ margin: "23px 38px 26px 21px" }}>Reports Detail</h1>
+
+      {toast.open && (
+        <Box sx={{ padding: "0 25px 16px" }}>
+          <Alert
+            severity={toast.type}
+            onClose={() => setToast({ ...toast, open: false })}
+          >
+            {toast.message}
+          </Alert>
+        </Box>
+      )}
 
       <div
         style={{
@@ -172,6 +233,86 @@ function StrategyDetail() {
             <MenuItem value="CRUDEOIL">CRUDEOIL</MenuItem>
             <MenuItem value="GOLD">GOLD</MenuItem>
           </Select>
+
+          <Select
+            value={selectedDateRange}
+            onChange={(e) => setSelectedDateRange(e.target.value)}
+            style={{ minWidth: 200 }}
+          >
+            <MenuItem value="today">Today</MenuItem>
+            <MenuItem value="this_month">This Month</MenuItem>
+            <MenuItem value="this_year">This Year</MenuItem>
+            <MenuItem value="custom">Custom</MenuItem>
+          </Select>
+
+          {selectedDateRange === "custom" && (
+            <>
+              <TextField
+                label="Start Date"
+                type="date"
+                value={customStartDate}
+                onChange={(e) => setCustomStartDate(e.target.value)}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                inputProps={{
+                  max: new Date().toISOString().split("T")[0],
+                }}
+                error={
+                  (customStartDate &&
+                    customEndDate &&
+                    new Date(customStartDate) > new Date(customEndDate)) ||
+                  (customStartDate && new Date(customStartDate) > new Date())
+                }
+                helperText={
+                  customStartDate && new Date(customStartDate) > new Date()
+                    ? "Start date cannot be in the future"
+                    : customStartDate &&
+                      customEndDate &&
+                      new Date(customStartDate) > new Date(customEndDate)
+                    ? "Start date cannot be greater than end date"
+                    : ""
+                }
+              />
+
+              <TextField
+                label="End Date"
+                type="date"
+                value={customEndDate}
+                onChange={(e) => setCustomEndDate(e.target.value)}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                inputProps={{
+                  max: new Date().toISOString().split("T")[0],
+                }}
+                error={
+                  (customStartDate &&
+                    customEndDate &&
+                    new Date(customStartDate) > new Date(customEndDate)) ||
+                  (customEndDate && new Date(customEndDate) > new Date())
+                }
+                helperText={
+                  customEndDate && new Date(customEndDate) > new Date()
+                    ? "End date cannot be in the future"
+                    : customStartDate &&
+                      customEndDate &&
+                      new Date(customStartDate) > new Date(customEndDate)
+                    ? "End date cannot be less than start date"
+                    : ""
+                }
+              />
+
+              <Button
+                onClick={handleFilterClick}
+                variant="contained"
+                style={{ width: "150px", height: "44px" }}
+                disabled={loading || isCustomInvalid}
+              >
+                {loading ? <CircularProgress size={24} /> : "Filter"}
+              </Button>
+            </>
+          )}
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
