@@ -135,6 +135,12 @@ function DashboardReports() {
   };
 
   useEffect(() => {
+    if (selectFilter !== "Custom") {
+      handleFilter();
+    }
+  }, [selectFilter]);
+
+  useEffect(() => {
     handleFilter();
   }, []);
 
@@ -210,73 +216,75 @@ function DashboardReports() {
           </Select>
 
           {selectFilter === "Custom" && (
-            <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-              <TextField
-                label="Start Date"
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                inputProps={{
-                  max: new Date().toISOString().split("T")[0],
-                }}
-                error={
-                  (startDate &&
-                    endDate &&
-                    new Date(startDate) > new Date(endDate)) ||
-                  (startDate && new Date(startDate) > new Date())
-                }
-                helperText={
-                  startDate && new Date(startDate) > new Date()
-                    ? "Start date cannot be in the future"
-                    : startDate &&
+            <>
+              <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                <TextField
+                  label="Start Date"
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  inputProps={{
+                    max: new Date().toISOString().split("T")[0],
+                  }}
+                  error={
+                    (startDate &&
                       endDate &&
-                      new Date(startDate) > new Date(endDate)
-                    ? "Start date cannot be greater than end date"
-                    : ""
-                }
-              />
+                      new Date(startDate) > new Date(endDate)) ||
+                    (startDate && new Date(startDate) > new Date())
+                  }
+                  helperText={
+                    startDate && new Date(startDate) > new Date()
+                      ? "Start date cannot be in the future"
+                      : startDate &&
+                        endDate &&
+                        new Date(startDate) > new Date(endDate)
+                      ? "Start date cannot be greater than end date"
+                      : ""
+                  }
+                />
 
-              <TextField
-                label="End Date"
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                inputProps={{
-                  max: new Date().toISOString().split("T")[0],
-                }}
-                error={
-                  (startDate &&
-                    endDate &&
-                    new Date(startDate) > new Date(endDate)) ||
-                  (endDate && new Date(endDate) > new Date())
-                }
-                helperText={
-                  endDate && new Date(endDate) > new Date()
-                    ? "End date cannot be in the future"
-                    : startDate &&
+                <TextField
+                  label="End Date"
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  inputProps={{
+                    max: new Date().toISOString().split("T")[0],
+                  }}
+                  error={
+                    (startDate &&
                       endDate &&
-                      new Date(startDate) > new Date(endDate)
-                    ? "End date cannot be less than start date"
-                    : ""
-                }
-              />
-            </div>
+                      new Date(startDate) > new Date(endDate)) ||
+                    (endDate && new Date(endDate) > new Date())
+                  }
+                  helperText={
+                    endDate && new Date(endDate) > new Date()
+                      ? "End date cannot be in the future"
+                      : startDate &&
+                        endDate &&
+                        new Date(startDate) > new Date(endDate)
+                      ? "End date cannot be less than start date"
+                      : ""
+                  }
+                />
+              </div>
+
+              <Button
+                onClick={handleFilter}
+                variant="contained"
+                style={{ marginLeft: 8, width: "150px", height: "44px" }}
+                disabled={loading || isCustomInvalid}
+              >
+                {loading ? <CircularProgress size={24} /> : "Filter"}
+              </Button>
+            </>
           )}
-
-          <Button
-            onClick={handleFilter}
-            variant="contained"
-            style={{ marginLeft: 8, width: "150px", height: "44px" }}
-            disabled={loading || isCustomInvalid}
-          >
-            {loading ? <CircularProgress size={24} /> : "Filter"}
-          </Button>
         </div>
       </div>
 
