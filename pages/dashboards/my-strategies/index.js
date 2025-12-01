@@ -10,9 +10,10 @@ import TableRow from "@mui/material/TableRow";
 import TextField from "@mui/material/TextField";
 import { Box, Checkbox, Paper } from "@mui/material";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "src/utils/axios";
 import { Button, ListItem, Select, MenuItem } from "@mui/material";
 import TableLoader from "src/components/TableLoader";
+import useToast from 'src/hooks/useToast';
 
 function myStrategies() {
   const baseUrl = process.env.EMA_SCALPING_URL;
@@ -30,11 +31,15 @@ function myStrategies() {
     }
   };
 
+  const { showToast } = useToast();
+
   const handleSave = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.patch(
-        `${baseUrl}paper_trade/strategy-update/${parseInt(editedRow.id)}/`, // PATCH to the specific row
+      const response = await axiosInstance.patch(
+        `${baseUrl}ema-scalping/strategy-update/${parseInt(
+          editedRow.id
+        )}/`, // PATCH to the specific row
         editedRow
       );
       const updatedRow = response.data;
@@ -67,8 +72,8 @@ function myStrategies() {
   };
 
   const fetchStrategies = async () => {
-    axios
-      .get(`${baseUrl}paper_trade/strategy-list/`)
+    axiosInstance
+      .get(`${baseUrl}ema-scalping/strategy-list/`)
       .then((res) => {
         if (res?.data.length === 0) {
           showToast("No orders found", "info");
@@ -250,7 +255,7 @@ function myStrategies() {
                   {editMode === row.id ? (
                     <>
                       {isLoading ? (
-                         <TableLoader />
+                        <TableLoader />
                       ) : (
                         <Box sx={{ display: "flex", gap: 1 }}>
                           <Button

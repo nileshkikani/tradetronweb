@@ -24,7 +24,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import axios from "axios";
+import axiosInstance from "src/utils/axios";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 function StrategyDetail() {
@@ -120,9 +120,9 @@ function StrategyDetail() {
       setError(null);
 
       const queryParams = buildQueryParams(page, size);
-      let url = `${baseUrl}paper_trade/strategy-details`;
+      let url = `${baseUrl}ema-scalping/strategy-details`;
 
-      const response = await axios.get(`${url}/?${queryParams}`);
+      const response = await axiosInstance.get(`${url}/?${queryParams}`);
 
       const data = response.data;
       setOrders(data.orders || []);
