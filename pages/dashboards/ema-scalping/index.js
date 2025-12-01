@@ -21,7 +21,8 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import axios from "axios";
+import axiosInstance from "src/utils/axios";
+
 import useToast from "src/hooks/useToast";
 import CustomDatePicker from "src/components/DatePicker";
 import MarketTrendCard from "src/components/MarketTrendCard";
@@ -58,9 +59,9 @@ function DashboardReports() {
   const [calendarMonthYear, setCalendarMonthYear] = useState(new Date());
 
   const fetchOrder = async () => {
-    axios
+    axiosInstance
       .get(
-        `${baseUrl}paper_trade/getorder?symbol=${selectedSymbol}&date=${selectedDate}`
+        `${baseUrl}ema-scalping/getorder?symbol=${selectedSymbol}&date=${selectedDate}`
       )
       .then((res) => {
         if (res?.data.length === 0) {
@@ -82,8 +83,10 @@ function DashboardReports() {
   const [marketTrend, setMarketTrend] = useState([]);
 
   const fetchMarketTrend = async () => {
-    axios
-      .get(`${baseUrl}paper_trade/getmarket?symbol=${selectedSymbol}`)
+    axiosInstance
+      .get(
+        `${baseUrl}ema-scalping/getmarket?symbol=${selectedSymbol}`
+      )
       .then((res) => {
         if (res?.data.length === 0) {
           showToast("No market data found", "info");
@@ -106,21 +109,24 @@ function DashboardReports() {
     try {
       const startDate = new Date(year, month - 2, 1);
       startDate.setDate(startDate.getDate() - startDate.getDay());
-  
+
       const endDate = new Date(year, month + 1, 0);
       endDate.setDate(endDate.getDate() + (6 - endDate.getDay()));
-  
+
       const formattedStart = startDate.toISOString().split("T")[0];
       const formattedEnd = endDate.toISOString().split("T")[0];
-  
-      const response = await axios.get(`${baseUrl}paper_trade/daywise-pnl/`, {
-        params: {
-          index_name: selectedSymbol,
-          start_date: formattedStart,
-          end_date: formattedEnd,
-        },
-      });
-  
+
+      const response = await axiosInstance.get(
+        `${baseUrl}ema-scalping/daywise-pnl/`,
+        {
+          params: {
+            index_name: selectedSymbol,
+            start_date: formattedStart,
+            end_date: formattedEnd,
+          },
+        }
+      );
+
       const pnlMap = {};
       if (response.data.daywise_pnl) {
         response.data.daywise_pnl.forEach((item) => {
@@ -132,8 +138,6 @@ function DashboardReports() {
       console.log("Error fetching daywise PnL:", error);
     }
   };
-  
-
 
   useEffect(() => {
     fetchOrder();
@@ -314,8 +318,9 @@ function DashboardReports() {
             }
             renderDayContents={(day, d) => {
               const pnl = getPLData(d);
-              const isCurrentMonth = d.getMonth() === calendarMonthYear.getMonth();
-            
+              const isCurrentMonth =
+                d.getMonth() === calendarMonthYear.getMonth();
+
               return (
                 <div
                   style={{
@@ -327,10 +332,11 @@ function DashboardReports() {
                     fontSize: "12px",
                     width: "100%",
                     height: "70px",
-
                   }}
                 >
-                  <span style={{ fontSize: "15px", fontWeight: 600 }}>{day}</span>
+                  <span style={{ fontSize: "15px", fontWeight: 600 }}>
+                    {day}
+                  </span>
                   {pnl !== null && (
                     <div
                       style={{
@@ -354,7 +360,6 @@ function DashboardReports() {
                 </div>
               );
             }}
-            
           />
 
           <IconButton

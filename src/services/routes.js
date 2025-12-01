@@ -17,22 +17,22 @@ export const API_ROUTER = {
     ADD_POSITION : "stocks/add-position/",
     ALL_POSITION : "stocks/all-position/",
 
-    STRATEGY_LIST: 'strategy/',
-    STRATEGY_CREATE: 'strategy/create/',
-    LOT_SIZES:'strategy/get-symbols/', //for lot sizes according to stock
-    STRATEGY_PREBUILD:(name)=>(name?`/strategy/pre-build/?name=${name}`: '/strategy/pre-build/'),
-    STRATEGY_UPDATE: (id) => (id ? `strategy/update/${id}/` : 'strategy/update/'), //wokrs with delete also
-    STRATEGY_STATUS:(strategyId)=>(`strategy/status/${strategyId}/`),
-    STRATEGY_ON_OFF_ALL:'strategy/on-off-all/',
+    STRATEGY_LIST: 'paper_trade/strategy/',
+    STRATEGY_CREATE: 'paper_trade/strategy/create/',
+    LOT_SIZES:'paper_trade/strategy/get-symbols/', //for lot sizes according to stock
+    STRATEGY_PREBUILD:(name)=>(name?`paper_trade/strategy/pre-build/?name=${name}`: 'paper_trade/strategy/pre-build/'),
+    STRATEGY_UPDATE: (id) => (id ? `paper_trade/strategy/update/${id}/` : 'paper_trade/strategy/update/'), //wokrs with delete also
+    STRATEGY_STATUS:(strategyId)=>(`paper_trade/strategy/status/${strategyId}/`),
+    STRATEGY_ON_OFF_ALL:'paper_trade/strategy/on-off-all/',
 
     
-    ORDER_DATE_LIST: (id) => (`orders/dates/${id}/`),
+    ORDER_DATE_LIST: (id) => (`paper_trade/orders/dates/${id}/`),
     ORDER_LIST: (id, selectedDate, symbol) => {
-        const baseUrl = `orders/${id}/?date=${selectedDate}`;
+        const baseUrl = `paper_trade/orders/${id}/?date=${selectedDate}`;
         return symbol ? `${baseUrl}&symbol=${symbol}` : baseUrl;
       },
 
 
-    ADD_BROKER:'broker/add/',
-    UPDATE_BROKER:'broker/update/',
+    ADD_BROKER:'paper_trade/broker/add/',
+    UPDATE_BROKER:'paper_trade/broker/update/',
 };

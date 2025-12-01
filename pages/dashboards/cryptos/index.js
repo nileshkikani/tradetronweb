@@ -19,7 +19,7 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import axios from "axios";
+import axiosInstance from "src/utils/axios";
 import useToast from "src/hooks/useToast";
 import CustomDatePicker from "src/components/DatePicker";
 import MarketTrendCard from "src/components/MarketTrendCard";
@@ -45,9 +45,9 @@ function DashboardReports() {
 
   const [orderData, setOrderData] = useState([]);
   const fetchOrder = async () => {
-    axios
+    axiosInstance
       .get(
-        `${baseUrl}crypto_trade/getorder?symbol=${selectedSymbol}&date=${selectedDate}`
+        `${baseUrl}ema-scalping/crypto_trade/getorder?symbol=${selectedSymbol}&date=${selectedDate}`
       )
       .then((res) => {
         if (res?.data.length === 0) {
@@ -69,8 +69,8 @@ function DashboardReports() {
   const [marketTrend, setMarketTrend] = useState([]);
 
   const fetchMarketTrend = async () => {
-    axios
-      .get(`${baseUrl}paper_trade/getmarket?symbol=${selectedSymbol}`)
+    axiosInstance
+      .get(`${baseUrl}ema-scalping/getmarket?symbol=${selectedSymbol}`)
       .then((res) => {
         if (res?.data.length === 0) {
           showToast("No orders found", "info");
@@ -231,7 +231,7 @@ function DashboardReports() {
                     component="span"
                     sx={{
                       ml: 1,
-                       color: (theme) => {
+                      color: (theme) => {
                         const totalPL = orderData.reduce(
                           (total, row) =>
                             total + (parseFloat(row?.profit) || 0),

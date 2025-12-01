@@ -23,7 +23,8 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import axios from "axios";
+import axiosInstance from "src/utils/axios";
+
 
 function DashboardReports() {
   const router = useRouter();
@@ -101,7 +102,7 @@ function DashboardReports() {
     setLoading(true);
 
     try {
-      let url = `${baseUrl}paper_trade/strategy-pnl-report/?`;
+      let url = `${baseUrl}ema-scalping/strategy-pnl-report/?`;
 
       if (selectFilter === "Custom") {
         url += `date_range=custom&start_date=${startDate}&end_date=${endDate}`;
@@ -114,7 +115,7 @@ function DashboardReports() {
         url += `date_range=${dateRangeMap[selectFilter]}`;
       }
 
-      const response = await axios.get(url);
+      const response = await axiosInstance.get(url);
 
       if (response.data.strategies && Array.isArray(response.data.strategies)) {
         setFilterData(response.data.strategies);
