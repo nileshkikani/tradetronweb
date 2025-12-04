@@ -52,9 +52,8 @@ export const LoginJWT = (props) => {
       try {
         await login(values.email, values.password);
 
-          // const backTo = router.query.backTo || '/dashboards/reports';
-          const backTo = '/dashboards/option-wizard';
-          router.push(backTo);
+        const backTo = router.query.backTo || '/dashboards/option-wizard';
+        router.push(backTo);
       } catch (err) {
         console.error(err);
         showToast(TOAST_ALERTS.GENERAL_ERROR, TOAST_TYPES.ERROR);
