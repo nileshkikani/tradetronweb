@@ -55,10 +55,15 @@ const menuItems = [
       //   icon: ConstructionIcon,
       //   link: '/dashboards/ema-scalping'
       // },
-      {
-        name: 'Cryptos',
+      // {
+      //   name: 'Cryptos',
+      //   icon: CurrencyBitcoinIcon,
+      //   link: '/dashboards/cryptos'
+      // },
+       {
+        name: 'Volume-spike',
         icon: CurrencyBitcoinIcon,
-        link: '/dashboards/cryptos'
+        link: '/dashboards/volume-spike'
       },
       {
         name: 'Strategy',
