@@ -290,7 +290,7 @@ function VolumeSpikePage() {
 
   return (
     <div style={{ padding: "24px" }}>
-      <h1>Stocks</h1>
+      <h1>Active trades</h1>
       
       {/* Filters Section */}
       <Box
