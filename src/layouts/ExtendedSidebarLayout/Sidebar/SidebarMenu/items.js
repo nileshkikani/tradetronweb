@@ -60,10 +60,28 @@ const menuItems = [
       //   icon: CurrencyBitcoinIcon,
       //   link: '/dashboards/cryptos'
       // },
+      //  {
+      //   name: 'Volume-spike',
+      //   icon: CurrencyBitcoinIcon,
+      //   link: '/dashboards/volume-spike'
+      // },
        {
-        name: 'Volume-spike',
-        icon: CurrencyBitcoinIcon,
-        link: '/dashboards/volume-spike'
+        name:'Stocks',
+        icon: ConstructionIcon,
+        items: [
+          {
+            name: 'Active trades',
+            link: '/dashboards/volume-spike',
+            badge: '',
+            // badgeTooltip: 'Dot indicator with example tooltip'
+          },
+          {
+            name:'Reports',
+            link:'/dashboards/reports',
+            badge:''
+          }
+
+        ]
       },
       {
         name: 'Strategy',
