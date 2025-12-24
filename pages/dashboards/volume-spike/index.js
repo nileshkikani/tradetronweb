@@ -4,14 +4,14 @@ import {
   Button,
   Select,
   MenuItem,
-  IconButton,
   Paper,
   Box,
   Typography,
   Chip,
   Pagination,
   FormControl,
-  InputLabel,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
 import dynamic from "next/dynamic";
 import { useState, useEffect } from "react";
@@ -26,8 +26,7 @@ import useToast from "src/hooks/useToast";
 import CustomDatePicker from "src/components/DatePicker";
 import MarketTrendCard from "src/components/MarketTrendCard";
 
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import SearchIcon from "@mui/icons-material/Search";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
@@ -35,17 +34,21 @@ const ReactApexChart = dynamic(() => import("react-apexcharts"), {
 
 function VolumeSpikePage() {
   const baseUrl = process.env.EMA_SCALPING_URL;
+  const { showToast } = useToast();
+  
+  // Get current date in YYYY-MM-DD format
   const getTodayDate = () => {
     const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0");
-    const day = String(today.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
+    return today.toISOString().split('T')[0];
   };
-  const { showToast } = useToast();
-  const [selectedDate, setSelectedDate] = useState(getTodayDate);
-  const [selectedSymbol, setSelectedSymbol] = useState("BTCUSD");
-
+  
+  // State management
+  const [dateRange, setDateRange] = useState("today");
+  const [startDate, setStartDate] = useState(getTodayDate());
+  const [endDate, setEndDate] = useState(getTodayDate());
+  const [searchSymbol, setSearchSymbol] = useState("");
+  const [debouncedSearchSymbol, setDebouncedSearchSymbol] = useState("");
+  
   const [volumeSpikeData, setVolumeSpikeData] = useState([]);
   const [pagination, setPagination] = useState({
     totalPages: 1,
@@ -56,13 +59,69 @@ function VolumeSpikePage() {
     hasPrevious: false,
   });
   const [pageSize, setPageSize] = useState(20);
+  const [marketTrend, setMarketTrend] = useState([]);
+  const [loading, setLoading] = useState(false);
 
+  // Debounce search symbol
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchSymbol(searchSymbol);
+    }, 500); // 500ms debounce
+
+    return () => clearTimeout(timer);
+  }, [searchSymbol]);
+
+  // Fetch volume spikes with all filters
   const fetchVolumeSpikes = async (page = 1, size = pageSize) => {
+    setLoading(true);
+    
+    // Build query parameters
+    const params = new URLSearchParams({
+      page: page.toString(),
+      page_size: size.toString(),
+    });
+
+    // Add date range filter
+    if (dateRange === "today") {
+      params.append("date_range", "today");
+    } else if (dateRange === "this_month") {
+      params.append("date_range", "this_month");
+    } else if (dateRange === "custom") {
+      if (!startDate || !endDate) {
+        showToast("Please select both start and end dates", "warning");
+        setLoading(false);
+        return;
+      }
+      
+      // Validate date range
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      const today = new Date(getTodayDate());
+      
+      if (start > today || end > today) {
+        showToast("Future dates are not allowed", "warning");
+        setLoading(false);
+        return;
+      }
+      
+      if (start > end) {
+        showToast("Start date cannot be after end date", "warning");
+        setLoading(false);
+        return;
+      }
+      
+      params.append("date_range", "custom");
+      params.append("start_date", startDate);
+      params.append("end_date", endDate);
+    }
+
+    // Add symbol filter if provided
+    if (debouncedSearchSymbol.trim()) {
+      params.append("symbol", debouncedSearchSymbol.trim());
+    }
+
     axiosInstance
-      .get(
-        // `${baseUrl}ema-scalping/crypto_trade/getorder?symbol=${selectedSymbol}&date=${selectedDate}`
-        `${baseUrl}ema-scalping/volume-spike-order/?page=${page}&page_size=${size}`
-      )
+      .get(`${baseUrl}ema-scalping/volume-spike-order/?${params.toString()}`)
       .then((res) => {
         if (res?.data?.data?.length === 0) {
           showToast("No volume spikes found", "info");
@@ -94,74 +153,88 @@ function VolumeSpikePage() {
           "error"
         );
         console.log(error?.response?.data?.error || error.message);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
-  const [marketTrend, setMarketTrend] = useState([]);
-
   const fetchMarketTrend = async () => {
     axiosInstance
-      .get(`${baseUrl}ema-scalping/getmarket?symbol=${selectedSymbol}`)
+      .get(`${baseUrl}ema-scalping/getmarket?symbol=${debouncedSearchSymbol || "BTCUSD"}`)
       .then((res) => {
         if (res?.data.length === 0) {
-          showToast("No orders found", "info");
-          setVolumeSpikeData([]);
           return;
         }
         setMarketTrend(res.data);
-        console.log(res.data);
       })
       .catch((error) => {
-        showToast(
-          error?.response?.data?.error || "Something went wrong",
-          "error"
-        );
         console.log(error?.response?.data?.error || error.message);
       });
   };
 
+  // Fetch data when filters change
+  useEffect(() => {
+    fetchVolumeSpikes(1);
+  }, [dateRange, startDate, endDate, debouncedSearchSymbol]);
+
+  // Initial fetch
   useEffect(() => {
     fetchVolumeSpikes();
     fetchMarketTrend();
-  }, [selectedSymbol, selectedDate]);
+  }, []);
 
-  // const handleDateChange = (event) => {
-  //   const dateString = event.target.value;
-  //   console.log(dateString);
-  //   setSelectedDate(dateString);
-  // };
-
-  const handleDateChange = (event) => {
-    const dateString = event.target.value;
-    const selectedDate = new Date(dateString);
-    const today = new Date();
-
-    if (selectedDate > today) {
-      showToast("Future dates are not allowed", "warning");
-    } else {
-      // console.log(dateString);
-      setSelectedDate(dateString);
+  const handleDateRangeChange = (event) => {
+    const value = event.target.value;
+    setDateRange(value);
+    
+    if (value === "today") {
+      const today = getTodayDate();
+      setStartDate(today);
+      setEndDate(today);
+    } else if (value === "this_month") {
+      const today = new Date();
+      const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+      const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      
+      setStartDate(firstDay.toISOString().split('T')[0]);
+      setEndDate(lastDay.toISOString().split('T')[0]);
+    } else if (value === "custom") {
+      // Set default to last 7 days for custom range
+      const today = new Date(getTodayDate());
+      const sevenDaysAgo = new Date(today);
+      sevenDaysAgo.setDate(today.getDate() - 6); // Last 7 days including today
+      
+      setStartDate(sevenDaysAgo.toISOString().split('T')[0]);
+      setEndDate(today.toISOString().split('T')[0]);
     }
   };
 
-  const handlePreviousDay = () => {
-    const date = new Date(selectedDate);
-    date.setDate(date.getDate() - 1);
-    const newDate = date.toISOString().split("T")[0];
-    setSelectedDate(newDate);
+  const handleStartDateChange = (event) => {
+    const dateString = event.target.value;
+    const selectedDate = new Date(dateString);
+    const today = new Date(getTodayDate());
+
+    if (selectedDate > today) {
+      showToast("Start date cannot be in the future", "warning");
+    } else if (dateString > endDate) {
+      showToast("Start date cannot be after end date", "warning");
+    } else {
+      setStartDate(dateString);
+    }
   };
 
-  const handleNextDay = () => {
-    const date = new Date(selectedDate);
-    date.setDate(date.getDate() + 1);
-    const newDate = date.toISOString().split("T")[0];
-
-    // Don't allow selecting future dates
+  const handleEndDateChange = (event) => {
+    const dateString = event.target.value;
+    const selectedDate = new Date(dateString);
     const today = new Date(getTodayDate());
-    if (date <= today) {
-      setSelectedDate(newDate);
+
+    if (selectedDate > today) {
+      showToast("End date cannot be in the future", "warning");
+    } else if (dateString < startDate) {
+      showToast("End date cannot be before start date", "warning");
     } else {
-      showToast("Cannot select future dates", "warning");
+      setEndDate(dateString);
     }
   };
 
@@ -178,6 +251,10 @@ function VolumeSpikePage() {
     const newSize = event.target.value;
     setPageSize(newSize);
     fetchVolumeSpikes(1, newSize);
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchSymbol(event.target.value.toUpperCase());
   };
 
   const formatDateTime = (dateTimeString) => {
@@ -213,58 +290,115 @@ function VolumeSpikePage() {
 
   return (
     <div style={{ padding: "24px" }}>
-      <h1>Volume Spike </h1>
-      <div
-        style={{
+      <h1>Volume Spike</h1>
+      
+      {/* Filters Section */}
+      <Box
+        sx={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           width: "100%",
+          mb: 3,
+          flexWrap: "wrap",
+          gap: 2,
         }}
       >
-        {/* <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            marginBottom: "10px",
-          }}
-        >
-          <Select
-            labelId="my-strategies-label"
-            value={selectedSymbol}
-            onChange={(e) => setSelectedSymbol(e.target.value)}
-            displayEmpty
-            style={{ minWidth: 200 }}
-          >
-            <MenuItem value="BTCUSD">BTCUSD</MenuItem>
-            <MenuItem value="ETHUSD">ETHUSD</MenuItem>
-          </Select>
+        {/* Left side: Search and Date Range */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2, flexWrap: "wrap" }}>
+          {/* Search Symbol */}
+          <TextField
+            placeholder="Search symbol..."
+            value={searchSymbol}
+            onChange={handleSearchChange}
+            size="small"
+            sx={{ minWidth: 200 }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+          
+          {/* Date Range Selector */}
+          <FormControl size="small" sx={{ minWidth: 150 }}>
+            <Select
+              value={dateRange}
+              onChange={handleDateRangeChange}
+              displayEmpty
+            >
+              <MenuItem value="today">Today</MenuItem>
+              <MenuItem value="this_month">This Month</MenuItem>
+              <MenuItem value="custom">Custom Date Range</MenuItem>
+            </Select>
+          </FormControl>
+
+          {/* Date Pickers - Show for custom range */}
+          {dateRange === "custom" && (
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+                {/* <Typography variant="caption" color="text.secondary">
+                  Start Date
+                </Typography> */}
+                <CustomDatePicker 
+                  value={startDate} 
+                  onChange={handleStartDateChange}
+                  size="small"
+                  sx={{ width: 150 }}
+                />
+              </Box>
+              
+              <Typography variant="body1" sx={{ mx: 1 }}>
+                to
+              </Typography>
+              
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+                {/* <Typography variant="caption" color="text.secondary">
+                  End Date
+                </Typography> */}
+                <CustomDatePicker 
+                  value={endDate} 
+                  onChange={handleEndDateChange}
+                  size="small"
+                  sx={{ width: 150 }}
+                />
+              </Box>
+            </Box>
+          )}
+
+          {/* Show selected date range for this_month */}
+          {dateRange === "this_month" && (
+            <Typography variant="body2" color="text.secondary">
+              {startDate} to {endDate}
+            </Typography>
+          )}
+        </Box>
+
+        {/* Right side: Refresh Button */}
+        <Box>
           <Button
             onClick={handleRefresh}
             variant="contained"
-            style={{ marginLeft: 6 }}
+            disabled={loading}
           >
-            Refresh
+            {loading ? "Loading..." : "Refresh"}
           </Button>
-        </div> */}
-        {/* <CustomDatePicker value={selectedDate} onChange={handleDateChange} /> */}
-        {/* <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <IconButton onClick={handlePreviousDay} color="primary">
-            <ArrowBackIosIcon fontSize="small" />
-          </IconButton>
+        </Box>
+      </Box>
 
-          <CustomDatePicker value={selectedDate} onChange={handleDateChange} />
+      {/* Show active filters */}
+      <Box sx={{ mb: 2 }}>
+        <Typography variant="body2" color="text.secondary">
+          Active filters: 
+          {dateRange === "today" && " Today"}
+          {dateRange === "this_month" && ` This month (${startDate} to ${endDate})`}
+          {dateRange === "custom" && ` Custom range: ${startDate} to ${endDate}`}
+          {debouncedSearchSymbol && ` | Symbol: ${debouncedSearchSymbol}`}
+        </Typography>
+      </Box>
 
-          <IconButton
-            onClick={handleNextDay}
-            color="primary"
-            style={{ marginLeft: "8px" }}
-          >
-            <ArrowForwardIosIcon fontSize="small" />
-          </IconButton>
-        </div> */}
-      </div>
       <div
         style={{
           display: "flex",
@@ -280,7 +414,6 @@ function VolumeSpikePage() {
             flexGrow: 1,
             overflow: "auto",
             borderRadius: "8px",
-            paddingTop: "25px",
           }}
         >
           <TableContainer
@@ -320,11 +453,19 @@ function VolumeSpikePage() {
                   <TableCell sx={{ fontWeight: 600 }}>Target Price</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Stop Loss</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Potential Gain</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Spike Time</TableCell>
+                  {/* <TableCell sx={{ fontWeight: 600 }}>Spike Time</TableCell> */}
                 </TableRow>
               </TableHead>
               <TableBody>
-                {volumeSpikeData.length === 0 ? (
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={10} align="center" sx={{ py: 4 }}>
+                      <Typography variant="body1" color="text.secondary">
+                        Loading...
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                ) : volumeSpikeData.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={10} align="center" sx={{ py: 4 }}>
                       <Typography variant="body1" color="text.secondary">
@@ -344,7 +485,7 @@ function VolumeSpikePage() {
                         transition: "background-color 0.2s",
                       }}
                     >
-                      <TableCell>{formatDateTime(row.created_at)}</TableCell>
+                      <TableCell>{formatDateTime(row.date_time)}</TableCell>
                       <TableCell>
                         <Chip
                           size="small"
@@ -435,7 +576,7 @@ function VolumeSpikePage() {
                           )}
                         </Typography>
                       </TableCell>
-                      <TableCell>{formatTime(row.date_time)}</TableCell>
+                      {/* <TableCell>{formatTime(row.date_time)}</TableCell> */}
                     </TableRow>
                   ))
                 )}
