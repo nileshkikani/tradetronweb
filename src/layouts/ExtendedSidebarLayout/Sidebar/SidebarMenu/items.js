@@ -71,13 +71,19 @@ const menuItems = [
         items: [
           {
             name: 'Active trades',
-            link: '/dashboards/volume-spike',
+            link: '/dashboards/active-trades',
+            badge: '',
+            // badgeTooltip: 'Dot indicator with example tooltip'
+          },
+          {
+            name: 'Closed trades',
+            link: '/dashboards/closed-trades',
             badge: '',
             // badgeTooltip: 'Dot indicator with example tooltip'
           },
           {
             name:'Reports',
-            link:'/dashboards/reports',
+            link:'/dashboards/stock-reports',
             badge:''
           }
 
