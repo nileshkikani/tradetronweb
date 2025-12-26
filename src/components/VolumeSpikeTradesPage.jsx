@@ -522,7 +522,7 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {!loading ? (
+                {loading ? (
                   <TableRow>
                     <TableCell
                       colSpan={calculateColSpan()}
