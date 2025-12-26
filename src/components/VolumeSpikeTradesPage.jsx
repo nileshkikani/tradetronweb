@@ -646,10 +646,11 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
                           variant="body2"
                           fontWeight="600"
                           sx={{
-                            color: (theme) => theme.palette[getPNLColor(row.live_pnl)]
+                            color: (theme) =>
+                              theme.palette[tradeType === 'closed' ? getPNLColor(row.pnl) : getPNLColor(row.live_pnl)]
                           }}
                         >
-                          {formatPNL(row.live_pnl)}
+                          {tradeType === 'closed' ? formatPNL(row.pnl) : formatPNL(row.live_pnl)}
                         </Typography>
                       </TableCell>
                       <TableCell>
