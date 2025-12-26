@@ -499,126 +499,71 @@ function StrategyDetail() {
                     </TableCell>
                   </TableRow>
                 ) : orders.length > 0 ? (
-                  orders.map((order, index) => (
-                    <>
-                      <TableRow key={order.id}>
-                        {/* <TableCell>{index + 1}</TableCell> */}
-                        {/* <TableCell>{formatDateTime(order.created_at)}</TableCell> */}
-                        <TableCell>{formatDateTime(order.entry_time)}</TableCell>
-                        <TableCell>
-                          <Typography variant="body2" fontWeight="medium">
-                            {order.symbol}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Chip 
-                            label={order.order_type} 
-                            size="small" 
-                            color={getOrderTypeColor(order.order_type)}
-                          />
-                        </TableCell>
-                        <TableCell>{order.entry_price?.toFixed(2)}</TableCell>
-                        <TableCell>{formatDateTime(order.exit_time)}</TableCell>
-                        <TableCell>{order.position_size}</TableCell>
-                        <TableCell>{order.risk_reward_ratio?.toFixed(2)}</TableCell>
-                        <TableCell>{order.stop_loss?.toFixed(2)}</TableCell>
-                        <TableCell>{order.target_price?.toFixed(2)}</TableCell>
-                        <TableCell>{order.exit_price?.toFixed(2)}</TableCell>
-                        <TableCell>
-                          <Chip 
-                            label={order.pnl?.toFixed(3)} 
-                            size="small" 
-                            color={getPnlColor(order.pnl)}
-                            variant="outlined"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Chip 
-                            label={order.order_status} 
-                            size="small" 
-                            color={getStatusColor(order.order_status)}
-                          />
-                        </TableCell>
-                        <TableCell>{order.exit_reason || '-'}</TableCell>
-                        {/* <TableCell>
-                          <IconButton
-                            size="small"
-                            onClick={() => toggleRowExpansion(order.id)}
-                          >
-                            {expandedRows[order.id] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                          </IconButton>
-                        </TableCell> */}
-                      </TableRow>
-                      
-                      {/* Expanded row for all fields */}
-                      {/* <TableRow>
-                        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={mainTableColumns.length}>
-                          <Collapse in={expandedRows[order.id]} timeout="auto" unmountOnExit>
-                            <Box sx={{ margin: 1, padding: 2, backgroundColor: 'rgba(0, 0, 0, 0.02)' }}>
-                              <Typography variant="h6" gutterBottom component="div">
-                                Complete Order Details
-                              </Typography>
-                              <Table size="small" aria-label="all-fields-table">
-                                <TableBody>
-                                  {getAllFieldNames().map((fieldName) => {
-                                    if (!mainTableColumns.find(col => col.key === fieldName)) {
-                                      return (
-                                        <TableRow key={fieldName}>
-                                          <TableCell component="th" scope="row" sx={{ fontWeight: 500 }}>
-                                            {fieldName.replace(/_/g, ' ').toUpperCase()}
-                                          </TableCell>
-                                          <TableCell>
-                                            {fieldName.includes('time') || fieldName.includes('date') || fieldName.includes('at')
-                                              ? formatDateTime(order[fieldName])
-                                              : typeof order[fieldName] === 'number'
-                                              ? order[fieldName].toFixed(3)
-                                              : order[fieldName] || '-'}
-                                          </TableCell>
-                                        </TableRow>
-                                      );
-                                    }
-                                    return null;
-                                  })}
-                                  
-                              
-                                  <TableRow>
-                                    <TableCell component="th" scope="row" sx={{ fontWeight: 500 }}>
-                                      RISK
-                                    </TableCell>
-                                    <TableCell>
-                                      {order.entry_price && order.stop_loss 
-                                        ? Math.abs(order.entry_price - order.stop_loss).toFixed(3)
-                                        : '-'}
-                                    </TableCell>
-                                  </TableRow>
-                                  <TableRow>
-                                    <TableCell component="th" scope="row" sx={{ fontWeight: 500 }}>
-                                      REWARD
-                                    </TableCell>
-                                    <TableCell>
-                                      {order.target_price && order.entry_price 
-                                        ? Math.abs(order.target_price - order.entry_price).toFixed(3)
-                                        : '-'}
-                                    </TableCell>
-                                  </TableRow>
-                                  <TableRow>
-                                    <TableCell component="th" scope="row" sx={{ fontWeight: 500 }}>
-                                      DURATION (MINUTES)
-                                    </TableCell>
-                                    <TableCell>
-                                      {order.entry_time && order.exit_time
-                                        ? Math.round((new Date(order.exit_time) - new Date(order.entry_time)) / (1000 * 60))
-                                        : '-'} mins
-                                    </TableCell>
-                                  </TableRow>
-                                </TableBody>
-                              </Table>
-                            </Box>
-                          </Collapse>
-                        </TableCell>
-                      </TableRow> */}
-                    </>
-                  ))
+                 orders.map((order, index) => (
+  <TableRow key={order.id}>
+    {/* Entry Time */}
+    <TableCell>{formatDateTime(order.entry_time)}</TableCell>
+    
+    {/* Symbol */}
+    <TableCell>
+      <Typography variant="body2" fontWeight="medium">
+        {order.symbol}
+      </Typography>
+    </TableCell>
+    
+    {/* Order Type */}
+    <TableCell>
+      <Chip 
+        label={order.order_type} 
+        size="small" 
+        color={getOrderTypeColor(order.order_type)}
+      />
+    </TableCell>
+    
+    {/* Entry Price */}
+    <TableCell>{order.entry_price?.toFixed(2)}</TableCell>
+    
+    {/* Exit Time */}
+    <TableCell>{formatDateTime(order.exit_time)}</TableCell>
+    
+    {/* Position Size */}
+    <TableCell>{order.position_size}</TableCell>
+    
+    {/* Stop Loss - Fixed position (was after risk_reward_ratio) */}
+    <TableCell>{order.stop_loss?.toFixed(2)}</TableCell>
+    
+    {/* Risk/Reward Ratio */}
+    <TableCell>{order.risk_reward_ratio?.toFixed(2)}</TableCell>
+    
+    {/* Target Price */}
+    <TableCell>{order.target_price?.toFixed(2)}</TableCell>
+    
+    {/* Exit Price */}
+    <TableCell>{order.exit_price?.toFixed(2)}</TableCell>
+    
+    {/* PNL */}
+    <TableCell>
+      <Chip 
+        label={order.pnl?.toFixed(3)} 
+        size="small" 
+        color={getPnlColor(order.pnl)}
+        variant="outlined"
+      />
+    </TableCell>
+    
+    {/* Status */}
+    <TableCell>
+      <Chip 
+        label={order.order_status} 
+        size="small" 
+        color={getStatusColor(order.order_status)}
+      />
+    </TableCell>
+    
+    {/* Exit Reason */}
+    <TableCell>{order.exit_reason || '-'}</TableCell>
+  </TableRow>
+))
                 ) : (
                   <TableRow>
                     <TableCell colSpan={mainTableColumns.length} align="center">
