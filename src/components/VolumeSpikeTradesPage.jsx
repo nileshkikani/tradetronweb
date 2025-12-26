@@ -515,7 +515,7 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
                   <TableCell sx={{ fontWeight: 600 }}>Stop Loss</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Order Status</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Current Price</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Live P&L</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>{tradeType === 'closed' ? 'P&L' : 'Live P&L'}</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Exit Price</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Exit Time</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Exit Reason</TableCell>
