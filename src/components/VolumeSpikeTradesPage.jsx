@@ -135,7 +135,12 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
     if (debouncedSearchSymbol.trim()) {
       params.append('symbol', debouncedSearchSymbol.trim());
     }
-
+    if (strategy === 'breakout') {
+      params.append('strategy_name', 'breakout');
+    }
+    if (strategy === 'volume-spike') {
+      params.append('strategy_name', 'volume-spike');
+    }
     // Get the appropriate API endpoint
     const apiEndpoint = getApiEndpoint();
 
