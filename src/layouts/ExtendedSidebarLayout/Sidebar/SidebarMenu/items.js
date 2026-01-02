@@ -17,9 +17,9 @@ const menuItems = [
     // heading: 'General',
     items: [
       {
-        name: 'Profile',
-        icon: AccountCircleIcon,
-        link: '/dashboards/profile'
+        name: 'Dashboard',
+        icon: BackupTableTwoToneIcon,
+        link: '/dashboards'
       },
       // {
       //   name: 'Builder',
@@ -27,7 +27,7 @@ const menuItems = [
       //   link: '/dashboards/strategy-builder'
       // },
       {
-        name:'EMA Scalping',
+        name: 'EMA Scalping',
         icon: ConstructionIcon,
         items: [
           {
@@ -43,9 +43,9 @@ const menuItems = [
           },
 
           {
-            name:'Reports',
-            link:'/dashboards/reports',
-            badge:''
+            name: 'Reports',
+            link: '/dashboards/reports',
+            badge: ''
           }
 
         ]
@@ -65,8 +65,8 @@ const menuItems = [
       //   icon: CurrencyBitcoinIcon,
       //   link: '/dashboards/volume-spike'
       // },
-       {
-        name:'Stocks',
+      {
+        name: 'Stocks',
         icon: ConstructionIcon,
         items: [
           {
@@ -82,9 +82,9 @@ const menuItems = [
             // badgeTooltip: 'Dot indicator with example tooltip'
           },
           {
-            name:'Reports',
-            link:'/dashboards/stock-reports',
-            badge:''
+            name: 'Reports',
+            link: '/dashboards/stock-reports',
+            badge: ''
           }
 
         ]
@@ -135,8 +135,8 @@ const menuItems = [
           }
         ]
       }
-      
-]
+
+    ]
   }];
 
 export default menuItems;

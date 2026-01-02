@@ -24,7 +24,7 @@ export const LoginAuth0 = (props) => {
       await loginWithPopup();
 
       if (isMountedRef()) {
-        const backTo = router.query.backTo || '/dashboards/option-wizard';
+        const backTo = router.query.backTo || '/dashboards';
         router.push(backTo);
       }
     } catch (err) {

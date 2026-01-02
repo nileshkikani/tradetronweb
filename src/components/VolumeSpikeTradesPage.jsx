@@ -22,6 +22,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
+import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import TradingViewChart from './TradingViewChart';
 import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
@@ -53,9 +55,7 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
 
   // State management
   const [strategy, setStrategy] = useState('volume-spike'); // 'volume-spike', 'breakout', 'order-block'
-  const [dateRange, setDateRange] = useState('today');
-  const [startDate, setStartDate] = useState(getTodayDate());
-  const [endDate, setEndDate] = useState(getTodayDate());
+  const [selectedDate, setSelectedDate] = useState(getTodayDate());
   const [searchSymbol, setSearchSymbol] = useState('');
   const [debouncedSearchSymbol, setDebouncedSearchSymbol] = useState('');
 
@@ -115,39 +115,8 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
     // Add trade_type parameter for closed trades
     tradeType === 'closed' ? params.append('order_status', 'CLOSED') : params.append('order_status', 'OPEN');
 
-    // Add date range filter
-    if (dateRange === 'today') {
-      params.append('date_range', 'today');
-    } else if (dateRange === 'this_month') {
-      params.append('date_range', 'this_month');
-    } else if (dateRange === 'custom') {
-      if (!startDate || !endDate) {
-        showToast('Please select both start and end dates', 'warning');
-        setLoading(false);
-        return;
-      }
-
-      // Validate date range
-      const start = new Date(startDate);
-      const end = new Date(endDate);
-      const today = new Date(getTodayDate());
-
-      if (start > today || end > today) {
-        showToast('Future dates are not allowed', 'warning');
-        setLoading(false);
-        return;
-      }
-
-      if (start > end) {
-        showToast('Start date cannot be after end date', 'warning');
-        setLoading(false);
-        return;
-      }
-
-      params.append('date_range', 'custom');
-      params.append('start_date', startDate);
-      params.append('end_date', endDate);
-    }
+    // Add selected date filter
+    params.append('date', selectedDate);
 
     // Add symbol filter if provided
     if (debouncedSearchSymbol.trim()) {
@@ -215,7 +184,7 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
   // Fetch data when filters change
   useEffect(() => {
     fetchData(1);
-  }, [dateRange, startDate, endDate, debouncedSearchSymbol, strategy]);
+  }, [selectedDate, debouncedSearchSymbol, strategy]);
 
 
 
@@ -224,57 +193,33 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
     setStrategy(value);
   };
 
-  const handleDateRangeChange = (event) => {
-    const value = event.target.value;
-    setDateRange(value);
+  const handleDateChange = (event) => {
+    const dateString = event.target.value;
+    const selected = new Date(dateString);
+    const today = new Date(getTodayDate());
 
-    if (value === 'today') {
-      const today = getTodayDate();
-      setStartDate(today);
-      setEndDate(today);
-    } else if (value === 'this_month') {
-      const today = new Date();
-      const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-      const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-
-      setStartDate(firstDay.toISOString().split('T')[0]);
-      setEndDate(lastDay.toISOString().split('T')[0]);
-    } else if (value === 'custom') {
-      // Set default to last 7 days for custom range
-      const today = new Date(getTodayDate());
-      const sevenDaysAgo = new Date(today);
-      sevenDaysAgo.setDate(today.getDate() - 6); // Last 7 days including today
-
-      setStartDate(sevenDaysAgo.toISOString().split('T')[0]);
-      setEndDate(today.toISOString().split('T')[0]);
+    if (selected > today) {
+      showToast('Future dates are not allowed', 'warning');
+    } else {
+      setSelectedDate(dateString);
     }
   };
 
-  const handleStartDateChange = (event) => {
-    const dateString = event.target.value;
-    const selectedDate = new Date(dateString);
-    const today = new Date(getTodayDate());
-
-    if (selectedDate > today) {
-      showToast('Start date cannot be in the future', 'warning');
-    } else if (dateString > endDate) {
-      showToast('Start date cannot be after end date', 'warning');
-    } else {
-      setStartDate(dateString);
-    }
+  const handlePreviousDate = () => {
+    const current = new Date(selectedDate);
+    current.setDate(current.getDate() - 1);
+    setSelectedDate(current.toISOString().split('T')[0]);
   };
 
-  const handleEndDateChange = (event) => {
-    const dateString = event.target.value;
-    const selectedDate = new Date(dateString);
+  const handleNextDate = () => {
+    const current = new Date(selectedDate);
     const today = new Date(getTodayDate());
+    current.setDate(current.getDate() + 1);
 
-    if (selectedDate > today) {
-      showToast('End date cannot be in the future', 'warning');
-    } else if (dateString < startDate) {
-      showToast('End date cannot be before start date', 'warning');
+    if (current > today) {
+      showToast('Future dates are not allowed', 'warning');
     } else {
-      setEndDate(dateString);
+      setSelectedDate(current.toISOString().split('T')[0]);
     }
   };
 
@@ -514,39 +459,34 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
               <MenuItem value="order-block">OrderBlock</MenuItem>
             </Select>
           </FormControl>
-
-          <FormControl size="small" sx={{ minWidth: 150 }}>
-            <Select value={dateRange} onChange={handleDateRangeChange} displayEmpty>
-              <MenuItem value="today">Today</MenuItem>
-              <MenuItem value="this_month">This Month</MenuItem>
-              <MenuItem value="custom">Custom Date Range</MenuItem>
-            </Select>
-          </FormControl>
-
-          {dateRange === 'custom' && (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                <CustomDatePicker value={startDate} onChange={handleStartDateChange} size="small" sx={{ width: 150 }} />
-              </Box>
-
-              <Typography variant="body1" sx={{ mx: 1 }}>
-                to
-              </Typography>
-
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                <CustomDatePicker value={endDate} onChange={handleEndDateChange} size="small" sx={{ width: 150 }} />
-              </Box>
-            </Box>
-          )}
-
-          {dateRange === 'this_month' && (
-            <Typography variant="body2" color="text.secondary">
-              {startDate} to {endDate}
-            </Typography>
-          )}
         </Box>
 
-        <Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={handlePreviousDate}
+            sx={{ minWidth: '40px', px: 3 }}
+          >
+            <ArrowLeftIcon />
+          </Button>
+          <CustomDatePicker
+            value={selectedDate}
+            onChange={handleDateChange}
+            size="small"
+            sx={{ width: 180 }}
+          />
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={handleNextDate}
+            disabled={selectedDate === getTodayDate()}
+            sx={{ minWidth: '40px', px: 3, mr: 6 }}
+          >
+            {/* add right arrow icon */}
+            <ArrowRightIcon />
+          </Button>
+
           <Button onClick={handleRefresh} variant="contained" disabled={loading}>
             {loading ? 'Loading...' : 'Refresh'}
           </Button>

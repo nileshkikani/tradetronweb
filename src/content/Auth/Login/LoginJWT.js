@@ -52,7 +52,7 @@ export const LoginJWT = (props) => {
       try {
         await login(values.email, values.password);
 
-        const backTo = router.query.backTo || '/dashboards/option-wizard';
+        const backTo = router.query.backTo || '/dashboards';
         router.push(backTo);
       } catch (err) {
         console.error(err);

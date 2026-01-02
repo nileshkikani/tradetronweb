@@ -6,12 +6,14 @@ import {
   alpha,
   tooltipClasses,
   styled,
-  useTheme
+  useTheme,
+  Button
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import EventTwoToneIcon from '@mui/icons-material/EventTwoTone';
 import PowerSettingsNewTwoToneIcon from '@mui/icons-material/PowerSettingsNewTwoTone';
 import SmsTwoToneIcon from '@mui/icons-material/SmsTwoTone';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Link from 'src/components/Link';
 import { useAuth } from 'src/hooks/useAuth';
 import { useRouter } from 'next/router';
@@ -49,83 +51,32 @@ function SidebarFooter() {
   return (
     <Box
       sx={{
-        height: 60
+        height: 60,
+        px: 2
       }}
       display="flex"
       alignItems="center"
       justifyContent="center"
     >
-      {/* <LightTooltip placement="top" arrow title={t('Events Calendar')}>
-        <IconButton
-          sx={{
-            background: `${theme.colors.alpha.trueWhite[10]}`,
-            color: `${theme.colors.alpha.trueWhite[70]}`,
-            transition: `${theme.transitions.create(['all'])}`,
-
-            '&:hover': {
-              background: `${alpha(theme.colors.alpha.trueWhite[100], 0.2)}`,
-              color: `${theme.colors.alpha.trueWhite[100]}`
-            }
-          }}
-          href="/applications/calendar"
-          component={Link}
-        >
-          <EventTwoToneIcon fontSize="small" />
-        </IconButton>
-      </LightTooltip>
-      <LightTooltip placement="top" arrow title={t('Messenger')}>
-        <Badge
-          color="success"
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'right'
-          }}
-          sx={{
-            '.MuiBadge-badge': {
-              animation: 'pulse 1s infinite',
-              top: '5%',
-              transition: `${theme.transitions.create(['all'])}`
-            }
-          }}
-          variant="dot"
-          overlap="circular"
-        >
-          <IconButton
-            href="/applications/messenger"
-            component={Link}
-            sx={{
-              background: `${theme.colors.alpha.trueWhite[10]}`,
-              color: `${theme.colors.alpha.trueWhite[70]}`,
-              transition: `${theme.transitions.create(['all'])}`,
-
-              '&:hover': {
-                background: `${alpha(theme.colors.alpha.trueWhite[100], 0.2)}`,
-                color: `${theme.colors.alpha.trueWhite[100]}`
-              },
-              mx: 1
-            }}
-          >
-            <SmsTwoToneIcon fontSize="small" />
-          </IconButton>
-        </Badge>
-      </LightTooltip> */}
-      {/* <LightTooltip placement="top" arrow title={t('Logout')}>
-        <IconButton
-          sx={{
-            background: `${theme.colors.alpha.trueWhite[10]}`,
-            color: `${theme.colors.alpha.trueWhite[70]}`,
-            transition: `${theme.transitions.create(['all'])}`,
-
-            '&:hover': {
-              background: `${alpha(theme.colors.alpha.trueWhite[100], 0.2)}`,
-              color: `${theme.colors.alpha.trueWhite[100]}`
-            }
-          }}
-          onClick={handleLogout}
-        >
-          <PowerSettingsNewTwoToneIcon fontSize="small" />
-        </IconButton>
-      </LightTooltip> */}
+      <Button
+        href="/dashboards/profile"
+        component={Link}
+        startIcon={<AccountCircleIcon />}
+        sx={{
+          width: '100%',
+          justifyContent: 'flex-start',
+          color: theme.colors.alpha.trueWhite[70],
+          background: theme.colors.alpha.trueWhite[10],
+          transition: theme.transitions.create(['all']),
+          padding: theme.spacing(1.2, 2),
+          '&:hover': {
+            background: alpha(theme.colors.alpha.trueWhite[100], 0.2),
+            color: theme.colors.alpha.trueWhite[100]
+          }
+        }}
+      >
+        Profile
+      </Button>
     </Box>
   );
 }

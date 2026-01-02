@@ -51,8 +51,7 @@ export const RegisterJWT = (props) => {
         await register(values.email, values.name, values.password);
 
         if (isMountedRef()) {
-          // const backTo = router.query.backTo || '/dashboards/reports';
-          const backTo = '/dashboards/option-wizard';
+          const backTo = router.query.backTo || '/dashboards';
           router.push(backTo);
         }
       } catch (err) {
