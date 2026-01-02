@@ -11,8 +11,18 @@ import {
   Pagination,
   FormControl,
   TextField,
-  InputAdornment
+  InputAdornment,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import TrendingDownIcon from '@mui/icons-material/TrendingDown';
+import TradingViewChart from './TradingViewChart';
 import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
 import Table from '@mui/material/Table';
@@ -61,6 +71,14 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
   const [pageSize, setPageSize] = useState(20);
   const [marketTrend, setMarketTrend] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  // Modal state
+  const [openModal, setOpenModal] = useState(false);
+  const [chartData, setChartData] = useState(null);
+  const [loadingChart, setLoadingChart] = useState(false);
+  const [selectedSymbol, setSelectedSymbol] = useState('');
+  const [highlightedBlock, setHighlightedBlock] = useState(null);
+  const [tradeDetails, setTradeDetails] = useState(null);
 
   // Debounce search symbol
   useEffect(() => {
@@ -199,11 +217,7 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
     fetchData(1);
   }, [dateRange, startDate, endDate, debouncedSearchSymbol, strategy]);
 
-  // Initial fetch
-  useEffect(() => {
-    fetchData();
-    // fetchMarketTrend();
-  }, []);
+
 
   const handleStrategyChange = (event) => {
     const value = event.target.value;
@@ -306,12 +320,101 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
     });
   };
 
-  // Get page title based on trade type
+  const handleViewClick = async (row) => {
+    setOpenModal(true);
+    setLoadingChart(true);
+    setSelectedSymbol(row.symbol);
+    setChartData(null);
+
+    const IST_OFFSET = 5.5 * 60 * 60;
+
+    const toIST = (dateString) => {
+      if (!dateString) return null;
+      return Math.floor(new Date(dateString).getTime() / 1000) + IST_OFFSET;
+    };
+
+    setHighlightedBlock({
+      block_high: row.ob_high_price,
+      block_low: row.ob_low_price,
+      start_time: row.ob_start_time ? toIST(row.ob_start_time) * 1000 : null,
+      end_time: row.ob_end_time ? toIST(row.ob_end_time) * 1000 : null
+    });
+
+    setTradeDetails({
+      entryTime: row.entry_time ? new Date(toIST(row.entry_time) * 1000).toISOString() : null,
+      exitTime: row.exit_time ? new Date(toIST(row.exit_time) * 1000).toISOString() : null,
+      entryPrice: row.entry_price,
+      exitPrice: row.exit_price,
+      orderType: row.order_type
+    });
+
+    try {
+      const response = await axiosInstance.post('https://scalping.tradeonair.com/api/ema-scalping/improved-smc-analysis/', {
+        symbol: row.symbol,
+        num_candles: 150
+      });
+
+      if (response.data.success) {
+        const rawData = response.data.data;
+
+        const candles = rawData.candles.map(c => ({
+          time: toIST(c.x),
+          open: c.open,
+          high: c.high,
+          low: c.low,
+          close: c.close,
+          volume: c.volume
+        }));
+
+        const orderBlocks = (strategy === 'breakout' || strategy === 'volume-spike') ? [] : rawData.order_blocks.map(ob => ({
+          start: ob.start,
+          end: ob.end,
+          startTime: toIST(ob.start),
+          endTime: toIST(ob.end),
+          high: ob.high,
+          low: ob.low,
+          type: ob.type,
+          is_broken: ob.is_broken
+        }));
+
+        const bosMarkers = rawData.bos_points.map(bos => ({
+          time: toIST(bos.x),
+          price: bos.y,
+          type: bos.type
+        }));
+
+        const chochMarkers = rawData.choch_points.map(choch => ({
+          time: toIST(choch.x),
+          price: choch.y,
+          type: choch.type
+        }));
+
+        setChartData({
+          candles,
+          orderBlocks,
+          bosMarkers,
+          chochMarkers
+        });
+      } else {
+        showToast('Failed to fetch chart data', 'error');
+      }
+    } catch (error) {
+      console.error('Error fetching chart data:', error);
+      showToast('Error fetching chart data', 'error');
+    } finally {
+      setLoadingChart(false);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setChartData(null);
+  };
+
   const getPageTitle = () => {
     return tradeType === 'active' ? 'Active Trades' : 'Closed Trades';
   };
 
-  // Get strategy display name
   const getStrategyDisplayName = () => {
     switch (strategy) {
       case 'volume-spike':
@@ -325,7 +428,6 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
     }
   };
 
-  // Get order status chip color
   const getOrderStatusColor = (status) => {
     if (!status) return 'default';
     switch (status.toUpperCase()) {
@@ -342,31 +444,33 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
     }
   };
 
-  // Get order status display text
   const getOrderStatusDisplay = (status) => {
     if (!status) return 'PENDING';
     return status.toUpperCase();
   };
 
-  // Format PNL value
   const formatPNL = (pnl) => {
     if (pnl === null || pnl === undefined || pnl === 'N/A') return 'N/A';
     const pnlValue = parseFloat(pnl);
     return `${pnlValue >= 0 ? '+' : ''}${pnlValue.toFixed(2)}`;
   };
 
-  // Get PNL color
   const getPNLColor = (pnl) => {
     if (pnl === null || pnl === undefined || pnl === 'N/A') return 'text.secondary';
     const pnlValue = parseFloat(pnl);
     return pnlValue >= 0 ? 'success.main' : 'error.main';
   };
 
-  // Calculate dynamic colspan for table headers
   const calculateColSpan = () => {
     let baseColSpan = 15;
     if (strategy === 'order-block') {
-      baseColSpan -= 1; // Add 6 columns for order-block specific data
+      baseColSpan += 1;
+    }
+    if (strategy === 'breakout' || strategy === 'volume-spike') {
+      baseColSpan += 1; // Added View column
+    }
+    if (tradeType === 'active') {
+      baseColSpan -= 3;
     }
 
     return baseColSpan;
@@ -376,7 +480,6 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
     <div style={{ padding: '24px' }}>
       <h1>{getPageTitle()}</h1>
 
-      {/* Filters Section */}
       <Box
         sx={{
           display: 'flex',
@@ -388,9 +491,7 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
           gap: 2
         }}
       >
-        {/* Left side: Search and Date Range */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
-          {/* Search Symbol */}
           <TextField
             placeholder="Search symbol..."
             value={searchSymbol}
@@ -406,7 +507,6 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
             }}
           />
 
-          {/* Strategy Selector */}
           <FormControl size="small" sx={{ minWidth: 150 }}>
             <Select value={strategy} onChange={handleStrategyChange} displayEmpty>
               <MenuItem value="volume-spike">Volume-Spike</MenuItem>
@@ -415,7 +515,6 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
             </Select>
           </FormControl>
 
-          {/* Date Range Selector */}
           <FormControl size="small" sx={{ minWidth: 150 }}>
             <Select value={dateRange} onChange={handleDateRangeChange} displayEmpty>
               <MenuItem value="today">Today</MenuItem>
@@ -424,7 +523,6 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
             </Select>
           </FormControl>
 
-          {/* Date Pickers - Show for custom range */}
           {dateRange === 'custom' && (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
@@ -441,7 +539,6 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
             </Box>
           )}
 
-          {/* Show selected date range for this_month */}
           {dateRange === 'this_month' && (
             <Typography variant="body2" color="text.secondary">
               {startDate} to {endDate}
@@ -449,7 +546,6 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
           )}
         </Box>
 
-        {/* Right side: Refresh Button */}
         <Box>
           <Button onClick={handleRefresh} variant="contained" disabled={loading}>
             {loading ? 'Loading...' : 'Refresh'}
@@ -515,15 +611,26 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
                   <TableCell sx={{ fontWeight: 600 }}>Symbol</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Direction</TableCell>
                   {strategy !== 'order-block' && <TableCell sx={{ fontWeight: 600 }}>Volume</TableCell>}
+                  {strategy === 'order-block' && (
+                    <>
+                      <TableCell sx={{ fontWeight: 600 }}>OB High</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>OB Low</TableCell>
+                    </>
+                  )}
                   <TableCell sx={{ fontWeight: 600 }}>Entry Price</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Target Price</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Stop Loss</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Order Status</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Current Price</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>{tradeType === 'closed' ? 'P&L' : 'Live P&L'}</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Exit Price</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Exit Time</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Exit Reason</TableCell>
+                  {tradeType === 'closed' && (
+                    <>
+                      <TableCell sx={{ fontWeight: 600 }}>Exit Price</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Exit Time</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Exit Reason</TableCell>
+                    </>
+                  )}
+                  {(strategy === 'order-block' || strategy === 'breakout' || strategy === 'volume-spike') && <TableCell sx={{ fontWeight: 600 }}>View</TableCell>}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -587,26 +694,30 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
                         </Typography>
                       </TableCell>
                       <TableCell>
-                        <Chip
-                          size="small"
-                          label={row.order_type}
-                          color={
-                            row.order_type?.toUpperCase() === 'BULLISH'
-                              ? 'success'
-                              : row.order_type?.toUpperCase() === 'BEARISH'
-                              ? 'error'
-                              : 'default'
-                          }
+                        <Box
                           sx={{
-                            fontWeight: 600,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: 32,
+                            height: 32,
+                            borderRadius: '50%',
                             backgroundColor:
                               row.order_type?.toUpperCase() === 'BULLISH'
                                 ? 'rgba(76, 175, 80, 0.1)'
                                 : row.order_type?.toUpperCase() === 'BEARISH'
-                                ? 'rgba(244, 67, 54, 0.1)'
-                                : 'transparent'
+                                  ? 'rgba(244, 67, 54, 0.1)'
+                                  : 'transparent'
                           }}
-                        />
+                        >
+                          {row.order_type?.toUpperCase() === 'BULLISH' ? (
+                            <TrendingUpIcon color="success" />
+                          ) : row.order_type?.toUpperCase() === 'BEARISH' ? (
+                            <TrendingDownIcon color="error" />
+                          ) : (
+                            <Typography variant="body2">-</Typography>
+                          )}
+                        </Box>
                       </TableCell>
                       {strategy !== 'order-block' && (
                         <TableCell>
@@ -616,6 +727,20 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
                             </Typography>
                           </Box>
                         </TableCell>
+                      )}
+                      {strategy === 'order-block' && (
+                        <>
+                          <TableCell>
+                            <Typography variant="body2" fontWeight="600">
+                              {row.ob_high_price || 'N/A'}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="body2" fontWeight="600">
+                              {row.ob_low_price || 'N/A'}
+                            </Typography>
+                          </TableCell>
+                        </>
                       )}
                       <TableCell>
                         <Typography variant="body2" fontWeight="600">
@@ -650,29 +775,41 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
                         <Typography
                           variant="body2"
                           fontWeight="600"
-                          sx={{
-                            color: (theme) =>
-                              theme.palette[tradeType === 'closed' ? getPNLColor(row.pnl) : getPNLColor(row.live_pnl)]
-                          }}
+                          color={tradeType === 'closed' ? getPNLColor(row.pnl) : getPNLColor(row.live_pnl)}
                         >
                           {tradeType === 'closed' ? formatPNL(row.pnl) : formatPNL(row.live_pnl)}
                         </Typography>
                       </TableCell>
-                      <TableCell>
-                        <Typography variant="body2" fontWeight="600">
-                          {row.exit_price || 'N/A'}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body2" fontWeight="600">
-                          {formatDateTime(row.exit_time)}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body2" fontWeight="600">
-                          {row.exit_reason || 'N/A'}
-                        </Typography>
-                      </TableCell>
+                      {tradeType === 'closed' && (
+                        <>
+                          <TableCell>
+                            <Typography variant="body2" fontWeight="600">
+                              {row.exit_price || 'N/A'}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="body2" fontWeight="600">
+                              {formatDateTime(row.exit_time)}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="body2" fontWeight="600">
+                              {row.exit_reason || 'N/A'}
+                            </Typography>
+                          </TableCell>
+                        </>
+                      )}
+                      {(strategy === 'order-block' || strategy === 'breakout' || strategy === 'volume-spike') && (
+                        <TableCell>
+                          <IconButton
+                            size="small"
+                            color="primary"
+                            onClick={() => handleViewClick(row)}
+                          >
+                            <VisibilityIcon />
+                          </IconButton>
+                        </TableCell>
+                      )}
                     </TableRow>
                   ))
                 )}
@@ -697,6 +834,7 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
                   <FormControl size="small" sx={{ minWidth: 80 }}>
                     <Select value={pageSize} onChange={handlePageSizeChange} displayEmpty sx={{ height: 36 }}>
                       <MenuItem value={10}>10</MenuItem>
+                      <MenuItem value={20}>20</MenuItem>
                       <MenuItem value={25}>25</MenuItem>
                       <MenuItem value={50}>50</MenuItem>
                     </Select>
@@ -727,7 +865,60 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
           </TableContainer>
         </div>
       </div>
-    </div>
+
+      <Dialog
+        open={openModal}
+        onClose={handleCloseModal}
+        maxWidth="lg"
+        fullWidth
+        PaperProps={{
+          sx: {
+            minHeight: '80vh',
+            maxHeight: '90vh'
+          }
+        }}
+      >
+        <DialogTitle sx={{ m: 0, p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="h6">
+            {selectedSymbol} - {strategy === 'order-block' ? 'Order Block' : strategy === 'breakout' ? 'Breakout' : 'Volume Spike'} Analysis
+          </Typography>
+          <IconButton
+            aria-label="close"
+            onClick={handleCloseModal}
+            sx={{
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent dividers sx={{ p: 0, height: '100%', display: 'flex', flexDirection: 'column' }}>
+          {loadingChart ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', minHeight: 400 }}>
+              <Typography>Loading chart data...</Typography>
+            </Box>
+          ) : chartData ? (
+            <Box sx={{ width: '100%', height: '100%', minHeight: 600 }}>
+              <TradingViewChart
+                data={chartData.candles}
+                orderBlocks={chartData.orderBlocks}
+                bosMarkers={chartData.bosMarkers}
+                chochMarkers={chartData.chochMarkers}
+                height={750}
+                showBrokenBlocks={true}
+                highlightedOrderBlock={highlightedBlock}
+                tradeDetails={tradeDetails}
+                strategy={strategy}
+              />
+            </Box>
+          ) : (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', minHeight: 400 }}>
+              <Typography>No data available</Typography>
+            </Box>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div >
   );
 }
 
