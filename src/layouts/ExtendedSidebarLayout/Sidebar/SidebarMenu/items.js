@@ -85,7 +85,12 @@ const menuItems = [
             name: 'Reports',
             link: '/dashboards/stock-reports',
             badge: ''
-          }
+          },
+          {
+            name: 'My Strategies',
+            link: '/dashboards/stock-my-strategies',
+            badge: ''
+          },
 
         ]
       },

@@ -78,7 +78,7 @@ export const AuthProvider = (props) => {
   const getUserFromToken = useCallback((token) => {
     try {
       const decoded = decode(token);
-      return { 
+      return {
         id: decoded.userId || decoded.sub,
         email: decoded.email,
         name: decoded.name
@@ -92,13 +92,13 @@ export const AuthProvider = (props) => {
   const validateToken = useCallback(async () => {
     const accessToken = localStorage.getItem('accessToken');
     if (!accessToken) return false;
-    
+
     if (isTokenExpired(accessToken)) {
       localStorage.removeItem('accessToken');
       dispatch({ type: 'LOGOUT' });
       return false;
     }
-    
+
     if (!state.isAuthenticated) {
       const user = getUserFromToken(accessToken);
       dispatch({
@@ -109,7 +109,7 @@ export const AuthProvider = (props) => {
         }
       });
     }
-    
+
     return true;
   }, [isTokenExpired, getUserFromToken, state.isAuthenticated]);
 
@@ -117,9 +117,9 @@ export const AuthProvider = (props) => {
     const initializeAuth = async () => {
       try {
         const accessToken = localStorage.getItem('accessToken');
-        const isValid = !isTokenExpired(accessToken);
+        const refreshToken = localStorage.getItem('refreshToken');
 
-        if (isValid && accessToken) {
+        if (accessToken && !isTokenExpired(accessToken)) {
           const user = getUserFromToken(accessToken);
           dispatch({
             type: 'INITIALIZE',
@@ -128,10 +128,39 @@ export const AuthProvider = (props) => {
               user
             }
           });
-        } else {
-          if (accessToken) {
+        } else if (refreshToken) {
+          // Access token is expired or missing, but we have a refresh token
+          try {
+            const response = await axiosInstance.post(API_ROUTER.REFRESH_TOKEN, {
+              refresh: refreshToken
+            });
+
+            const { access } = response.data;
+            localStorage.setItem('accessToken', access);
+
+            const user = getUserFromToken(access);
+            dispatch({
+              type: 'INITIALIZE',
+              payload: {
+                isAuthenticated: true,
+                user
+              }
+            });
+          } catch (err) {
+            console.error('Refresh token failed during init:', err);
             localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            dispatch({
+              type: 'INITIALIZE',
+              payload: {
+                isAuthenticated: false,
+                user: null
+              }
+            });
           }
+        } else {
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
           dispatch({
             type: 'INITIALIZE',
             payload: {
@@ -159,15 +188,18 @@ export const AuthProvider = (props) => {
     try {
       const { data } = await axiosInstance.post(API_ROUTER.LOG_IN,
         JSON.stringify({ email, password }), {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
       );
-      
+
       const accessToken = data.tokens.access;
+      const refreshToken = data.tokens.refresh;
+
       localStorage.setItem('accessToken', accessToken);
-      
+      localStorage.setItem('refreshToken', refreshToken);
+
       const user = getUserFromToken(accessToken);
       // console.log(user);
       dispatchStore(setAuth(accessToken));
@@ -184,21 +216,25 @@ export const AuthProvider = (props) => {
 
   const logout = async () => {
     localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
     dispatch({ type: 'LOGOUT' });
   };
 
   const register = async (email, full_name, password) => {
     try {
-      const { data } = await axiosInstance.post(API_ROUTER.REGISTER, 
+      const { data } = await axiosInstance.post(API_ROUTER.REGISTER,
         JSON.stringify({ email, full_name, password }), {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
       );
 
       const accessToken = data.tokens.access;
+      const refreshToken = data.tokens.refresh;
+
       localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
 
       const user = getUserFromToken(accessToken);
       dispatch({

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { decode } from "jsonwebtoken";
+import { API_ROUTER } from "src/services/routes";
 
 const axiosInstance = axios.create({
   baseURL: process.env.EMA_SCALPING_URL,
@@ -21,9 +22,25 @@ const isTokenExpired = (token) => {
 const handleTokenExpiration = () => {
   if (typeof window !== "undefined") {
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
     // Redirect to login page
     window.location.href = "/auth/login/cover";
   }
+};
+
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+
+  failedQueue = [];
 };
 
 // Add a request interceptor to include the Authorization Bearer token
@@ -34,12 +51,6 @@ axiosInstance.interceptors.request.use(
       typeof window !== "undefined"
         ? localStorage.getItem("accessToken")
         : null;
-
-    // Check if token is expired before making the request
-    if (accessToken && isTokenExpired(accessToken)) {
-      handleTokenExpiration();
-      return Promise.reject(new Error("Token expired"));
-    }
 
     // If token exists, add it to the Authorization header
     if (accessToken) {
@@ -58,20 +69,61 @@ axiosInstance.interceptors.response.use(
   (response) => {
     return response;
   },
-  (error) => {
-    // Check if the error is a 401 Unauthorized response
-    if (error.response && error.response.status === 401) {
-      // Token is invalid or expired, redirect to login
-      handleTokenExpiration();
-      return Promise.reject(error);
-    }
+  async (error) => {
+    const originalRequest = error.config;
 
-    // For other errors, check if token exists and is expired
-    if (typeof window !== "undefined") {
-      const accessToken = localStorage.getItem("accessToken");
-      if (accessToken && isTokenExpired(accessToken)) {
+    // Check if the error is a 401 Unauthorized response
+    if (error.response && error.response.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise(function (resolve, reject) {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers["Authorization"] = "Bearer " + token;
+            return axiosInstance(originalRequest);
+          })
+          .catch((err) => {
+            return Promise.reject(err);
+          });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      const refreshToken = localStorage.getItem("refreshToken");
+
+      if (!refreshToken) {
         handleTokenExpiration();
         return Promise.reject(error);
+      }
+
+      try {
+        // Create a new instance to avoid interceptors for the refresh call
+        const refreshInstance = axios.create({
+          baseURL: process.env.EMA_SCALPING_URL,
+        });
+
+        const { data } = await refreshInstance.post(API_ROUTER.REFRESH_TOKEN, {
+          refresh: refreshToken,
+        });
+
+        const { access } = data;
+
+        if (access) {
+          localStorage.setItem("accessToken", access);
+          axiosInstance.defaults.headers.common["Authorization"] = "Bearer " + access;
+          originalRequest.headers["Authorization"] = "Bearer " + access;
+          processQueue(null, access);
+          return axiosInstance(originalRequest);
+        } else {
+          throw new Error("No access token returned");
+        }
+      } catch (err) {
+        processQueue(err, null);
+        handleTokenExpiration();
+        return Promise.reject(err);
+      } finally {
+        isRefreshing = false;
       }
     }
 
