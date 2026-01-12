@@ -38,6 +38,7 @@ import useToast from 'src/hooks/useToast';
 import CustomDatePicker from 'src/components/DatePicker';
 import MarketTrendCard from 'src/components/MarketTrendCard';
 import SearchIcon from '@mui/icons-material/Search';
+import axios from 'axios';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false
@@ -47,14 +48,13 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
   const baseUrl = process.env.EMA_SCALPING_URL;
   const { showToast } = useToast();
 
-  // Get current date in YYYY-MM-DD format
   const getTodayDate = () => {
     const today = new Date();
     return today.toISOString().split('T')[0];
   };
 
-  // State management
-  const [strategy, setStrategy] = useState('volume-spike'); // 'volume-spike', 'breakout', 'order-block'
+  const [strategiesList, setStrategiesList] = useState([]);
+  const [strategy, setStrategy] = useState('');
   const [selectedDate, setSelectedDate] = useState(getTodayDate());
   const [searchSymbol, setSearchSymbol] = useState('');
   const [debouncedSearchSymbol, setDebouncedSearchSymbol] = useState('');
@@ -72,7 +72,6 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
   const [marketTrend, setMarketTrend] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Modal state
   const [openModal, setOpenModal] = useState(false);
   const [chartData, setChartData] = useState(null);
   const [loadingChart, setLoadingChart] = useState(false);
@@ -80,23 +79,38 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
   const [highlightedBlock, setHighlightedBlock] = useState(null);
   const [tradeDetails, setTradeDetails] = useState(null);
 
-  // Debounce search symbol
+  useEffect(() => {
+    const fetchStrategies = async () => {
+      try {
+        const res = await axiosInstance.get(`${baseUrl}ema-scalping/get-my-strategies/`);
+        if (res.data && res.data.length > 0) {
+          setStrategiesList(res.data);
+          if (!strategy) {
+            setStrategy(res.data[0].strategy_name);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch strategies:', error);
+        showToast('Failed to fetch strategies', 'error');
+      }
+    };
+    fetchStrategies();
+  }, []);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchSymbol(searchSymbol);
-    }, 500); // 500ms debounce
+    }, 500);
 
     return () => clearTimeout(timer);
   }, [searchSymbol]);
-
-  // Get API endpoint based on selected strategy
   const getApiEndpoint = () => {
     switch (strategy) {
-      case 'order-block':
+      case 'order_block':
         return 'ema-scalping/order-block-order/';
       case 'breakout':
         return 'ema-scalping/volume-spike-order/';
-      case 'volume-spike':
+      case 'volume_spike':
       default:
         return 'ema-scalping/volume-spike-order/';
     }
@@ -122,10 +136,10 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
     if (debouncedSearchSymbol.trim()) {
       params.append('symbol', debouncedSearchSymbol.trim());
     }
+
     if (strategy === 'breakout') {
       params.append('strategy_name', 'breakout');
-    }
-    if (strategy === 'volume-spike') {
+    } else if (strategy === 'volume_spike') {
       params.append('strategy_name', 'volume_spike');
     }
     // Get the appropriate API endpoint
@@ -135,7 +149,7 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
       .get(`${baseUrl}${apiEndpoint}?${params.toString()}`)
       .then((res) => {
         if (res?.data?.data?.length === 0) {
-          showToast(`No ${tradeType} ${strategy.replace('-', ' ')} data found`, 'info');
+          showToast(`No ${tradeType} ${strategy.replace('_', ' ')} data found`, 'info');
           setVolumeSpikeData([]);
           setPagination({
             totalPages: 1,
@@ -183,9 +197,10 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
 
   // Fetch data when filters change
   useEffect(() => {
-    fetchData(1);
+    if (strategy) {
+      fetchData(1);
+    }
   }, [selectedDate, debouncedSearchSymbol, strategy]);
-
 
 
   const handleStrategyChange = (event) => {
@@ -193,21 +208,39 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
     setStrategy(value);
   };
 
+  const isWeekend = (date) => {
+    const day = date.getUTCDay();
+    return day === 0 || day === 6;
+  };
+
   const handleDateChange = (event) => {
     const dateString = event.target.value;
-    const selected = new Date(dateString);
+    let selected = new Date(dateString);
     const today = new Date(getTodayDate());
 
     if (selected > today) {
       showToast('Future dates are not allowed', 'warning');
+      return;
+    }
+
+    // Skip weekends
+    while (isWeekend(selected)) {
+      selected.setDate(selected.getDate() + 1);
+    }
+
+    if (selected > today) {
+      showToast('Future dates are not allowed', 'warning');
     } else {
-      setSelectedDate(dateString);
+      setSelectedDate(selected.toISOString().split('T')[0]);
     }
   };
 
   const handlePreviousDate = () => {
     const current = new Date(selectedDate);
     current.setDate(current.getDate() - 1);
+    while (isWeekend(current)) {
+      current.setDate(current.getDate() - 1);
+    }
     setSelectedDate(current.toISOString().split('T')[0]);
   };
 
@@ -215,6 +248,9 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
     const current = new Date(selectedDate);
     const today = new Date(getTodayDate());
     current.setDate(current.getDate() + 1);
+    while (isWeekend(current)) {
+      current.setDate(current.getDate() + 1);
+    }
 
     if (current > today) {
       showToast('Future dates are not allowed', 'warning');
@@ -311,7 +347,7 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
           volume: c.volume
         }));
 
-        const orderBlocks = (strategy === 'breakout' || strategy === 'volume-spike') ? [] : rawData.order_blocks.map(ob => ({
+        const orderBlocks = (strategy === 'breakout' || strategy === 'volume_spike') ? [] : rawData.order_blocks.map(ob => ({
           start: ob.start,
           end: ob.end,
           startTime: toIST(ob.start),
@@ -361,16 +397,8 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
   };
 
   const getStrategyDisplayName = () => {
-    switch (strategy) {
-      case 'volume-spike':
-        return 'Volume-Spike';
-      case 'breakout':
-        return 'Breakout';
-      case 'order-block':
-        return 'OrderBlock';
-      default:
-        return 'Volume-Spike';
-    }
+    if (!strategy) return '';
+    return strategy.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   };
 
   const getOrderStatusColor = (status) => {
@@ -408,10 +436,10 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
 
   const calculateColSpan = () => {
     let baseColSpan = 15;
-    if (strategy === 'order-block') {
+    if (strategy === 'order_block') {
       baseColSpan += 1;
     }
-    if (strategy === 'breakout' || strategy === 'volume-spike') {
+    if (strategy === 'breakout' || strategy === 'volume_spike') {
       baseColSpan += 1; // Added View column
     }
     if (tradeType === 'active') {
@@ -453,10 +481,22 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
           />
 
           <FormControl size="small" sx={{ minWidth: 150 }}>
-            <Select value={strategy} onChange={handleStrategyChange} displayEmpty>
-              <MenuItem value="volume-spike">Volume-Spike</MenuItem>
-              <MenuItem value="breakout">Breakout</MenuItem>
-              <MenuItem value="order-block">OrderBlock</MenuItem>
+            <Select
+              value={strategy}
+              onChange={handleStrategyChange}
+              displayEmpty
+              renderValue={(selected) => {
+                if (!selected) {
+                  return <em>Select Strategy</em>;
+                }
+                return selected.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+              }}
+            >
+              {strategiesList.map((s) => (
+                <MenuItem key={s.strategy_name} value={s.strategy_name}>
+                  {s.strategy_name.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Box>
@@ -550,8 +590,8 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
                   <TableCell sx={{ fontWeight: 600 }}>Strategy</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Symbol</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Direction</TableCell>
-                  {strategy !== 'order-block' && <TableCell sx={{ fontWeight: 600 }}>Volume</TableCell>}
-                  {strategy === 'order-block' && (
+                  {strategy !== 'order_block' && <TableCell sx={{ fontWeight: 600 }}>Volume</TableCell>}
+                  {strategy === 'order_block' && (
                     <>
                       <TableCell sx={{ fontWeight: 600 }}>OB High</TableCell>
                       <TableCell sx={{ fontWeight: 600 }}>OB Low</TableCell>
@@ -570,7 +610,7 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
                       <TableCell sx={{ fontWeight: 600 }}>Exit Reason</TableCell>
                     </>
                   )}
-                  {(strategy === 'order-block' || strategy === 'breakout' || strategy === 'volume-spike') && <TableCell sx={{ fontWeight: 600 }}>View</TableCell>}
+                  {(strategy === 'order_block' || strategy === 'breakout' || strategy === 'volume_spike') && <TableCell sx={{ fontWeight: 600 }}>View</TableCell>}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -659,7 +699,7 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
                           )}
                         </Box>
                       </TableCell>
-                      {strategy !== 'order-block' && (
+                      {strategy !== 'order_block' && (
                         <TableCell>
                           <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             <Typography variant="body2" fontWeight="600">
@@ -668,7 +708,7 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
                           </Box>
                         </TableCell>
                       )}
-                      {strategy === 'order-block' && (
+                      {strategy === 'order_block' && (
                         <>
                           <TableCell>
                             <Typography variant="body2" fontWeight="600">
@@ -739,7 +779,7 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
                           </TableCell>
                         </>
                       )}
-                      {(strategy === 'order-block' || strategy === 'breakout' || strategy === 'volume-spike') && (
+                      {(strategy === 'order_block' || strategy === 'breakout' || strategy === 'volume_spike') && (
                         <TableCell>
                           <IconButton
                             size="small"
@@ -820,7 +860,7 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
       >
         <DialogTitle sx={{ m: 0, p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="h6">
-            {selectedSymbol} - {strategy === 'order-block' ? 'Order Block' : strategy === 'breakout' ? 'Breakout' : 'Volume Spike'} Analysis
+            {selectedSymbol} - {getStrategyDisplayName()} Analysis
           </Typography>
           <IconButton
             aria-label="close"

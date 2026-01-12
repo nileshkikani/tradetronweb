@@ -11,6 +11,7 @@ import ReceiptTwoToneIcon from '@mui/icons-material/ReceiptTwoTone';
 import CurrencyBitcoinIcon from '@mui/icons-material/CurrencyBitcoin';
 import BackupTableTwoToneIcon from '@mui/icons-material/BackupTableTwoTone';
 import SmartToyTwoToneIcon from '@mui/icons-material/SmartToyTwoTone';
+import LocalMallIcon from '@mui/icons-material/LocalMall';
 
 const menuItems = [
   {
@@ -93,6 +94,11 @@ const menuItems = [
           },
 
         ]
+      },
+      {
+        name: 'Assets',
+        icon: LocalMallIcon,
+        link: '/dashboards/assets'
       },
       {
         name: 'Strategy',
