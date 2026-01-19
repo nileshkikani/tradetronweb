@@ -228,34 +228,57 @@ const TradingViewChart = ({
 
         // Add trade markers if available
         if (tradeDetails) {
-            const { entryTime, exitTime, entryPrice, exitPrice, orderType } = tradeDetails
-            const isBullish = orderType?.toUpperCase() === 'BULLISH'
+            // Handle both single trade object and array of trades
+            const trades = Array.isArray(tradeDetails) ? tradeDetails : [tradeDetails];
+            
+            trades.forEach((trade) => {
+                const { entryTime, exitTime, entryPrice, exitPrice, orderType } = trade;
+                const isBullish = orderType?.toUpperCase() === 'BULLISH' || orderType?.toLowerCase() === 'buy';
 
-            if (entryTime) {
-                const entryTimestamp = Math.floor(new Date(entryTime).getTime() / 1000)
-                const { time, position } = findCandleAndPosition(entryTimestamp, entryPrice)
-                allMarkers.push({
-                    time: time,
-                    position: position,
-                    color: '#2196f3', // Blue for entry
-                    shape: isBullish ? 'arrowUp' : 'arrowDown',
-                    text: `Entry: ${entryPrice}`,
-                    size: 2
-                })
-            }
+                if (entryTime) {
+                    const entryTimestamp = Math.floor(new Date(entryTime).getTime() / 1000);
+                    
+                    // Find the candle at entry time to get the price
+                    const entryCandle = chartData.find(c => c.time === entryTimestamp) || 
+                                       chartData.reduce((prev, curr) => {
+                                           return Math.abs(curr.time - entryTimestamp) < Math.abs(prev.time - entryTimestamp) ? curr : prev;
+                                       });
+                    
+                    const actualEntryPrice = entryPrice || entryCandle.close;
+                    const { time, position } = findCandleAndPosition(entryTimestamp, actualEntryPrice);
+                    
+                    allMarkers.push({
+                        time: time,
+                        position: position,
+                        color: '#2196f3', // Blue for entry
+                        shape: isBullish ? 'arrowUp' : 'arrowDown',
+                        text: `Entry: ${actualEntryPrice.toFixed(2)}`,
+                        size: 2
+                    });
+                }
 
-            if (exitTime) {
-                const exitTimestamp = Math.floor(new Date(exitTime).getTime() / 1000)
-                const { time, position } = findCandleAndPosition(exitTimestamp, exitPrice)
-                allMarkers.push({
-                    time: time,
-                    position: position,
-                    color: '#9c27b0', // Purple for exit
-                    shape: isBullish ? 'arrowDown' : 'arrowUp',
-                    text: `Exit: ${exitPrice}`,
-                    size: 2
-                })
-            }
+                if (exitTime) {
+                    const exitTimestamp = Math.floor(new Date(exitTime).getTime() / 1000);
+                    
+                    // Find the candle at exit time to get the price
+                    const exitCandle = chartData.find(c => c.time === exitTimestamp) || 
+                                      chartData.reduce((prev, curr) => {
+                                          return Math.abs(curr.time - exitTimestamp) < Math.abs(prev.time - exitTimestamp) ? curr : prev;
+                                      });
+                    
+                    const actualExitPrice = exitPrice || exitCandle.close;
+                    const { time, position } = findCandleAndPosition(exitTimestamp, actualExitPrice);
+                    
+                    allMarkers.push({
+                        time: time,
+                        position: position,
+                        color: '#9c27b0', // Purple for exit
+                        shape: isBullish ? 'arrowDown' : 'arrowUp',
+                        text: `Exit: ${actualExitPrice.toFixed(2)}`,
+                        size: 2
+                    });
+                }
+            });
         }
 
         allMarkers.sort((a, b) => a.time - b.time)

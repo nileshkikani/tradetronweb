@@ -12,6 +12,9 @@ import {
   Box,
   Typography,
   Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from "@mui/material";
 import dynamic from "next/dynamic";
 import { useState, useEffect } from "react";
@@ -22,6 +25,9 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import axiosInstance from "src/utils/axios";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import CloseIcon from "@mui/icons-material/Close";
+import TradingViewChart from "src/components/TradingViewChart";
 
 import useToast from "src/hooks/useToast";
 import CustomDatePicker from "src/components/DatePicker";
@@ -57,6 +63,13 @@ function DashboardReports() {
   const [orderData, setOrderData] = useState([]);
   const [daywisePnL, setDaywisePnL] = useState({});
   const [calendarMonthYear, setCalendarMonthYear] = useState(new Date());
+  
+  // Chart modal states
+  const [openModal, setOpenModal] = useState(false);
+  const [loadingChart, setLoadingChart] = useState(false);
+  const [chartData, setChartData] = useState(null);
+  const [selectedChartSymbol, setSelectedChartSymbol] = useState("");
+  const [tradeDetails, setTradeDetails] = useState(null);
 
   const fetchOrder = async () => {
     axiosInstance
@@ -219,6 +232,87 @@ function DashboardReports() {
 
   const handleMonthChange = (date) => {
     setCalendarMonthYear(date);
+  };
+
+  const handleViewClick = async (symbol, orderRow) => {
+    setOpenModal(true);
+    setLoadingChart(true);
+    setSelectedChartSymbol(symbol);
+    setChartData(null);
+    setTradeDetails(null);
+
+    const IST_OFFSET = 5.5 * 60 * 60;
+
+    // For candle data timestamps (UTC) - add IST offset
+    const toIST = (dateString) => {
+      if (!dateString) return null;
+      return Math.floor(new Date(dateString).getTime() / 1000) + IST_OFFSET;
+    };
+
+    // For order timestamps (already in IST) - convert directly AND add offset to match candle face value
+    const toUnixTimestampWithOffset = (dateString) => {
+      if (!dateString) return null;
+      // Get real UTC timestamp
+      const realUtc = Math.floor(new Date(dateString).getTime() / 1000);
+      // Add IST offset to match the "Face Value" timestamps used by candles
+      return realUtc + IST_OFFSET;
+    };
+
+    // Set trade details for the specific order only
+    if (orderRow) {
+      const tradeDetail = {
+        entryTime: orderRow.created_at ? new Date(toUnixTimestampWithOffset(orderRow.created_at) * 1000).toISOString() : null,
+        exitTime: orderRow.updated_at && orderRow.index_close_price ? new Date(toUnixTimestampWithOffset(orderRow.updated_at) * 1000).toISOString() : null,
+        entryPrice: null, // Let chart determine price from candle data
+        exitPrice: null, // Let chart determine price from candle data
+        orderType: orderRow.order_type,
+      };
+      
+      setTradeDetails(tradeDetail);
+    }
+
+    try {
+      const response = await axiosInstance.post(
+        `${baseUrl}ema-scalping/get-index-candles/`,
+        {
+          symbol: symbol,
+          num_candles: 400,
+        }
+      );
+
+      if (response.data.success) {
+        const rawData = response.data.data;
+
+        const candles = rawData.map((c) => ({
+          time: toIST(c.x),
+          open: c.open,
+          high: c.high,
+          low: c.low,
+          close: c.close,
+          volume: c.volume,
+        }));
+
+        setChartData({
+          candles,
+          orderBlocks: [],
+          bosMarkers: [],
+          chochMarkers: [],
+        });
+      } else {
+        showToast("Failed to fetch chart data", "error");
+      }
+    } catch (error) {
+      console.error("Error fetching chart data:", error);
+      showToast("Error fetching chart data", "error");
+    } finally {
+      setLoadingChart(false);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setChartData(null);
+    setTradeDetails(null);
   };
 
   return (
@@ -447,6 +541,7 @@ function DashboardReports() {
                   <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>Strategy Name</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>In Market</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>View</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -526,6 +621,21 @@ function DashboardReports() {
                         <ClearIcon color="error" sx={{ fontSize: "1.1rem" }} />
                       )}
                     </TableCell>
+                    <TableCell>
+                      {["NIFTY", "BANKNIFTY", "SENSEX"].includes(selectedSymbol) ? (
+                        <IconButton
+                          size="small"
+                          color="primary"
+                          onClick={() => handleViewClick(selectedSymbol, row)}
+                        >
+                          <VisibilityIcon />
+                        </IconButton>
+                      ) : (
+                        <Typography variant="body2" color="text.disabled">
+                          -
+                        </Typography>
+                      )}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -533,6 +643,85 @@ function DashboardReports() {
           </TableContainer>
         </div>
       </div>
+
+      <Dialog
+        open={openModal}
+        onClose={handleCloseModal}
+        maxWidth="lg"
+        fullWidth
+        PaperProps={{
+          sx: {
+            minHeight: "80vh",
+            maxHeight: "90vh",
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            m: 0,
+            p: 2,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Typography variant="h6">
+            {selectedChartSymbol} - Candlestick Chart
+          </Typography>
+          <IconButton
+            aria-label="close"
+            onClick={handleCloseModal}
+            sx={{
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent
+          dividers
+          sx={{ p: 0, height: "100%", display: "flex", flexDirection: "column" }}
+        >
+          {loadingChart ? (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+                minHeight: 400,
+              }}
+            >
+              <Typography>Loading chart data...</Typography>
+            </Box>
+          ) : chartData ? (
+            <Box sx={{ width: "100%", height: "100%", minHeight: 600 }}>
+              <TradingViewChart
+                data={chartData.candles}
+                orderBlocks={chartData.orderBlocks}
+                bosMarkers={chartData.bosMarkers}
+                chochMarkers={chartData.chochMarkers}
+                height={750}
+                showBrokenBlocks={false}
+                strategy="index"
+                tradeDetails={tradeDetails}
+              />
+            </Box>
+          ) : (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+                minHeight: 400,
+              }}
+            >
+              <Typography>No data available</Typography>
+            </Box>
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
