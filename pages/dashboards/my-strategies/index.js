@@ -21,6 +21,7 @@ function myStrategies() {
   const [editMode, setEditMode] = useState({});
   const [editedRow, setEditedRow] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [isClosingOrders, setIsClosingOrders] = useState(false);
   const handleEditMode = (rowId) => {
     if (editMode === rowId) {
       setEditMode(null);
@@ -32,6 +33,24 @@ function myStrategies() {
   };
 
   const { showToast } = useToast();
+
+  const handleCloseAllOrders = async () => {
+    try {
+      setIsClosingOrders(true);
+      const response = await axiosInstance.post(
+        `${baseUrl}ema-scalping/close-orders/`
+      );
+      showToast(response?.data?.message || "All orders closed successfully", "success");
+    } catch (error) {
+      showToast(
+        error?.response?.data?.error || "Failed to close orders",
+        "error"
+      );
+      console.error("Failed to close orders:", error);
+    } finally {
+      setIsClosingOrders(false);
+    }
+  };
 
   const handleSave = async () => {
     try {
@@ -97,9 +116,32 @@ function myStrategies() {
   return (
     <>
       <PageTitleWrapper>
-        <h1 style={{ margin: "24px 0", paddingLeft: "24px" }}>
-          My EMA Strategies
-        </h1>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: "24px",
+          }}
+        >
+          <h1 style={{ margin: 0 }}>My EMA Strategies</h1>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleCloseAllOrders}
+            disabled={isClosingOrders}
+            sx={{
+              textTransform: "none",
+              fontWeight: 500,
+              boxShadow: "none",
+              "&:hover": {
+                boxShadow: "none",
+              },
+            }}
+          >
+            {isClosingOrders ? "Closing..." : "Close All Orders"}
+          </Button>
+        </Box>
       </PageTitleWrapper>
       <TableContainer
         component={Paper}
