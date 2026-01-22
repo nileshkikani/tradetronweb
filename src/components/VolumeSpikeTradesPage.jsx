@@ -330,7 +330,7 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
     });
 
     try {
-      const response = await axiosInstance.post('https://scalping.tradeonair.com/api/ema-scalping/improved-smc-analysis/', {
+      const response = await axiosInstance.post('https://scanner.tradeonair.com/api/ema-scalping/improved-smc-analysis/', {
         symbol: row.symbol,
         num_candles: 150
       });
