@@ -13,7 +13,8 @@ const TradingViewChart = ({
     showBrokenBlocks = false,
     highlightedOrderBlock = null,
     tradeDetails = null,
-    strategy = ''
+    strategy = '',
+    emaData = null
 }) => {
     const chartContainerRef = useRef(null)
     const chartRef = useRef(null)
@@ -91,6 +92,25 @@ const TradingViewChart = ({
                 .sort((a, b) => a.time - b.time)
 
             volumeSeries.setData(volumeData)
+        }
+
+        // Add EMA lines if emaData is provided
+        if (emaData && emaData.ema9 && emaData.ema9.length > 0) {
+            const ema9Series = chart.addLineSeries({
+                color: '#2962FF',
+                lineWidth: 2,
+                title: 'EMA 9'
+            })
+            ema9Series.setData(emaData.ema9.sort((a, b) => a.time - b.time))
+        }
+
+        if (emaData && emaData.ema15 && emaData.ema15.length > 0) {
+            const ema15Series = chart.addLineSeries({
+                color: '#FF6D00',
+                lineWidth: 2,
+                title: 'EMA 15'
+            })
+            ema15Series.setData(emaData.ema15.sort((a, b) => a.time - b.time))
         }
 
         const primitives = []
@@ -381,7 +401,7 @@ const TradingViewChart = ({
                 chartRef.current = null
             }
         }
-    }, [data, orderBlocks, bosMarkers, chochMarkers, height, showBrokenBlocks, highlightedOrderBlock, tradeDetails, strategy])
+    }, [data, orderBlocks, bosMarkers, chochMarkers, height, showBrokenBlocks, highlightedOrderBlock, tradeDetails, strategy, emaData])
 
     if (!data.length) {
         return (

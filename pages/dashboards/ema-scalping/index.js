@@ -292,11 +292,30 @@ function DashboardReports() {
           volume: c.volume,
         }));
 
+        // Extract EMA data
+        const ema9Data = rawData
+          .filter((c) => c.ema_9 !== null && c.ema_9 !== undefined)
+          .map((c) => ({
+            time: toIST(c.x),
+            value: c.ema_9,
+          }));
+
+        const ema15Data = rawData
+          .filter((c) => c.ema_15 !== null && c.ema_15 !== undefined)
+          .map((c) => ({
+            time: toIST(c.x),
+            value: c.ema_15,
+          }));
+
         setChartData({
           candles,
           orderBlocks: [],
           bosMarkers: [],
           chochMarkers: [],
+          emaData: {
+            ema9: ema9Data,
+            ema15: ema15Data,
+          },
         });
       } else {
         showToast("Failed to fetch chart data", "error");
@@ -705,6 +724,7 @@ function DashboardReports() {
                 showBrokenBlocks={false}
                 strategy="index"
                 tradeDetails={tradeDetails}
+                emaData={chartData.emaData}
               />
             </Box>
           ) : (
