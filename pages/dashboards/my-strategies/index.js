@@ -8,12 +8,13 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TextField from "@mui/material/TextField";
-import { Box, Checkbox, Paper } from "@mui/material";
+import { Box, Checkbox, Paper, Tooltip, IconButton } from "@mui/material";
 import { useState, useEffect } from "react";
 import axiosInstance from "src/utils/axios";
 import { Button, ListItem, Select, MenuItem } from "@mui/material";
 import TableLoader from "src/components/TableLoader";
 import useToast from 'src/hooks/useToast';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 function myStrategies() {
   const baseUrl = process.env.EMA_SCALPING_URL;
@@ -113,6 +114,19 @@ function myStrategies() {
   useEffect(() => {
     fetchStrategies();
   }, []);
+
+  const getStrategyDescription = (strategyName) => {
+    const descriptions = {
+      'ema_trend': 'EMA Trend strategy uses Exponential Moving Averages (EMA 9 and EMA 15) to identify short-term trend directions and generate quick entry/exit signals for scalping trades.',
+      'ema_2040': 'EMA 2040 strategy uses Exponential Moving Averages (EMA 20 and EMA 40) to identify medium-term trend directions and generate entry/exit signals for trades.',
+      'margin_orders': 'Margin Orders strategy uses Exponential Moving Averages (EMA 9 and EMA 15) to identify short-term trend directions and generate quick entry/exit signals for scalping trades.',
+      'ema_scalping': 'EMA Scalping strategy uses Exponential Moving Averages (EMA 9 and EMA 15) to identify short-term trend directions and generate quick entry/exit signals for scalping trades.',
+      'future_ema_trend': 'Future EMA Trend strategy uses Exponential Moving Averages (EMA 9 and EMA 15) to identify short-term trend directions and generate quick entry/exit signals for scalping trades.',
+      'enhanced_ema': 'Enhanced EMA strategy uses Exponential Moving Averages (EMA 9 and EMA 15) to identify short-term trend directions and generate quick entry/exit signals for scalping trades.',
+    };
+    return descriptions[strategyName] || 'No description available for this strategy.';
+  };
+
   return (
     <>
       <PageTitleWrapper>
@@ -186,7 +200,34 @@ function myStrategies() {
                   transition: "background-color 0.2s",
                 }}
               >
-                <TableCell>{row?.strategy_name}</TableCell>
+                <TableCell>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    {row?.strategy_name}
+                    <Tooltip 
+                      title={getStrategyDescription(row?.strategy_name)} 
+                      arrow
+                      placement="right"
+                      sx={{
+                        '& .MuiTooltip-tooltip': {
+                          maxWidth: 300,
+                          fontSize: '0.875rem',
+                        }
+                      }}
+                    >
+                      <IconButton 
+                        size="small" 
+                        sx={{ 
+                          padding: '2px',
+                          '&:hover': {
+                            backgroundColor: 'rgba(0, 0, 0, 0.04)'
+                          }
+                        }}
+                      >
+                        <InfoOutlinedIcon sx={{ fontSize: '1rem', color: 'info.main' }} />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                </TableCell>
                 <TableCell>
                   {editMode === row.id ? (
                     <Select

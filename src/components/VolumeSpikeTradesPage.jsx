@@ -200,7 +200,7 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
     if (strategy) {
       fetchData(1);
     }
-  }, [selectedDate, debouncedSearchSymbol, strategy]);
+  }, [selectedDate, debouncedSearchSymbol, strategy]);  
 
 
   const handleStrategyChange = (event) => {
@@ -347,16 +347,24 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
           volume: c.volume
         }));
 
-        const orderBlocks = (strategy === 'breakout' || strategy === 'volume_spike') ? [] : rawData.order_blocks.map(ob => ({
-          start: ob.start,
-          end: ob.end,
-          startTime: toIST(ob.start),
-          endTime: toIST(ob.end),
-          high: ob.high,
-          low: ob.low,
-          type: ob.type,
-          is_broken: ob.is_broken
-        }));
+        const orderBlocks = (strategy === 'breakout' || strategy === 'volume_spike') ? [] : rawData.order_blocks
+          .filter(ob => {
+            if (strategy === 'order_block') {
+              // Filter to show only the order block that matches the trade's high and low prices
+              return parseFloat(ob.high) === parseFloat(row.ob_high_price) && parseFloat(ob.low) === parseFloat(row.ob_low_price);
+            }
+            return true;
+          })
+          .map(ob => ({
+            start: ob.start,
+            end: ob.end,
+            startTime: toIST(ob.start),
+            endTime: toIST(ob.end),
+            high: ob.high,
+            low: ob.low,
+            type: ob.type,
+            is_broken: ob.is_broken
+          }));
 
         const bosMarkers = rawData.bos_points.map(bos => ({
           time: toIST(bos.x),
@@ -884,8 +892,8 @@ function VolumeSpikeTradesPage({ tradeType = 'active' }) {
                 orderBlocks={chartData.orderBlocks}
                 bosMarkers={chartData.bosMarkers}
                 chochMarkers={chartData.chochMarkers}
-                height={750}
-                showBrokenBlocks={false}
+                height={600}
+                showBrokenBlocks={true}
                 highlightedOrderBlock={highlightedBlock}
                 tradeDetails={tradeDetails}
                 strategy={strategy}
