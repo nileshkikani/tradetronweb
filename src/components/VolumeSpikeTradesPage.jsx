@@ -45,7 +45,7 @@ const ReactApexChart = dynamic(() => import('react-apexcharts'), {
 });
 
 function VolumeSpikeTradesPage({ tradeType = 'active' }) {
-  const baseUrl = process.env.EMA_SCALPING_URL;
+  const baseUrl = process.env.NEXT_PUBLIC_STOCK_URL;
   const { showToast } = useToast();
 
   const getTodayDate = () => {

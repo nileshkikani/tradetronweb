@@ -13,7 +13,7 @@ import axios from "axios";
 import useToast from 'src/hooks/useToast';
 
 function myStrategies() {
-    const baseUrl = process.env.EMA_SCALPING_URL;
+    const baseUrl = process.env.NEXT_PUBLIC_STOCK_URL;
     const [strategies, setStrategies] = useState([]);
     const { showToast } = useToast();
 

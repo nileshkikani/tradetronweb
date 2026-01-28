@@ -17,7 +17,7 @@ import axiosInstance from 'src/utils/axios';
 
 function DashboardReports() {
   const router = useRouter();
-  const baseUrl = process.env.EMA_SCALPING_URL;
+  const baseUrl = process.env.NEXT_PUBLIC_STOCK_URL;
 
   const [selectFilter, setSelectedFilter] = useState('Today');
   const [startDate, setStartDate] = useState('');
