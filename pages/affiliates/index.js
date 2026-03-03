@@ -1,4 +1,5 @@
 import React from "react";
+import Head from 'next/head';
 import {
   Box,
   Typography,
@@ -88,6 +89,31 @@ const SectionHeader = styled(Typography)(
 const Affiliates = () => {
   return (
     <OverviewWrapper>
+      <Head>
+        <title>Affiliate Program | TradeOnAir - Earn 20% Recurring Commission</title>
+        <meta
+          name="description"
+          content="Join the TradeOnAir affiliate program and earn 20% recurring commission. Promote India's leading automated algo trading platform and build a steady passive income stream."
+        />
+        <meta
+          name="keywords"
+          content="TradeOnAir affiliate, trading affiliate program, earn commission, passive income, algo trading referral"
+        />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://tradeonair.com/affiliates" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://tradeonair.com/affiliates" />
+        <meta property="og:title" content="Affiliate Program | TradeOnAir - Earn 20% Recurring Commission" />
+        <meta
+          property="og:description"
+          content="Join the TradeOnAir affiliate program and earn 20% recurring commission on every referral."
+        />
+        <meta name="twitter:title" content="Affiliate Program | TradeOnAir - Earn 20% Recurring Commission" />
+        <meta
+          name="twitter:description"
+          content="Join the TradeOnAir affiliate program and earn 20% recurring commission on every referral."
+        />
+      </Head>
       <Navbar1 />
 
       <ContentWrapper>

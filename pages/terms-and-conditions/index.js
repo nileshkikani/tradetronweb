@@ -1,4 +1,5 @@
 import React from 'react';
+import Head from 'next/head';
 import { Box, Typography, Container, useTheme } from '@mui/material';
 import Footer from 'src/components/Footer';
 
@@ -6,6 +7,28 @@ const TermsAndConditions = () => {
     const theme = useTheme();
     
     return (
+        <>
+        <Head>
+          <title>Terms and Conditions | TradeOnAir</title>
+          <meta
+            name="description"
+            content="Read the terms and conditions governing your use of TradeOnAir's automated trading platform, including registration, license, liability, and security policies."
+          />
+          <meta name="robots" content="noindex, follow" />
+          <link rel="canonical" href="https://tradeonair.com/terms-and-conditions" />
+          <meta property="og:type" content="website" />
+          <meta property="og:url" content="https://tradeonair.com/terms-and-conditions" />
+          <meta property="og:title" content="Terms and Conditions | TradeOnAir" />
+          <meta
+            property="og:description"
+            content="Read the terms and conditions governing your use of TradeOnAir's automated trading platform."
+          />
+          <meta name="twitter:title" content="Terms and Conditions | TradeOnAir" />
+          <meta
+            name="twitter:description"
+            content="Read the terms and conditions governing your use of TradeOnAir's automated trading platform."
+          />
+        </Head>
         <Box sx={{
             display: 'flex',
             flexDirection: 'column',
@@ -182,6 +205,7 @@ const TermsAndConditions = () => {
             </Container>
             <Footer />
         </Box>
+        </>
     );
 };
 

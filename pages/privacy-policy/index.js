@@ -1,4 +1,5 @@
 import React from 'react';
+import Head from 'next/head';
 import { Box, Typography, styled, Container, Paper, useTheme } from '@mui/material';
 import Footer from 'src/components/Footer';
 // import BaseLayout from 'src/layouts/BaseLayout';
@@ -53,6 +54,27 @@ const PrivacyPolicy = () => {
 
   return (
     <OverviewWrapper>
+      <Head>
+        <title>Privacy Policy | TradeOnAir</title>
+        <meta
+          name="description"
+          content="Learn how TradeOnAir protects your personal data with bank-level security, strict privacy policies, and transparent data practices."
+        />
+        <meta name="robots" content="noindex, follow" />
+        <link rel="canonical" href="https://tradeonair.com/privacy-policy" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://tradeonair.com/privacy-policy" />
+        <meta property="og:title" content="Privacy Policy | TradeOnAir" />
+        <meta
+          property="og:description"
+          content="Learn how TradeOnAir protects your personal data with bank-level security and strict privacy policies."
+        />
+        <meta name="twitter:title" content="Privacy Policy | TradeOnAir" />
+        <meta
+          name="twitter:description"
+          content="Learn how TradeOnAir protects your personal data with bank-level security and strict privacy policies."
+        />
+      </Head>
       <Navbar1 />
       <ContentWrapper>
         <Box textAlign="center" mb={6}>

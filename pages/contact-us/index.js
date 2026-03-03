@@ -1,4 +1,5 @@
 import React from 'react';
+import Head from 'next/head';
 import { Formik, Form } from 'formik';
 import {
   TextField,
@@ -40,6 +41,28 @@ const ContactUs = () => {
   };
   
   return (
+  <>
+    <Head>
+      <title>Contact Us | TradeOnAir</title>
+      <meta
+        name="description"
+        content="Get in touch with the TradeOnAir team. We're here to help with any questions about our automated trading platform, strategies, or broker integrations."
+      />
+      <meta name="robots" content="index, follow" />
+      <link rel="canonical" href="https://tradeonair.com/contact-us" />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content="https://tradeonair.com/contact-us" />
+      <meta property="og:title" content="Contact Us | TradeOnAir" />
+      <meta
+        property="og:description"
+        content="Get in touch with the TradeOnAir team. We're here to help with your trading platform questions."
+      />
+      <meta name="twitter:title" content="Contact Us | TradeOnAir" />
+      <meta
+        name="twitter:description"
+        content="Get in touch with the TradeOnAir team. We're here to help with your trading platform questions."
+      />
+    </Head>
   <Box sx={{
     display: 'flex',
     flexDirection: 'column',
@@ -196,6 +219,7 @@ const ContactUs = () => {
     </Box>
     <Footer />
   </Box>
+  </>
 );
 };
 

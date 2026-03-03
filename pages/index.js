@@ -69,12 +69,94 @@ function Overview() {
   return (
     <OverviewWrapper>
       <Head>
-        <title>Trading For Everyone</title>
-        <meta 
-          name="description" 
-          content="Empower strategy creators to automate quant strategies and sell them to investors worldwide. No coding required, no clunky software downloads." 
+        <title>TradeOnAir | Automated Algo Trading for Everyone</title>
+        <meta
+          name="description"
+          content="Empower strategy creators to automate quant strategies and sell them to investors worldwide. No coding required, no clunky software downloads. Start trading smarter today."
         />
-        <meta name="keywords" content="trading, strategies, automation, quant, algorithmic trading, financial technology" />
+        <meta
+          name="keywords"
+          content="algo trading, automated trading, quant strategies, options trading, TradeOnAir, trading bot, India trading platform, NIFTY strategies, no-code trading"
+        />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://tradeonair.com/" />
+
+        {/* Open Graph */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://tradeonair.com/" />
+        <meta property="og:title" content="TradeOnAir | Automated Algo Trading for Everyone" />
+        <meta
+          property="og:description"
+          content="Empower strategy creators to automate quant strategies and sell them to investors worldwide. No coding required."
+        />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://tradeonair.com/" />
+        <meta name="twitter:title" content="TradeOnAir | Automated Algo Trading for Everyone" />
+        <meta
+          name="twitter:description"
+          content="Empower strategy creators to automate quant strategies and sell them to investors worldwide. No coding required."
+        />
+
+        {/* JSON-LD: Organization Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: 'TradeOnAir',
+              url: 'https://tradeonair.com',
+              logo: 'https://tradeonair.com/bull_logo.png',
+              contactPoint: {
+                '@type': 'ContactPoint',
+                email: 'support@tradeonair.com',
+                contactType: 'customer service',
+              },
+              sameAs: [],
+            }),
+          }}
+        />
+
+        {/* JSON-LD: WebSite Structured Data (enables Sitelinks searchbox) */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebSite',
+              name: 'TradeOnAir',
+              url: 'https://tradeonair.com',
+              potentialAction: {
+                '@type': 'SearchAction',
+                target: 'https://tradeonair.com/?q={search_term_string}',
+                'query-input': 'required name=search_term_string',
+              },
+            }),
+          }}
+        />
+
+        {/* JSON-LD: SoftwareApplication Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'SoftwareApplication',
+              name: 'TradeOnAir',
+              applicationCategory: 'FinanceApplication',
+              operatingSystem: 'Web',
+              offers: {
+                '@type': 'Offer',
+                price: '0',
+                priceCurrency: 'INR',
+              },
+              description:
+                'Automate quant trading strategies with no coding. TradeOnAir lets strategy creators build, deploy, and monetize algorithmic trading strategies.',
+            }),
+          }}
+        />
       </Head>
       
       <HeaderWrapper style={{position:"fixed"}}>

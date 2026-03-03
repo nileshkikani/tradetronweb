@@ -1,3 +1,15 @@
-# https://www.robotstxt.org/robotstxt.html
+# *
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /dashboards
+Disallow: /dashboards/
+Disallow: /auth/
+Disallow: /blocks/
+Disallow: /status/
+Disallow: /api/
+
+# Host
+Host: https://tradeonair.com
+
+# Sitemaps
+Sitemap: https://tradeonair.com/sitemap.xml

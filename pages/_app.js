@@ -37,10 +37,24 @@ function TokyoApp(props) {
   return (
     <CacheProvider value={emotionCache}>
       <Head>
-        <title>TradeOnAir-custom strategy creation tool</title>
+        <title>TradeOnAir | Automated Algo Trading Platform</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, shrink-to-fit=no"
+          name="description"
+          content="TradeOnAir empowers strategy creators to automate quant trading strategies and sell them to investors worldwide. No coding required."
+        />
+        <meta name="robots" content="index, follow" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://tradeonair.com/" />
+        <meta property="og:title" content="TradeOnAir | Automated Algo Trading Platform" />
+        <meta
+          property="og:description"
+          content="TradeOnAir empowers strategy creators to automate quant trading strategies and sell them to investors worldwide. No coding required."
+        />
+        <meta name="twitter:title" content="TradeOnAir | Automated Algo Trading Platform" />
+        <meta
+          name="twitter:description"
+          content="TradeOnAir empowers strategy creators to automate quant trading strategies and sell them to investors worldwide. No coding required."
         />
       </Head>
       <ReduxProvider store={store}>

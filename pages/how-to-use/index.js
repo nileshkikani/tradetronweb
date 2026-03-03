@@ -1,4 +1,5 @@
 import React from 'react';
+import Head from 'next/head';
 import { Typography, Box, styled, Container, Paper, List, ListItem, ListItemText } from '@mui/material';
 import Image from 'next/image';
 import BaseLayout from 'src/layouts/BaseLayout';
@@ -84,6 +85,65 @@ const ImageCaption = styled(Typography)(
 
   return (
     <OverviewWrapper>
+      <Head>
+        <title>How to Use TradeOnAir | Strategy Bot Guide</title>
+        <meta
+          name="description"
+          content="Learn how to use TradeOnAir's automated trading bot. Step-by-step guide covering creating strategies, monitoring positions, managing broker connections, and more."
+        />
+        <meta
+          name="keywords"
+          content="how to use TradeOnAir, trading bot guide, algo trading tutorial, strategy builder guide, options trading automation"
+        />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://tradeonair.com/how-to-use" />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content="https://tradeonair.com/how-to-use" />
+        <meta property="og:title" content="How to Use TradeOnAir | Strategy Bot Guide" />
+        <meta
+          property="og:description"
+          content="Step-by-step guide to building and automating trading strategies on TradeOnAir with no coding required."
+        />
+        <meta name="twitter:title" content="How to Use TradeOnAir | Strategy Bot Guide" />
+        <meta
+          name="twitter:description"
+          content="Step-by-step guide to building and automating trading strategies on TradeOnAir with no coding required."
+        />
+        {/* JSON-LD: HowTo Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'HowTo',
+              name: 'How to Use TradeOnAir Strategy Bot',
+              description: 'A step-by-step guide to create and deploy automated trading strategies using TradeOnAir.',
+              step: [
+                {
+                  '@type': 'HowToStep',
+                  name: 'Create a Strategy',
+                  text: 'Login to TradeOnAir, navigate to Option Wizard, click Create Own Strategy, add legs and configure entry/exit conditions.',
+                },
+                {
+                  '@type': 'HowToStep',
+                  name: 'Monitor Positions',
+                  text: 'Navigate to the Deployed page, select your strategy and date to view active positions.',
+                },
+                {
+                  '@type': 'HowToStep',
+                  name: 'Manage Strategy Status',
+                  text: 'Set strategies as Active or Deactive, and permanently delete strategies from the My Strategies page.',
+                },
+                {
+                  '@type': 'HowToStep',
+                  name: 'Add Broker',
+                  text: 'Add your broker credentials to enable live market trading through your connected broker account.',
+                },
+              ],
+            }),
+          }}
+        />
+      </Head>
       <Navbar1 />
       <ContentWrapper maxWidth="lg">
         <Typography variant="h3" gutterBottom sx={{ fontWeight: 700, color: 'primary.main', mb: 4 }}>
