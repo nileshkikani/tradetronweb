@@ -13,6 +13,7 @@ import HowItWorks from 'src/content/Overview/HowItWorks';
 import Statistics from 'src/content/Overview/Statistics';
 import Testimonials from 'src/content/Overview/Testimonials';
 import FAQ from 'src/content/Overview/FAQ';
+import CommunitySection from 'src/content/Overview/CommunitySection';
 
 const HeaderWrapper = styled(Card)(
   ({ theme }) => `
@@ -180,6 +181,8 @@ function Overview() {
       <AlternateSection>
         <Testimonials />
       </AlternateSection>
+
+      <CommunitySection />
 
       <SectionWrapper>
         <FAQ />
