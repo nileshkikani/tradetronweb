@@ -22,7 +22,7 @@ export default class MyDocument extends Document {
           <meta name="apple-mobile-web-app-title" content="TradeOnAir" />
 
           {/* Default OG image (overridden per page) */}
-          <meta property="og:image" content="https://tradeonair.com/bull_logo.png" />
+          <meta property="og:image" content="https://tradeonair.com/TradeOnAir.svg" />
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
           <meta property="og:image:alt" content="TradeOnAir - Automated Algo Trading Platform" />
@@ -32,7 +32,7 @@ export default class MyDocument extends Document {
           {/* Twitter Card defaults */}
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:site" content="@tradeonair" />
-          <meta name="twitter:image" content="https://tradeonair.com/bull_logo.png" />
+          <meta name="twitter:image" content="https://tradeonair.com/TradeOnAir.svg" />
 
           {/* Fonts */}
           <link rel="preconnect" href="https://fonts.googleapis.com" />

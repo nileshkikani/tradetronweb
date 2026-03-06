@@ -138,9 +138,9 @@ function Logo() {
           color="success"
         >
            <Link href="/" passHref>
-      <Box sx={{ position: 'relative', width: 83, height: 58, cursor: 'pointer' }}>
+      <Box sx={{ position: 'relative', width: 83, height: 58, cursor: 'pointer', ml: 2 }}>
         <Image 
-          src="/bull_logo.png" 
+          src="/TradeOnAir.svg" 
           alt="Bull Logo" 
           layout="fill" 
           objectFit="contain" 

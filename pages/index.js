@@ -109,7 +109,7 @@ function Overview() {
               '@type': 'Organization',
               name: 'TradeOnAir',
               url: 'https://tradeonair.com',
-              logo: 'https://tradeonair.com/bull_logo.png',
+              logo: 'https://tradeonair.com/TradeOnAir.svg',
               contactPoint: {
                 '@type': 'ContactPoint',
                 email: 'support@tradeonair.com',
