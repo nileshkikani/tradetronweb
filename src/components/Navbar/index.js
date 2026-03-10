@@ -90,9 +90,6 @@ const Navbar1 = () => {
                 
                     <NavLinksWrapper>
                         <Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 3 }}>
-                            <StyledLink href="/affiliates">
-                                {t('Affiliates')}
-                            </StyledLink>
                             <StyledLink href="/contact-us">
                                 {t('Contact us')}
                             </StyledLink>

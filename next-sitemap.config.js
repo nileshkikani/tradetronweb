@@ -38,7 +38,6 @@ module.exports = {
       '/': { priority: 1.0, changefreq: 'daily' },
       '/how-to-use': { priority: 0.9, changefreq: 'monthly' },
       '/contact-us': { priority: 0.8, changefreq: 'monthly' },
-      '/affiliates': { priority: 0.7, changefreq: 'monthly' },
       '/privacy-policy': { priority: 0.5, changefreq: 'yearly' },
       '/terms-and-conditions': { priority: 0.5, changefreq: 'yearly' },
     };

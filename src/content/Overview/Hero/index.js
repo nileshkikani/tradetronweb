@@ -211,7 +211,8 @@ function Hero() {
               style={{width:'50rem'}}
             >
               <source
-                src="https://files.tradetron.tech/tt-ad2.mp4"
+                // src="https://files.tradetron.tech/tt-ad2.mp4"
+                src="/intro.mp4"
                 type="video/mp4"
               />
               Your browser does not support the video tag.

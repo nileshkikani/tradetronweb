@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Card, Typography, styled } from '@mui/material';
 import Link from 'src/components/Link';
 import ContactUs from '../../../pages/contact-us/index'; 
-import Affiliates from '../../../pages/affiliates/index';
+
 
 const FooterWrapper = styled(Card)(
   ({ theme }) => `
@@ -17,23 +17,19 @@ const FooterWrapper = styled(Card)(
 
 function Footer() {
   const [showContactForm, setShowContactForm] = useState(false);
-  const [showAffiliatesForm, setShowAffiliatesForm] = useState(false);
+
 
   // const handleContactUsClick = (e) => {
   //   e.preventDefault();
   //   setShowContactForm(!showContactForm);
-  //   setShowAffiliatesForm(false);
+
   // };
 
-  // const handleAffiliatesClick = (e) => {
-  //   e.preventDefault();
-  //   setShowAffiliatesForm(!showAffiliatesForm);
-  //   setShowContactForm(false);
-  // };
+
 
   // const handlePrivacyPolicyClick = (e) => {
   //   e.preventDefault();
-  //   setShowAffiliatesForm(false);
+
   //   setShowContactForm(false);
   // };
 
@@ -58,15 +54,7 @@ function Footer() {
                 Contact us
             </Link>
           </Box>
-          <Box mx={2}>
-            <Link
-              href="/affiliates"
-              // onClick={handleAffiliatesClick}
-              passHref
-            >
-                {showAffiliatesForm ? 'Hide Affiliates' : 'Affiliates'}
-            </Link>
-          </Box>
+
           <Box mx={2}>
             <Link
               href="/privacy-policy"
@@ -95,11 +83,7 @@ function Footer() {
           <ContactUs />
         </Box>
       )}
-      {showAffiliatesForm && (
-        <Box mt={2}>
-          <Affiliates />
-        </Box>
-      )}
+
     </FooterWrapper>
   );
 }
