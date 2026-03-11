@@ -6,7 +6,7 @@ import createEmotionCache from 'src/createEmotionCache';
 export default class MyDocument extends Document {
   render() {
     return (
-      <Html lang="en">
+      <Html lang="en-IN">
         <Head>
           {/* Character set */}
           <meta charSet="utf-8" />
@@ -21,18 +21,30 @@ export default class MyDocument extends Document {
           <meta name="apple-mobile-web-app-status-bar-style" content="default" />
           <meta name="apple-mobile-web-app-title" content="TradeOnAir" />
 
+          {/* India Geo-Targeting */}
+          <meta name="geo.region" content="IN" />
+          <meta name="geo.placename" content="India" />
+          <meta name="geo.position" content="20.5937;78.9629" />
+          <meta name="ICBM" content="20.5937, 78.9629" />
+
+          {/* Google Search Console Verification */}
+          <meta name="google-site-verification" content="vOY7fxQuwOndakbWeYYXJh1a4nnMGd_B4wcPXPpIeQ8" />
+
           {/* Default OG image (overridden per page) */}
-          <meta property="og:image" content="https://tradeonair.com/TradeOnAir.svg" />
-          <meta property="og:image:width" content="1200" />
-          <meta property="og:image:height" content="630" />
-          <meta property="og:image:alt" content="TradeOnAir - Automated Algo Trading Platform" />
+          <meta property="og:image" content="https://tradeonair.com/icon-512x512.png" />
+          <meta property="og:image:width" content="512" />
+          <meta property="og:image:height" content="512" />
+          <meta property="og:image:alt" content="TradeOnAir - Algo Trading Platform India" />
           <meta property="og:site_name" content="TradeOnAir" />
           <meta property="og:locale" content="en_IN" />
 
           {/* Twitter Card defaults */}
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:site" content="@tradeonair" />
-          <meta name="twitter:image" content="https://tradeonair.com/TradeOnAir.svg" />
+          <meta name="twitter:image" content="https://tradeonair.com/icon-512x512.png" />
+
+          {/* Preload LCP video for faster first paint */}
+          <link rel="preload" href="/intro.mp4" as="video" type="video/mp4" />
 
           {/* Fonts */}
           <link rel="preconnect" href="https://fonts.googleapis.com" />

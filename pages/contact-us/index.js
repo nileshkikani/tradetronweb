@@ -43,24 +43,60 @@ const ContactUs = () => {
   return (
   <>
     <Head>
-      <title>Contact Us | TradeOnAir</title>
+      <title>Contact TradeOnAir | Algo Trading Support India — Get Help Fast</title>
       <meta
         name="description"
-        content="Get in touch with the TradeOnAir team. We're here to help with any questions about our automated trading platform, strategies, or broker integrations."
+        content="Contact TradeOnAir's algo trading support team. Get help with strategy automation, broker integration, NSE/BSE trading bots, and account questions. We're here for Indian traders."
+      />
+      <meta
+        name="keywords"
+        content="contact tradeonair, tradeonair support, algo trading help India, trading bot support, NSE BSE trading support"
       />
       <meta name="robots" content="index, follow" />
       <link rel="canonical" href="https://tradeonair.com/contact-us" />
       <meta property="og:type" content="website" />
       <meta property="og:url" content="https://tradeonair.com/contact-us" />
-      <meta property="og:title" content="Contact Us | TradeOnAir" />
+      <meta property="og:title" content="Contact TradeOnAir | Algo Trading Support India" />
       <meta
         property="og:description"
-        content="Get in touch with the TradeOnAir team. We're here to help with your trading platform questions."
+        content="Get in touch with the TradeOnAir team. We're here to help Indian traders with algo trading, strategy automation, and broker integration questions."
       />
-      <meta name="twitter:title" content="Contact Us | TradeOnAir" />
+      <meta name="twitter:title" content="Contact TradeOnAir | Algo Trading Support India" />
       <meta
         name="twitter:description"
-        content="Get in touch with the TradeOnAir team. We're here to help with your trading platform questions."
+        content="Get in touch with the TradeOnAir team. We're here to help Indian traders with algo trading and automation questions."
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'ContactPage',
+            name: 'Contact TradeOnAir',
+            url: 'https://tradeonair.com/contact-us',
+            description: 'Contact TradeOnAir for algo trading support, strategy help, and broker integration assistance for Indian stock markets.',
+            mainEntity: {
+              '@type': 'Organization',
+              name: 'TradeOnAir',
+              email: 'support@tradeonair.com',
+              url: 'https://tradeonair.com',
+              areaServed: 'India',
+            },
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://tradeonair.com' },
+              { '@type': 'ListItem', position: 2, name: 'Contact Us', item: 'https://tradeonair.com/contact-us' },
+            ],
+          }),
+        }}
       />
     </Head>
   <Box sx={{

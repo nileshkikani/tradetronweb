@@ -86,28 +86,28 @@ const ImageCaption = styled(Typography)(
   return (
     <OverviewWrapper>
       <Head>
-        <title>How to Use TradeOnAir | Strategy Bot Guide</title>
+        <title>How to Use TradeOnAir | Algo Trading Bot Setup Guide India — Step by Step</title>
         <meta
           name="description"
-          content="Learn how to use TradeOnAir's automated trading bot. Step-by-step guide covering creating strategies, monitoring positions, managing broker connections, and more."
+          content="Learn how to use TradeOnAir's algo trading bot. Step-by-step guide: create NSE/BSE strategies, automate intraday & options trades, connect your broker (Angel, Dhan, Kotak), and monitor positions."
         />
         <meta
           name="keywords"
-          content="how to use TradeOnAir, trading bot guide, algo trading tutorial, strategy builder guide, options trading automation"
+          content="how to use tradeonair, algo trading tutorial India, trading bot setup guide, automate options trading India, NSE BSE strategy guide, intraday bot guide, no code trading tutorial"
         />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://tradeonair.com/how-to-use" />
         <meta property="og:type" content="article" />
         <meta property="og:url" content="https://tradeonair.com/how-to-use" />
-        <meta property="og:title" content="How to Use TradeOnAir | Strategy Bot Guide" />
+        <meta property="og:title" content="How to Use TradeOnAir | Algo Trading Bot Setup Guide India" />
         <meta
           property="og:description"
-          content="Step-by-step guide to building and automating trading strategies on TradeOnAir with no coding required."
+          content="Step-by-step guide to creating and automating trading strategies on TradeOnAir. No coding required — works for NSE & BSE markets."
         />
-        <meta name="twitter:title" content="How to Use TradeOnAir | Strategy Bot Guide" />
+        <meta name="twitter:title" content="How to Use TradeOnAir | Algo Trading Bot Setup Guide India" />
         <meta
           name="twitter:description"
-          content="Step-by-step guide to building and automating trading strategies on TradeOnAir with no coding required."
+          content="Step-by-step guide to creating and automating trading strategies. No coding required — works for NSE & BSE markets."
         />
         {/* JSON-LD: HowTo Structured Data */}
         <script
@@ -116,29 +116,52 @@ const ImageCaption = styled(Typography)(
             __html: JSON.stringify({
               '@context': 'https://schema.org',
               '@type': 'HowTo',
-              name: 'How to Use TradeOnAir Strategy Bot',
-              description: 'A step-by-step guide to create and deploy automated trading strategies using TradeOnAir.',
+              name: 'How to Set Up Algo Trading on TradeOnAir',
+              description: 'A step-by-step guide to create and deploy automated NSE/BSE trading strategies using TradeOnAir — no coding required.',
+              totalTime: 'PT15M',
+              tool: [{ '@type': 'HowToTool', name: 'TradeOnAir Account' }, { '@type': 'HowToTool', name: 'Indian Stock Broker (Angel, Dhan, or Kotak Neo)' }],
               step: [
                 {
                   '@type': 'HowToStep',
+                  position: 1,
                   name: 'Create a Strategy',
-                  text: 'Login to TradeOnAir, navigate to Option Wizard, click Create Own Strategy, add legs and configure entry/exit conditions.',
+                  text: 'Login to TradeOnAir, navigate to Option Wizard, click Create Own Strategy, add legs and configure entry/exit conditions for your NSE/BSE strategy.',
+                  url: 'https://tradeonair.com/how-to-use#create-strategy',
                 },
                 {
                   '@type': 'HowToStep',
+                  position: 2,
                   name: 'Monitor Positions',
-                  text: 'Navigate to the Deployed page, select your strategy and date to view active positions.',
+                  text: 'Navigate to the Deployed page, select your strategy and date to view active intraday or swing trading positions in real time.',
+                  url: 'https://tradeonair.com/how-to-use#monitor-positions',
                 },
                 {
                   '@type': 'HowToStep',
+                  position: 3,
                   name: 'Manage Strategy Status',
-                  text: 'Set strategies as Active or Deactive, and permanently delete strategies from the My Strategies page.',
+                  text: 'Set strategies as Active or Inactive, and permanently delete strategies from the My Strategies page. Deactivating will close all open orders immediately.',
+                  url: 'https://tradeonair.com/how-to-use#manage-strategies',
                 },
                 {
                   '@type': 'HowToStep',
+                  position: 4,
                   name: 'Add Broker',
-                  text: 'Add your broker credentials to enable live market trading through your connected broker account.',
+                  text: 'Add your Indian broker credentials (Angel Broking, Dhan, Kotak Neo) to enable live market trading. Your credentials are encrypted and secure.',
+                  url: 'https://tradeonair.com/how-to-use#add-broker',
                 },
+              ],
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'BreadcrumbList',
+              itemListElement: [
+                { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://tradeonair.com' },
+                { '@type': 'ListItem', position: 2, name: 'How to Use', item: 'https://tradeonair.com/how-to-use' },
               ],
             }),
           }}

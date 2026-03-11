@@ -55,12 +55,16 @@ const PrivacyPolicy = () => {
   return (
     <OverviewWrapper>
       <Head>
-        <title>Privacy Policy | TradeOnAir</title>
+        <title>Privacy Policy | TradeOnAir Algo Trading Platform India</title>
         <meta
           name="description"
-          content="Learn how TradeOnAir protects your personal data with bank-level security, strict privacy policies, and transparent data practices."
+          content="Read TradeOnAir's privacy policy. We protect Indian traders' personal data with bank-level security, 256-bit SSL encryption, and strict data practices. Your privacy is our priority."
         />
-        <meta name="robots" content="noindex, follow" />
+        <meta
+          name="keywords"
+          content="tradeonair privacy policy, algo trading platform privacy, trading data security India"
+        />
+        <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://tradeonair.com/privacy-policy" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://tradeonair.com/privacy-policy" />
@@ -73,6 +77,19 @@ const PrivacyPolicy = () => {
         <meta
           name="twitter:description"
           content="Learn how TradeOnAir protects your personal data with bank-level security and strict privacy policies."
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'BreadcrumbList',
+              itemListElement: [
+                { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://tradeonair.com' },
+                { '@type': 'ListItem', position: 2, name: 'Privacy Policy', item: 'https://tradeonair.com/privacy-policy' },
+              ],
+            }),
+          }}
         />
       </Head>
       <Navbar1 />

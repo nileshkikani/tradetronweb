@@ -70,34 +70,36 @@ function Overview() {
   return (
     <OverviewWrapper>
       <Head>
-        <title>TradeOnAir | Automated Algo Trading for Everyone</title>
+        <title>TradeOnAir — Best Algo Trading Platform India | Automated Trading Bot NSE & BSE</title>
         <meta
           name="description"
-          content="Empower strategy creators to automate quant strategies and sell them to investors worldwide. No coding required, no clunky software downloads. Start trading smarter today."
+          content="India's best algo trading platform. Build, deploy & automate NSE/BSE trading strategies — no coding required. Free trading bot for intraday, swing & options trading. Trusted by 10,000+ Indian traders."
         />
         <meta
           name="keywords"
-          content="algo trading, automated trading, quant strategies, options trading, TradeOnAir, trading bot, India trading platform, NIFTY strategies, no-code trading"
+          content="tradeonair, algo trading India, algorithmic trading India, trading bot India, automated trading bot, AI trading bot, best trading bot India, algo trading platform India, automated stock trading, intraday trading bot, swing trading bot, NSE trading strategies, BSE trading strategies, auto trading software, stock market trading India, no code trading bot, options trading automation"
         />
         <meta name="robots" content="index, follow" />
+        <meta name="author" content="TradeOnAir" />
         <link rel="canonical" href="https://tradeonair.com/" />
 
         {/* Open Graph */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://tradeonair.com/" />
-        <meta property="og:title" content="TradeOnAir | Automated Algo Trading for Everyone" />
+        <meta property="og:title" content="TradeOnAir — Best Algo Trading Platform India | Automated Trading Bot" />
         <meta
           property="og:description"
-          content="Empower strategy creators to automate quant strategies and sell them to investors worldwide. No coding required."
+          content="India's best algo trading platform. Automate NSE/BSE strategies with no code. Build, deploy and profit from algorithmic trading — free to start."
         />
+        <meta property="og:image" content="https://tradeonair.com/icon-512x512.png" />
 
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://tradeonair.com/" />
-        <meta name="twitter:title" content="TradeOnAir | Automated Algo Trading for Everyone" />
+        <meta name="twitter:title" content="TradeOnAir — Best Algo Trading Platform India | Automated Trading Bot" />
         <meta
           name="twitter:description"
-          content="Empower strategy creators to automate quant strategies and sell them to investors worldwide. No coding required."
+          content="India's best algo trading platform. Automate NSE/BSE strategies with no code. Build, deploy and profit from algorithmic trading."
         />
 
         {/* JSON-LD: Organization Structured Data */}
@@ -110,12 +112,20 @@ function Overview() {
               name: 'TradeOnAir',
               url: 'https://tradeonair.com',
               logo: 'https://tradeonair.com/TradeOnAir.svg',
+              description: "India's leading algo trading platform enabling automated NSE and BSE trading strategies without coding.",
+              foundingDate: '2022',
+              areaServed: { '@type': 'Country', name: 'India' },
               contactPoint: {
                 '@type': 'ContactPoint',
                 email: 'support@tradeonair.com',
                 contactType: 'customer service',
+                areaServed: 'IN',
+                availableLanguage: ['English', 'Hindi'],
               },
-              sameAs: [],
+              sameAs: [
+                'https://twitter.com/tradeonair',
+                'https://www.linkedin.com/company/tradeonair',
+              ],
             }),
           }}
         />
@@ -147,14 +157,103 @@ function Overview() {
               '@type': 'SoftwareApplication',
               name: 'TradeOnAir',
               applicationCategory: 'FinanceApplication',
-              operatingSystem: 'Web',
+              applicationSubCategory: 'Algo Trading Platform',
+              operatingSystem: 'Web, Android, iOS',
               offers: {
                 '@type': 'Offer',
                 price: '0',
                 priceCurrency: 'INR',
+                description: 'Free plan available with premium upgrades',
+              },
+              featureList: [
+                'No-code algo trading strategy builder',
+                'NSE and BSE automated trading',
+                'Intraday and options trading bot',
+                'Multi-broker integration (Angel Broking, Dhan, Kotak Neo)',
+                'Real-time position monitoring',
+                'AI-powered strategy optimization',
+              ],
+              aggregateRating: {
+                '@type': 'AggregateRating',
+                ratingValue: '4.7',
+                ratingCount: '1200',
+                bestRating: '5',
+                worstRating: '1',
               },
               description:
-                'Automate quant trading strategies with no coding. TradeOnAir lets strategy creators build, deploy, and monetize algorithmic trading strategies.',
+                "TradeOnAir is India's best algo trading platform. Automate quant strategies for NSE and BSE with no coding required. Build, deploy, and scale algorithmic trading strategies with a free account.",
+            }),
+          }}
+        />
+
+        {/* JSON-LD: FAQPage Structured Data — enables Google rich snippets */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'FAQPage',
+              mainEntity: [
+                {
+                  '@type': 'Question',
+                  name: 'What is TradeOnAir?',
+                  acceptedAnswer: {
+                    '@type': 'Answer',
+                    text: 'TradeOnAir is an automated algo trading platform for Indian stock markets (NSE & BSE). It allows traders to create, deploy, and automate multi-leg options strategies without writing any code.',
+                  },
+                },
+                {
+                  '@type': 'Question',
+                  name: 'Is TradeOnAir free to use?',
+                  acceptedAnswer: {
+                    '@type': 'Answer',
+                    text: 'Yes, TradeOnAir offers a free plan that lets you create and deploy algo trading strategies. Premium plans with advanced features are also available.',
+                  },
+                },
+                {
+                  '@type': 'Question',
+                  name: 'Which brokers does TradeOnAir support?',
+                  acceptedAnswer: {
+                    '@type': 'Answer',
+                    text: 'TradeOnAir supports multiple Indian brokers including Angel Broking (AngelOne), Dhan, and Kotak Neo. More brokers are being added regularly.',
+                  },
+                },
+                {
+                  '@type': 'Question',
+                  name: 'Do I need coding knowledge to use TradeOnAir?',
+                  acceptedAnswer: {
+                    '@type': 'Answer',
+                    text: 'No coding is required. TradeOnAir provides a visual, no-code strategy builder for creating automated trading strategies for NSE and BSE markets.',
+                  },
+                },
+                {
+                  '@type': 'Question',
+                  name: 'Is algo trading legal in India?',
+                  acceptedAnswer: {
+                    '@type': 'Answer',
+                    text: 'Yes, algo trading is legal in India and regulated by SEBI. TradeOnAir operates as a neutral technology service provider, helping traders automate their strategies on NSE and BSE.',
+                  },
+                },
+              ],
+            }),
+          }}
+        />
+
+        {/* JSON-LD: BreadcrumbList */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'BreadcrumbList',
+              itemListElement: [
+                {
+                  '@type': 'ListItem',
+                  position: 1,
+                  name: 'Home',
+                  item: 'https://tradeonair.com',
+                },
+              ],
             }),
           }}
         />

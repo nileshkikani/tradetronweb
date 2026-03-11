@@ -9,12 +9,16 @@ const TermsAndConditions = () => {
     return (
         <>
         <Head>
-          <title>Terms and Conditions | TradeOnAir</title>
+          <title>Terms & Conditions | TradeOnAir Algo Trading Platform India</title>
           <meta
             name="description"
-            content="Read the terms and conditions governing your use of TradeOnAir's automated trading platform, including registration, license, liability, and security policies."
+            content="Read TradeOnAir's terms and conditions for India's leading algo trading platform. Understand registration, licensing, liability, SEBI compliance, and user responsibilities before trading."
           />
-          <meta name="robots" content="noindex, follow" />
+          <meta
+            name="keywords"
+            content="tradeonair terms and conditions, algo trading platform terms, automated trading terms India, SEBI algo trading compliance"
+          />
+          <meta name="robots" content="index, follow" />
           <link rel="canonical" href="https://tradeonair.com/terms-and-conditions" />
           <meta property="og:type" content="website" />
           <meta property="og:url" content="https://tradeonair.com/terms-and-conditions" />
@@ -27,6 +31,19 @@ const TermsAndConditions = () => {
           <meta
             name="twitter:description"
             content="Read the terms and conditions governing your use of TradeOnAir's automated trading platform."
+          />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                '@context': 'https://schema.org',
+                '@type': 'BreadcrumbList',
+                itemListElement: [
+                  { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://tradeonair.com' },
+                  { '@type': 'ListItem', position: 2, name: 'Terms & Conditions', item: 'https://tradeonair.com/terms-and-conditions' },
+                ],
+              }),
+            }}
           />
         </Head>
         <Box sx={{

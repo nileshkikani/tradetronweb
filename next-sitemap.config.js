@@ -1,7 +1,7 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
   siteUrl: process.env.SITE_URL || 'https://tradeonair.com',
-  generateRobotsTxt: true,
+  generateRobotsTxt: false, // We maintain robots.txt manually in /public
   sitemapSize: 7000,
   changefreq: 'weekly',
   priority: 0.7,
@@ -15,27 +15,13 @@ module.exports = {
     '/404',
     '/500',
     '/api/*',
+    '/affiliates', // Page has been removed
   ],
-  robotsTxtOptions: {
-    policies: [
-      {
-        userAgent: '*',
-        allow: '/',
-        disallow: [
-          '/dashboards',
-          '/dashboards/',
-          '/auth/',
-          '/blocks/',
-          '/status/',
-          '/api/',
-        ],
-      },
-    ],
-  },
   // Custom transformation for specific pages
   transform: async (config, path) => {
     const priorityMap = {
       '/': { priority: 1.0, changefreq: 'daily' },
+      '/algo-trading': { priority: 0.9, changefreq: 'weekly' },
       '/how-to-use': { priority: 0.9, changefreq: 'monthly' },
       '/contact-us': { priority: 0.8, changefreq: 'monthly' },
       '/privacy-policy': { priority: 0.5, changefreq: 'yearly' },
