@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: process.env.SITE_URL || 'https://tradeonair.com',
+  siteUrl: process.env.SITE_URL || 'https://app.tradeonair.com',
   generateRobotsTxt: false, // We maintain robots.txt manually in /public
   sitemapSize: 7000,
   changefreq: 'weekly',
@@ -21,7 +21,6 @@ module.exports = {
   transform: async (config, path) => {
     const priorityMap = {
       '/': { priority: 1.0, changefreq: 'daily' },
-      '/algo-trading': { priority: 0.9, changefreq: 'weekly' },
       '/how-to-use': { priority: 0.9, changefreq: 'monthly' },
       '/contact-us': { priority: 0.8, changefreq: 'monthly' },
       '/privacy-policy': { priority: 0.5, changefreq: 'yearly' },

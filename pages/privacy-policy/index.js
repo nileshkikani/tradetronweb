@@ -65,9 +65,9 @@ const PrivacyPolicy = () => {
           content="tradeonair privacy policy, algo trading platform privacy, trading data security India"
         />
         <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="https://tradeonair.com/privacy-policy" />
+        <link rel="canonical" href="https://app.tradeonair.com/privacy-policy" />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://tradeonair.com/privacy-policy" />
+        <meta property="og:url" content="https://app.tradeonair.com/privacy-policy" />
         <meta property="og:title" content="Privacy Policy | TradeOnAir" />
         <meta
           property="og:description"
@@ -85,8 +85,8 @@ const PrivacyPolicy = () => {
               '@context': 'https://schema.org',
               '@type': 'BreadcrumbList',
               itemListElement: [
-                { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://tradeonair.com' },
-                { '@type': 'ListItem', position: 2, name: 'Privacy Policy', item: 'https://tradeonair.com/privacy-policy' },
+                { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://app.tradeonair.com' },
+                { '@type': 'ListItem', position: 2, name: 'Privacy Policy', item: 'https://app.tradeonair.com/privacy-policy' },
               ],
             }),
           }}

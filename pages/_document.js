@@ -31,7 +31,7 @@ export default class MyDocument extends Document {
           <meta name="google-site-verification" content="vOY7fxQuwOndakbWeYYXJh1a4nnMGd_B4wcPXPpIeQ8" />
 
           {/* Default OG image (overridden per page) */}
-          <meta property="og:image" content="https://tradeonair.com/icon-512x512.png" />
+          <meta property="og:image" content="https://app.tradeonair.com/icon-512x512.png" />
           <meta property="og:image:width" content="512" />
           <meta property="og:image:height" content="512" />
           <meta property="og:image:alt" content="TradeOnAir - Algo Trading Platform India" />
@@ -41,7 +41,7 @@ export default class MyDocument extends Document {
           {/* Twitter Card defaults */}
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:site" content="@tradeonair" />
-          <meta name="twitter:image" content="https://tradeonair.com/icon-512x512.png" />
+          <meta name="twitter:image" content="https://app.tradeonair.com/icon-512x512.png" />
 
           {/* Preload LCP video for faster first paint */}
           <link rel="preload" href="/intro.mp4" as="video" type="video/mp4" />

@@ -9,7 +9,7 @@ Disallow: /status/
 Disallow: /api/
 
 # Host
-Host: https://tradeonair.com
+Host: https://app.tradeonair.com
 
 # Sitemaps
-Sitemap: https://tradeonair.com/sitemap.xml
+Sitemap: https://app.tradeonair.com/sitemap.xml

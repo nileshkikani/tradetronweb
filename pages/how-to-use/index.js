@@ -96,9 +96,9 @@ const ImageCaption = styled(Typography)(
           content="how to use tradeonair, algo trading tutorial India, trading bot setup guide, automate options trading India, NSE BSE strategy guide, intraday bot guide, no code trading tutorial"
         />
         <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="https://tradeonair.com/how-to-use" />
+        <link rel="canonical" href="https://app.tradeonair.com/how-to-use" />
         <meta property="og:type" content="article" />
-        <meta property="og:url" content="https://tradeonair.com/how-to-use" />
+        <meta property="og:url" content="https://app.tradeonair.com/how-to-use" />
         <meta property="og:title" content="How to Use TradeOnAir | Algo Trading Bot Setup Guide India" />
         <meta
           property="og:description"
@@ -126,28 +126,28 @@ const ImageCaption = styled(Typography)(
                   position: 1,
                   name: 'Create a Strategy',
                   text: 'Login to TradeOnAir, navigate to Option Wizard, click Create Own Strategy, add legs and configure entry/exit conditions for your NSE/BSE strategy.',
-                  url: 'https://tradeonair.com/how-to-use#create-strategy',
+                  url: 'https://app.tradeonair.com/how-to-use#create-strategy',
                 },
                 {
                   '@type': 'HowToStep',
                   position: 2,
                   name: 'Monitor Positions',
                   text: 'Navigate to the Deployed page, select your strategy and date to view active intraday or swing trading positions in real time.',
-                  url: 'https://tradeonair.com/how-to-use#monitor-positions',
+                  url: 'https://app.tradeonair.com/how-to-use#monitor-positions',
                 },
                 {
                   '@type': 'HowToStep',
                   position: 3,
                   name: 'Manage Strategy Status',
                   text: 'Set strategies as Active or Inactive, and permanently delete strategies from the My Strategies page. Deactivating will close all open orders immediately.',
-                  url: 'https://tradeonair.com/how-to-use#manage-strategies',
+                  url: 'https://app.tradeonair.com/how-to-use#manage-strategies',
                 },
                 {
                   '@type': 'HowToStep',
                   position: 4,
                   name: 'Add Broker',
                   text: 'Add your Indian broker credentials (Angel Broking, Dhan, Kotak Neo) to enable live market trading. Your credentials are encrypted and secure.',
-                  url: 'https://tradeonair.com/how-to-use#add-broker',
+                  url: 'https://app.tradeonair.com/how-to-use#add-broker',
                 },
               ],
             }),
@@ -160,8 +160,8 @@ const ImageCaption = styled(Typography)(
               '@context': 'https://schema.org',
               '@type': 'BreadcrumbList',
               itemListElement: [
-                { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://tradeonair.com' },
-                { '@type': 'ListItem', position: 2, name: 'How to Use', item: 'https://tradeonair.com/how-to-use' },
+                { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://app.tradeonair.com' },
+                { '@type': 'ListItem', position: 2, name: 'How to Use', item: 'https://app.tradeonair.com/how-to-use' },
               ],
             }),
           }}

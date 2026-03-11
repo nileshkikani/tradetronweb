@@ -45,7 +45,7 @@ function TokyoApp(props) {
         />
         <meta name="robots" content="index, follow" />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://tradeonair.com/" />
+        <meta property="og:url" content="https://app.tradeonair.com/" />
         <meta property="og:title" content="TradeOnAir | Automated Algo Trading Platform" />
         <meta
           property="og:description"

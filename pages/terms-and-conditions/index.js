@@ -19,9 +19,9 @@ const TermsAndConditions = () => {
             content="tradeonair terms and conditions, algo trading platform terms, automated trading terms India, SEBI algo trading compliance"
           />
           <meta name="robots" content="index, follow" />
-          <link rel="canonical" href="https://tradeonair.com/terms-and-conditions" />
+          <link rel="canonical" href="https://app.tradeonair.com/terms-and-conditions" />
           <meta property="og:type" content="website" />
-          <meta property="og:url" content="https://tradeonair.com/terms-and-conditions" />
+          <meta property="og:url" content="https://app.tradeonair.com/terms-and-conditions" />
           <meta property="og:title" content="Terms and Conditions | TradeOnAir" />
           <meta
             property="og:description"
@@ -39,8 +39,8 @@ const TermsAndConditions = () => {
                 '@context': 'https://schema.org',
                 '@type': 'BreadcrumbList',
                 itemListElement: [
-                  { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://tradeonair.com' },
-                  { '@type': 'ListItem', position: 2, name: 'Terms & Conditions', item: 'https://tradeonair.com/terms-and-conditions' },
+                  { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://app.tradeonair.com' },
+                  { '@type': 'ListItem', position: 2, name: 'Terms & Conditions', item: 'https://app.tradeonair.com/terms-and-conditions' },
                 ],
               }),
             }}

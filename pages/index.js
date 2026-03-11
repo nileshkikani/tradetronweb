@@ -81,21 +81,21 @@ function Overview() {
         />
         <meta name="robots" content="index, follow" />
         <meta name="author" content="TradeOnAir" />
-        <link rel="canonical" href="https://tradeonair.com/" />
+        <link rel="canonical" href="https://app.tradeonair.com/" />
 
         {/* Open Graph */}
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://tradeonair.com/" />
+        <meta property="og:url" content="https://app.tradeonair.com/" />
         <meta property="og:title" content="TradeOnAir — Best Algo Trading Platform India | Automated Trading Bot" />
         <meta
           property="og:description"
           content="India's best algo trading platform. Automate NSE/BSE strategies with no code. Build, deploy and profit from algorithmic trading — free to start."
         />
-        <meta property="og:image" content="https://tradeonair.com/icon-512x512.png" />
+        <meta property="og:image" content="https://app.tradeonair.com/icon-512x512.png" />
 
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content="https://tradeonair.com/" />
+        <meta name="twitter:url" content="https://app.tradeonair.com/" />
         <meta name="twitter:title" content="TradeOnAir — Best Algo Trading Platform India | Automated Trading Bot" />
         <meta
           name="twitter:description"
@@ -110,8 +110,8 @@ function Overview() {
               '@context': 'https://schema.org',
               '@type': 'Organization',
               name: 'TradeOnAir',
-              url: 'https://tradeonair.com',
-              logo: 'https://tradeonair.com/TradeOnAir.svg',
+              url: 'https://app.tradeonair.com',
+              logo: 'https://app.tradeonair.com/TradeOnAir.svg',
               description: "India's leading algo trading platform enabling automated NSE and BSE trading strategies without coding.",
               foundingDate: '2022',
               areaServed: { '@type': 'Country', name: 'India' },
@@ -138,10 +138,10 @@ function Overview() {
               '@context': 'https://schema.org',
               '@type': 'WebSite',
               name: 'TradeOnAir',
-              url: 'https://tradeonair.com',
+              url: 'https://app.tradeonair.com',
               potentialAction: {
                 '@type': 'SearchAction',
-                target: 'https://tradeonair.com/?q={search_term_string}',
+                target: 'https://app.tradeonair.com/?q={search_term_string}',
                 'query-input': 'required name=search_term_string',
               },
             }),
@@ -251,7 +251,7 @@ function Overview() {
                   '@type': 'ListItem',
                   position: 1,
                   name: 'Home',
-                  item: 'https://tradeonair.com',
+                  item: 'https://app.tradeonair.com',
                 },
               ],
             }),

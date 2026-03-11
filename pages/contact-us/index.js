@@ -53,9 +53,9 @@ const ContactUs = () => {
         content="contact tradeonair, tradeonair support, algo trading help India, trading bot support, NSE BSE trading support"
       />
       <meta name="robots" content="index, follow" />
-      <link rel="canonical" href="https://tradeonair.com/contact-us" />
+      <link rel="canonical" href="https://app.tradeonair.com/contact-us" />
       <meta property="og:type" content="website" />
-      <meta property="og:url" content="https://tradeonair.com/contact-us" />
+      <meta property="og:url" content="https://app.tradeonair.com/contact-us" />
       <meta property="og:title" content="Contact TradeOnAir | Algo Trading Support India" />
       <meta
         property="og:description"
@@ -73,13 +73,13 @@ const ContactUs = () => {
             '@context': 'https://schema.org',
             '@type': 'ContactPage',
             name: 'Contact TradeOnAir',
-            url: 'https://tradeonair.com/contact-us',
+            url: 'https://app.tradeonair.com/contact-us',
             description: 'Contact TradeOnAir for algo trading support, strategy help, and broker integration assistance for Indian stock markets.',
             mainEntity: {
               '@type': 'Organization',
               name: 'TradeOnAir',
               email: 'support@tradeonair.com',
-              url: 'https://tradeonair.com',
+              url: 'https://app.tradeonair.com',
               areaServed: 'India',
             },
           }),
@@ -92,8 +92,8 @@ const ContactUs = () => {
             '@context': 'https://schema.org',
             '@type': 'BreadcrumbList',
             itemListElement: [
-              { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://tradeonair.com' },
-              { '@type': 'ListItem', position: 2, name: 'Contact Us', item: 'https://tradeonair.com/contact-us' },
+              { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://app.tradeonair.com' },
+              { '@type': 'ListItem', position: 2, name: 'Contact Us', item: 'https://app.tradeonair.com/contact-us' },
             ],
           }),
         }}
