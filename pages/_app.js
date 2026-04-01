@@ -62,10 +62,10 @@ function TokyoApp(props) {
         {/* ── Canonical URL: prevents duplicate-content between domains ── */}
         <link
           rel="canonical"
-          href={`https://app.tradeonair.com${router.asPath.split('?')[0]}`}
+          href={`https://app.tradeonair.com${(router.asPath || router.pathname || '').split('?')[0]}`}
         />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={`https://app.tradeonair.com${router.asPath.split('?')[0]}`} />
+        <meta property="og:url" content={`https://app.tradeonair.com${(router.asPath || router.pathname || '').split('?')[0]}`} />
         <meta property="og:title" content="TradeOnAir | Automated Algo Trading Platform" />
         <meta
           property="og:description"
