@@ -39,6 +39,10 @@ const redirects = {
 
 module.exports = withImages(
   calendarTranspile({
+    i18n: {
+      defaultLocale: "en",
+      locales: ["en"],
+    },
     redirects,
     async headers() {
       return [
