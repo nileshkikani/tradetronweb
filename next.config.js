@@ -32,28 +32,13 @@ const redirects = {
         destination: "/management/users",
       },
       // Eradicate /en/ ghost URLs to prevent SEO duplicate content penalties
-      {
-        source: '/en',
-        destination: '/',
-        permanent: true,
-        locale: false,
-      },
-      {
-        source: '/en/:path*',
-        destination: '/:path*',
-        permanent: true,
-        locale: false,
-      }
+      // Removed manual redirects: We accomplish this safely by deleting the i18n object below instead.
     ];
   },
 };
 
 module.exports = withImages(
   calendarTranspile({
-    i18n: {
-      defaultLocale: "en",
-      locales: ["en"],
-    },
     redirects,
     env: {
       EMA_SCALPING_URL: process.env.EMA_SCALPING_URL,
