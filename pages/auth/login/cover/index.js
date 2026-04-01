@@ -207,6 +207,16 @@ function LoginCover() {
           </Scrollbar>
         </SidebarWrapper> */}
         <MainContent>
+          {/* Fixed positioning to place it top-left on the entire screen */}
+          <Box sx={{ position: 'fixed', top: 24, left: 32, zIndex: 10 }}>
+            <Link href="/">
+              <img
+                src="/TradeOnAir.svg"
+                alt="TradeOnAir Logo"
+                style={{ width: 'auto', maxHeight: '42px', cursor: 'pointer' }}
+              />
+            </Link>
+          </Box>
           <Container
             sx={{
               display: 'flex',

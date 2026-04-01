@@ -297,3 +297,13 @@ export default Overview;
 Overview.getLayout = function getLayout(page) {
   return <BaseLayout>{page}</BaseLayout>;
 };
+
+// Enable SSG: pre-renders full HTML at build time so Googlebot & AI crawlers
+// see real content instead of an empty <div id="__next"> shell.
+export async function getStaticProps() {
+  return {
+    props: {},
+    // Re-generate page at most once per day in the background (ISR)
+    revalidate: 86400,
+  };
+}

@@ -31,6 +31,19 @@ const redirects = {
         source: "/management",
         destination: "/management/users",
       },
+      // Eradicate /en/ ghost URLs to prevent SEO duplicate content penalties
+      {
+        source: '/en',
+        destination: '/',
+        permanent: true,
+        locale: false,
+      },
+      {
+        source: '/en/:path*',
+        destination: '/:path*',
+        permanent: true,
+        locale: false,
+      }
     ];
   },
 };

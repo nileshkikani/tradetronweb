@@ -146,6 +146,7 @@ function Testimonials() {
                     <Avatar
                       src={testimonial.avatar}
                       sx={{ width: 50, height: 50, mr: 2 }}
+                      imgProps={{ width: 50, height: 50, loading: 'lazy' }}
                     >
                       {testimonial.name.charAt(0)}
                     </Avatar>

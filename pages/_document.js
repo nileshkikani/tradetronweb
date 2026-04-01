@@ -13,7 +13,7 @@ export default class MyDocument extends Document {
 
           {/* Favicon & PWA */}
           <link rel="icon" href="/favicon.ico" />
-          <link rel="apple-touch-icon" sizes="192x192" href="/icon-192x192.png" />
+          <link rel="apple-touch-icon" href="/TradeOnAir.svg" />
           <link rel="manifest" href="/manifest.json" />
           <meta name="theme-color" content="#1975ff" />
           <meta name="application-name" content="TradeOnAir" />
@@ -31,7 +31,7 @@ export default class MyDocument extends Document {
           <meta name="google-site-verification" content="vOY7fxQuwOndakbWeYYXJh1a4nnMGd_B4wcPXPpIeQ8" />
 
           {/* Default OG image (overridden per page) */}
-          <meta property="og:image" content="https://app.tradeonair.com/icon-512x512.png" />
+          <meta property="og:image" content="https://app.tradeonair.com/TradeOnAir.svg" />
           <meta property="og:image:width" content="512" />
           <meta property="og:image:height" content="512" />
           <meta property="og:image:alt" content="TradeOnAir - Algo Trading Platform India" />
@@ -41,14 +41,48 @@ export default class MyDocument extends Document {
           {/* Twitter Card defaults */}
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:site" content="@tradeonair" />
-          <meta name="twitter:image" content="https://app.tradeonair.com/icon-512x512.png" />
+          <meta name="twitter:image" content="https://app.tradeonair.com/TradeOnAir.svg" />
 
-          {/* Preload LCP video for faster first paint */}
-          <link rel="preload" href="/intro.mp4" as="video" type="video/mp4" />
+          {/* JSON-LD Schema (Organization & SoftwareApplication) */}
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@graph": [
+                  {
+                    "@type": "Organization",
+                    "name": "TradeOnAir",
+                    "url": "https://app.tradeonair.com",
+                    "logo": "https://app.tradeonair.com/TradeOnAir.svg",
+                    "contactPoint": {
+                      "@type": "ContactPoint",
+                      "contactType": "customer support",
+                      "availableLanguage": ["English", "Hindi"]
+                    }
+                  },
+                  {
+                    "@type": "SoftwareApplication",
+                    "name": "TradeOnAir",
+                    "applicationCategory": "FinanceApplication",
+                    "operatingSystem": "Web",
+                    "url": "https://app.tradeonair.com",
+                    "description": "Automated algorithmic trading platform for Indian markets (NSE & BSE). Connect your broker, build quant strategies without coding, and deploy instantly.",
+                    "offers": {
+                      "@type": "Offer",
+                      "price": "0",
+                      "priceCurrency": "INR",
+                      "availability": "https://schema.org/InStock"
+                    }
+                  }
+                ]
+              })
+            }}
+          />
 
-          {/* Fonts */}
-          <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+
+
+          {/* Fonts (Next.js automatically adds preconnects for Google Fonts) */}
           <link
             rel="stylesheet"
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"

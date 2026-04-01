@@ -8,6 +8,34 @@ Disallow: /blocks/
 Disallow: /status/
 Disallow: /api/
 
+# AI Crawlers
+User-agent: GPTBot
+Allow: /
+Disallow: /dashboards
+Disallow: /dashboards/
+Disallow: /auth/
+Disallow: /blocks/
+Disallow: /status/
+Disallow: /api/
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /dashboards
+Disallow: /dashboards/
+Disallow: /auth/
+Disallow: /blocks/
+Disallow: /status/
+Disallow: /api/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /dashboards
+Disallow: /dashboards/
+Disallow: /auth/
+Disallow: /blocks/
+Disallow: /status/
+Disallow: /api/
+
 # Host
 Host: https://app.tradeonair.com
 

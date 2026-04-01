@@ -141,9 +141,9 @@ function Logo() {
       <Box sx={{ position: 'relative', width: 83, height: 58, cursor: 'pointer', ml: 2 }}>
         <Image 
           src="/TradeOnAir.svg" 
-          alt="Bull Logo" 
-          layout="fill" 
-          objectFit="contain" 
+          alt="TradeOnAir Logo" 
+          width={83}
+          height={58}
         />
       </Box>
     </Link>

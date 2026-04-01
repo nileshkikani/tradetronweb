@@ -183,7 +183,7 @@ function Hero() {
               }}
               variant="h1"
             >
-              {t('Trading for Everyone')}
+              {t('Automated Algo Trading for Indian Markets')}
             </TypographyH1>
             <TypographyH2
               sx={{
@@ -195,7 +195,7 @@ function Hero() {
               color="text.secondary"
               fontWeight="normal"
             >
-              {t(" 'TradeOnAir has been created to empower strategy creators. How? By allowing them to automate their quant strategies and sell them to investors and traders the world over. The best part? You never have to write a single bit of code or download clunky algo trading software'")}
+              {t("TradeOnAir is an algorithmic trading platform for NSE & BSE. Connect your broker, build quant strategies without coding, and deploy automation instantly. The best part? You never have to write a single line of code or download clunky software.")}
             </TypographyH2>
           </Box>
         </Grid>

@@ -20,9 +20,6 @@ const HowToUse = () => {
     ({ theme }) => `
       flex: 1;
       padding: ${theme.spacing(4)} 0;
-      overflow-y: auto;
-      max-height: calc(100vh - 186px);
-      scrollbar-width: none;
     `
   );
 
@@ -474,3 +471,12 @@ const ImageCaption = styled(Typography)(
 };
 
 export default HowToUse;
+
+// Enable SSG: pre-renders full HTML at build time so Googlebot & AI crawlers
+// see real content instead of an empty <div id="__next"> shell.
+export async function getStaticProps() {
+  return {
+    props: {},
+    revalidate: 86400,
+  };
+}

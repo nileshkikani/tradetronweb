@@ -52,10 +52,6 @@ const TermsAndConditions = () => {
             minHeight: '100vh',
             backgroundColor: "#232a2e",
             color: "#CBCCD2",
-            overflowY: "auto",
-            maxHeight: "calc(100vh - 150px)",
-            
-            
         }}>
             <Container sx={{ 
                 flex: 1,
@@ -227,3 +223,12 @@ const TermsAndConditions = () => {
 };
 
 export default TermsAndConditions;
+
+// Enable SSG: pre-renders full HTML at build time so Googlebot & AI crawlers
+// see real content instead of an empty <div id="__next"> shell.
+export async function getStaticProps() {
+  return {
+    props: {},
+    revalidate: 86400,
+  };
+}
