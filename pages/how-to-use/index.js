@@ -477,6 +477,5 @@ export default HowToUse;
 export async function getStaticProps() {
   return {
     props: {},
-    revalidate: 86400,
   };
 }

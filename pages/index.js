@@ -303,7 +303,5 @@ Overview.getLayout = function getLayout(page) {
 export async function getStaticProps() {
   return {
     props: {},
-    // Re-generate page at most once per day in the background (ISR)
-    revalidate: 86400,
   };
 }
