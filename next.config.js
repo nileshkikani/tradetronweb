@@ -11,6 +11,18 @@ const withImages = require("next-images");
 const redirects = {
   async redirects() {
     return [
+      // Redirect legacy locale-prefixed URLs to canonical paths.
+      // This avoids runtime ISR renders for /en/* (which can time out on cache miss).
+      {
+        source: "/en",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/en/:path*",
+        destination: "/:path*",
+        permanent: true,
+      },
       {
         source: "/dashboards/healthcare",
         destination: "/dashboards/healthcare/doctor",
@@ -31,18 +43,15 @@ const redirects = {
         source: "/management",
         destination: "/management/users",
       },
-      // Eradicate /en/ ghost URLs to prevent SEO duplicate content penalties
-      // Removed manual redirects: We accomplish this safely by deleting the i18n object below instead.
     ];
   },
 };
 
 module.exports = withImages(
   calendarTranspile({
-    i18n: {
-      defaultLocale: "en",
-      locales: ["en"],
-    },
+    // NOTE: i18n is intentionally disabled. Keeping a single-locale i18n config
+    // causes Next/Vercel to serve locale-prefixed routes like /en which can
+    // trigger runtime ISR renders and timeouts on cache misses.
     redirects,
     async headers() {
       return [
