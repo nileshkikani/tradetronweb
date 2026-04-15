@@ -101,6 +101,22 @@ const menuItems = [
         link: '/dashboards/assets'
       },
       {
+        name: 'ITM_CE_PE',
+        icon: LocalMallIcon,
+        items: [
+          {
+            name: 'Premium Symbol',
+            link: '/dashboards/premium-assets',
+            badge: ''
+          },
+          {
+            name: 'Premium Data',
+            link: '/dashboards/premium-data',
+            badge: ''
+          }
+        ]
+      },
+      {
         name: 'Strategy',
         icon: AddchartIcon,
         // link: '/dashboards/banking',
