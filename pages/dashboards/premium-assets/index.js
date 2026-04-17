@@ -14,8 +14,8 @@ import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import AddTwoToneIcon from '@mui/icons-material/AddTwoTone';
 import WarningTwoToneIcon from '@mui/icons-material/WarningTwoTone';
 import SearchIcon from '@mui/icons-material/Search';
-import axios from 'axios';
 import useToast from 'src/hooks/useToast';
+import axiosInstance from 'src/utils/axios';
 
 function PremiumSymbol() {
   const { showToast } = useToast();
@@ -32,6 +32,7 @@ function PremiumSymbol() {
     premium_range: 0,
     strike_gap: 0,
     top_n: 0,
+    lot_size: 0,
     is_active: true
   });
   
@@ -47,7 +48,7 @@ function PremiumSymbol() {
   const fetchAssets = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${baseURL}premium/symbols/`);
+      const response = await axiosInstance.get(`${baseURL}premium/symbols/`);
       if (response.data && response.data.data) {
         setAssets(response.data.data);
       } else if (Array.isArray(response.data)) {
@@ -83,7 +84,7 @@ function PremiumSymbol() {
   const paginatedAssets = filteredAssets.slice(page * limit, page * limit + limit);
 
   const openCreateModal = () => {
-    setFormData({ id: null, name: '', premium_range: 0, strike_gap: 0, top_n: 0, is_active: true });
+    setFormData({ id: null, name: '', premium_range: 0, strike_gap: 0, top_n: 0, lot_size: 0, is_active: true });
     setCreateModalOpen(true);
   };
 
@@ -94,6 +95,7 @@ function PremiumSymbol() {
       premium_range: asset.premium_range,
       strike_gap: asset.strike_gap,
       top_n: asset.top_n,
+      lot_size: asset.lot_size || 0,
       is_active: asset.is_active
     });
     setEditModalOpen(true);
@@ -110,11 +112,12 @@ function PremiumSymbol() {
   const handleCreateSubmit = async () => {
     setSubmitting(true);
     try {
-      await axios.post(`${baseURL}premium/symbols/`, {
+      await axiosInstance.post(`${baseURL}premium/symbols/`, {
         name: formData.name,
         premium_range: parseFloat(formData.premium_range),
         strike_gap: parseInt(formData.strike_gap, 10),
         top_n: parseInt(formData.top_n, 10),
+        lot_size: parseInt(formData.lot_size, 10),
         is_active: formData.is_active
       });
       showToast('Asset created successfully', 'success');
@@ -131,10 +134,11 @@ function PremiumSymbol() {
   const handleEditSubmit = async () => {
     setSubmitting(true);
     try {
-      await axios.patch(`${baseURL}premium/symbol/update/${formData.id}/`, {
+      await axiosInstance.patch(`${baseURL}premium/symbol/update/${formData.id}/`, {
         premium_range: parseFloat(formData.premium_range),
         strike_gap: parseInt(formData.strike_gap, 10),
-        top_n: parseInt(formData.top_n, 10)
+        top_n: parseInt(formData.top_n, 10),
+        lot_size: parseInt(formData.lot_size, 10)
       });
       showToast('Asset updated successfully', 'success');
       setEditModalOpen(false);
@@ -150,7 +154,7 @@ function PremiumSymbol() {
   const handleDeactivateAll = async () => {
     setSubmitting(true);
     try {
-      await axios.post(`${baseURL}premium/symbols/deactivate/`);
+      await axiosInstance.post(`${baseURL}premium/symbols/deactivate/`);
       showToast('All assets deactivated successfully', 'success');
       setDeactivateModalOpen(false);
       fetchAssets();
@@ -230,6 +234,7 @@ function PremiumSymbol() {
                         <TableCell>Premium Range</TableCell>
                         <TableCell>Strike Gap</TableCell>
                         <TableCell>Top N</TableCell>
+                        <TableCell>Lot Size</TableCell>
                         <TableCell>Status</TableCell>
                         <TableCell align="right">Actions</TableCell>
                       </TableRow>
@@ -257,6 +262,7 @@ function PremiumSymbol() {
                             <TableCell>{asset.premium_range}</TableCell>
                             <TableCell>{asset.strike_gap}</TableCell>
                             <TableCell>{asset.top_n}</TableCell>
+                            <TableCell>{asset.lot_size}</TableCell>
                             <TableCell>
                               {asset.is_active ? (
                                 <Box sx={{ display: 'inline-block', px: 1.5, py: 0.5, borderRadius: 10, bgcolor: 'success.light', color: 'success.dark', fontWeight: 'bold', fontSize: '0.75rem' }}>
@@ -336,6 +342,14 @@ function PremiumSymbol() {
               value={formData.top_n}
               onChange={handleInputChange}
             />
+            <TextField
+              label="Lot Size"
+              type="number"
+              fullWidth
+              name="lot_size"
+              value={formData.lot_size}
+              onChange={handleInputChange}
+            />
             <FormControlLabel
               control={
                 <Switch
@@ -367,7 +381,7 @@ function PremiumSymbol() {
         </DialogTitle>
         <DialogContent dividers>
           <Typography variant="body2" sx={{ mb: 3 }} color="text.secondary">
-            Only Premium Range, Strike Gap, and Top N can be updated.
+            Only Premium Range, Strike Gap, Top N, and Lot Size can be updated.
           </Typography>
           <Box display="flex" flexDirection="column" gap={3}>
             <TextField
@@ -393,6 +407,14 @@ function PremiumSymbol() {
               fullWidth
               name="top_n"
               value={formData.top_n}
+              onChange={handleInputChange}
+            />
+            <TextField
+              label="Lot Size"
+              type="number"
+              fullWidth
+              name="lot_size"
+              value={formData.lot_size}
               onChange={handleInputChange}
             />
           </Box>

@@ -10,8 +10,8 @@ import {
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import axios from 'axios';
 import useToast from 'src/hooks/useToast';
+import axiosInstance from 'src/utils/axios';
 
 const SearchBar = ({ onSearch, disabled }) => {
   const [localStr, setLocalStr] = useState('');
@@ -59,7 +59,7 @@ function PremiumData() {
       const url = symbols 
         ? `${baseURL}premium/data/?symbols=${symbols}` 
         : `${baseURL}premium/data/`;
-      const response = await axios.get(url);
+      const response = await axiosInstance.get(url);
       
       let items = [];
       if (response.data && response.data.data) {
