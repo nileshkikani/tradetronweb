@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import ExtendedSidebarLayout from 'src/layouts/ExtendedSidebarLayout';
 import { Authenticated } from 'src/components/Authenticated';
@@ -50,10 +50,12 @@ function PremiumData() {
   const { showToast } = useToast();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const activeSymbolsRef = useRef('');
 
   const baseURL = process.env.EMA_SCALPING_URL;
 
   const fetchPremiumData = async (symbols = '') => {
+    activeSymbolsRef.current = symbols;
     setLoading(true);
     try {
       const url = symbols 
@@ -100,6 +102,12 @@ function PremiumData() {
 
   useEffect(() => {
     fetchPremiumData();
+
+    const intervalId = setInterval(() => {
+      fetchPremiumData(activeSymbolsRef.current);
+    }, 10 * 60 * 1000); // 10 minutes auto-refresh
+
+    return () => clearInterval(intervalId);
   }, []);
 
   const handleFilter = (searchStr) => {
