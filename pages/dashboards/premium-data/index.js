@@ -53,6 +53,8 @@ function PremiumData() {
   const activeSymbolsRef = useRef('');
   // Read ATR values set from Premium Assets page (localStorage)
   const [atrValues, setAtrValues] = useState({});
+  // Per-symbol selection: { [symbolName]: { call: optObj|null, put: optObj|null } }
+  const [selections, setSelections] = useState({});
 
   useEffect(() => {
     try {
@@ -141,7 +143,17 @@ function PremiumData() {
     );
   };
 
-  const OptionTable = ({ title, options, typeColor }) => (
+  const handleSelect = (symbolName, type, opt) => {
+    setSelections((prev) => {
+      const cur = prev[symbolName] || { call: null, put: null };
+      const key = type === 'CALL' ? 'call' : 'put';
+      // Toggle off if same row clicked again
+      const already = cur[key]?.strike === opt.strike;
+      return { ...prev, [symbolName]: { ...cur, [key]: already ? null : opt } };
+    });
+  };
+
+  const OptionTable = ({ title, options, typeColor, symbolName, selectionType, selectedStrike }) => (
     <Box sx={{ height: '100%' }}>
       <Box sx={{ bgcolor: `${typeColor}.lighter`, p: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}>
         <Typography variant="subtitle2" color={`${typeColor}.main`} sx={{ letterSpacing: 1 }}>{title}</Typography>
@@ -155,23 +167,43 @@ function PremiumData() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {options.map(opt => (
-            <TableRow hover key={opt.strike}>
-              <TableCell sx={{ p: 1 }}>{opt.strike}</TableCell>
-              <TableCell sx={{ p: 1, color: typeColor === 'success' ? 'primary.main' : 'error.main' }}>
-                {opt.ltp}
-              </TableCell>
-              <TableCell sx={{ p: 1 }} align="right">
-                 <PremiumPill val={opt.premium} />
+          {options.map(opt => {
+            const isSelected = selectedStrike === opt.strike;
+            return (
+              <TableRow
+                hover
+                key={opt.strike}
+                onClick={() => handleSelect(symbolName, selectionType, opt)}
+                sx={{
+                  cursor: 'pointer',
+                  bgcolor: isSelected
+                    ? (typeColor === 'success' ? 'success.lighter' : 'error.lighter')
+                    : 'transparent',
+                  '&:hover': {
+                    bgcolor: isSelected
+                      ? (typeColor === 'success' ? 'success.light' : 'error.light')
+                      : undefined
+                  }
+                }}
+              >
+                <TableCell sx={{ p: 1, fontWeight: isSelected ? 'bold' : 'normal' }}>
+                  {isSelected ? '✓ ' : ''}{opt.strike}
+                </TableCell>
+                <TableCell sx={{ p: 1, color: typeColor === 'success' ? 'primary.main' : 'error.main', fontWeight: isSelected ? 'bold' : 'normal' }}>
+                  {opt.ltp}
+                </TableCell>
+                <TableCell sx={{ p: 1 }} align="right">
+                  <PremiumPill val={opt.premium} />
+                </TableCell>
+              </TableRow>
+            );
+          })}
+          {options.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={3} align="center" sx={{ py: 3 }}>
+                <Typography variant="caption" color="text.secondary">No Active Strikes</Typography>
               </TableCell>
             </TableRow>
-          ))}
-          {options.length === 0 && (
-             <TableRow>
-                <TableCell colSpan={3} align="center" sx={{ py: 3 }}>
-                    <Typography variant="caption" color="text.secondary">No Active Strikes</Typography>
-                </TableCell>
-             </TableRow>
           )}
         </TableBody>
       </Table>
@@ -206,8 +238,15 @@ function PremiumData() {
         ) : (
           <Grid container spacing={3}>
             {data.map((symbol) => {
-              const calls = (symbol.options || []).filter(o => o.option_type === 'CALL').sort((a, b) => b.strike - a.strike); // or a.strike - b.strike
-              const puts = (symbol.options || []).filter(o => o.option_type === 'PUT').sort((a, b) => b.strike - a.strike);
+              const calls = (symbol.options || []).filter(o => o.option_type === 'CALL').sort((a, b) => b.strike - a.strike);
+              const puts  = (symbol.options || []).filter(o => o.option_type === 'PUT').sort((a, b) => b.strike - a.strike);
+              const sel   = selections[symbol.name] || { call: null, put: null };
+              const lotSize = symbol.lot_size || 0;
+
+              const callPremium = sel.call ? (parseFloat(sel.call.premium) || 0) : 0;
+              const putPremium  = sel.put  ? (parseFloat(sel.put.premium)  || 0) : 0;
+              const maxRisk     = (callPremium * lotSize) + (putPremium * lotSize);
+              const hasSelection = sel.call || sel.put;
 
               return (
                 <Grid item xs={12} md={6} lg={4} xl={4} key={symbol.name}>
@@ -216,7 +255,6 @@ function PremiumData() {
                       title={
                         <Box>
                           <Typography variant="h4">{symbol.name}</Typography>
-                          {/* <Typography variant="caption" color="text.secondary">NSE · {symbol.name.toUpperCase()}</Typography> */}
                         </Box>
                       }
                       action={
@@ -239,13 +277,56 @@ function PremiumData() {
                     <CardContent sx={{ p: 0, flexGrow: 1 }}>
                       <Grid container sx={{ height: '100%' }}>
                         <Grid item xs={6} sx={{ borderRight: '1px solid', borderColor: 'divider' }}>
-                          <OptionTable title="CALLS" options={calls} typeColor="success" />
+                          <OptionTable
+                            title="CALLS"
+                            options={calls}
+                            typeColor="success"
+                            symbolName={symbol.name}
+                            selectionType="CALL"
+                            selectedStrike={sel.call?.strike}
+                          />
                         </Grid>
                         <Grid item xs={6}>
-                          <OptionTable title="PUTS" options={puts} typeColor="error" />
+                          <OptionTable
+                            title="PUTS"
+                            options={puts}
+                            typeColor="error"
+                            symbolName={symbol.name}
+                            selectionType="PUT"
+                            selectedStrike={sel.put?.strike}
+                          />
                         </Grid>
                       </Grid>
                     </CardContent>
+
+                    {/* Max Risk Footer */}
+                    <Box sx={{
+                      borderTop: '1px solid',
+                      borderColor: 'divider',
+                      px: 2, py: 1.5,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      bgcolor: hasSelection ? 'warning.lighter' : 'background.default'
+                    }}>
+                      <Box>
+                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', lineHeight: 1.2 }}>
+                          {sel.call ? `C: Strike ${sel.call.strike} · Premium ${sel.call.premium}` : 'No Call selected'}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', lineHeight: 1.2 }}>
+                          {sel.put ? `P: Strike ${sel.put.strike} · Premium ${sel.put.premium}` : 'No Put selected'}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ textAlign: 'right' }}>
+                        <Typography variant="caption" color="text.secondary">Max Risk</Typography>
+                        <Typography variant="h5" color={hasSelection ? 'warning.dark' : 'text.disabled'} sx={{ fontWeight: 'bold' }}>
+                          {hasSelection ? `₹${maxRisk.toFixed(2)}` : '—'}
+                        </Typography>
+                        {lotSize > 0 && (
+                          <Typography variant="caption" color="text.secondary">Lot: {lotSize}</Typography>
+                        )}
+                      </Box>
+                    </Box>
                   </Card>
                 </Grid>
               );
