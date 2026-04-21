@@ -51,6 +51,15 @@ function PremiumData() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const activeSymbolsRef = useRef('');
+  // Read ATR values set from Premium Assets page (localStorage)
+  const [atrValues, setAtrValues] = useState({});
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('premiumAssetATR');
+      setAtrValues(stored ? JSON.parse(stored) : {});
+    } catch {}
+  }, []);
 
   const baseURL = process.env.EMA_SCALPING_URL;
 
@@ -211,9 +220,19 @@ function PremiumData() {
                         </Box>
                       }
                       action={
-                        <Typography variant="h4" sx={{ mt: 1 }}>
-                          &#8377;{symbol.price}
-                        </Typography>
+                        <Box display="flex" alignItems="center" gap={1.5} sx={{ mt: 0.5 }}>
+                          <Box sx={{
+                            display: 'inline-flex', alignItems: 'center', gap: 0.5,
+                            px: 1.5, py: 0.4, borderRadius: 10,
+                            bgcolor: 'info.lighter', color: 'info.dark',
+                            fontWeight: 'bold', fontSize: '0.75rem'
+                          }}>
+                            ATR:&nbsp;{atrValues[symbol.name] ?? 0}
+                          </Box>
+                          <Typography variant="h4">
+                            &#8377;{symbol.price}
+                          </Typography>
+                        </Box>
                       }
                       sx={{ borderBottom: '1px solid', borderColor: 'divider', bgcolor: 'background.default' }}
                     />

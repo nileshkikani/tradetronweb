@@ -21,6 +21,13 @@ function PremiumSymbol() {
   const { showToast } = useToast();
   const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(false);
+  // ATR values keyed by asset id – persisted in localStorage
+  const [atrValues, setAtrValues] = useState(() => {
+    try {
+      const stored = localStorage.getItem('premiumAssetATR');
+      return stored ? JSON.parse(stored) : {};
+    } catch { return {}; }
+  });
   
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -33,6 +40,7 @@ function PremiumSymbol() {
     strike_gap: 0,
     top_n: 0,
     lot_size: 0,
+    atr: 0,
     is_active: true
   });
   
@@ -84,11 +92,12 @@ function PremiumSymbol() {
   const paginatedAssets = filteredAssets.slice(page * limit, page * limit + limit);
 
   const openCreateModal = () => {
-    setFormData({ id: null, name: '', premium_range: 0, strike_gap: 0, top_n: 0, lot_size: 0, is_active: true });
+    setFormData({ id: null, name: '', premium_range: 0, strike_gap: 0, top_n: 0, lot_size: 0, atr: 0, is_active: true });
     setCreateModalOpen(true);
   };
 
   const openEditModal = (asset) => {
+    const key = asset.name;
     setFormData({
       id: asset.id,
       name: asset.name,
@@ -96,6 +105,7 @@ function PremiumSymbol() {
       strike_gap: asset.strike_gap,
       top_n: asset.top_n,
       lot_size: asset.lot_size || 0,
+      atr: atrValues[key] ?? 0,
       is_active: asset.is_active
     });
     setEditModalOpen(true);
@@ -139,6 +149,13 @@ function PremiumSymbol() {
         strike_gap: parseInt(formData.strike_gap, 10),
         top_n: parseInt(formData.top_n, 10),
         lot_size: parseInt(formData.lot_size, 10)
+      });
+      // Persist ATR in localStorage (not sent to API)
+      const key = formData.name;
+      setAtrValues((prev) => {
+        const next = { ...prev, [key]: parseFloat(formData.atr) || 0 };
+        try { localStorage.setItem('premiumAssetATR', JSON.stringify(next)); } catch {}
+        return next;
       });
       showToast('Asset updated successfully', 'success');
       setEditModalOpen(false);
@@ -235,6 +252,7 @@ function PremiumSymbol() {
                         <TableCell>Strike Gap</TableCell>
                         <TableCell>Top N</TableCell>
                         <TableCell>Lot Size</TableCell>
+                        <TableCell>ATR</TableCell>
                         <TableCell>Status</TableCell>
                         <TableCell align="right">Actions</TableCell>
                       </TableRow>
@@ -242,13 +260,13 @@ function PremiumSymbol() {
                     <TableBody>
                       {loading ? (
                         <TableRow>
-                          <TableCell colSpan={7} align="center" sx={{ py: 5 }}>
+                          <TableCell colSpan={8} align="center" sx={{ py: 5 }}>
                             <CircularProgress />
                           </TableCell>
                         </TableRow>
                       ) : paginatedAssets.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={7} align="center" sx={{ py: 5 }}>
+                          <TableCell colSpan={8} align="center" sx={{ py: 5 }}>
                             <Typography variant="body1" color="text.secondary">
                               No premium assets found.
                             </Typography>
@@ -263,6 +281,7 @@ function PremiumSymbol() {
                             <TableCell>{asset.strike_gap}</TableCell>
                             <TableCell>{asset.top_n}</TableCell>
                             <TableCell>{asset.lot_size}</TableCell>
+                            <TableCell>{atrValues[asset.name] ?? 0}</TableCell>
                             <TableCell>
                               {asset.is_active ? (
                                 <Box sx={{ display: 'inline-block', px: 1.5, py: 0.5, borderRadius: 10, bgcolor: 'success.light', color: 'success.dark', fontWeight: 'bold', fontSize: '0.75rem' }}>
@@ -381,7 +400,7 @@ function PremiumSymbol() {
         </DialogTitle>
         <DialogContent dividers>
           <Typography variant="body2" sx={{ mb: 3 }} color="text.secondary">
-            Only Premium Range, Strike Gap, Top N, and Lot Size can be updated.
+            Only Premium Range, Strike Gap, Top N, Lot Size, and ATR can be updated.
           </Typography>
           <Box display="flex" flexDirection="column" gap={3}>
             <TextField
@@ -416,6 +435,16 @@ function PremiumSymbol() {
               name="lot_size"
               value={formData.lot_size}
               onChange={handleInputChange}
+            />
+            <TextField
+              label="ATR"
+              type="number"
+              inputProps={{ step: "0.01" }}
+              fullWidth
+              name="atr"
+              value={formData.atr}
+              onChange={handleInputChange}
+              helperText="Stored locally, not synced with server"
             />
           </Box>
         </DialogContent>
