@@ -55,6 +55,7 @@ function PremiumData() {
   const [atrValues, setAtrValues] = useState({});
   // Per-symbol selection: { [symbolName]: { call: optObj|null, put: optObj|null } }
   const [selections, setSelections] = useState({});
+  const [localSearchTerm, setLocalSearchTerm] = useState('');
 
   useEffect(() => {
     try {
@@ -210,6 +211,10 @@ function PremiumData() {
     </Box>
   );
 
+  const filteredData = data.filter((symbol) =>
+    symbol.name.toLowerCase().includes(localSearchTerm.toLowerCase())
+  );
+
   return (
     <>
       <Head>
@@ -236,8 +241,31 @@ function PremiumData() {
             </CardContent>
           </Card>
         ) : (
-          <Grid container spacing={3}>
-            {data.map((symbol) => {
+          <>
+            <Box mb={3} display="flex" justifyContent="flex-start">
+              <TextField
+                size="small"
+                placeholder="e.g. ABFRL"
+                value={localSearchTerm}
+                onChange={(e) => setLocalSearchTerm(e.target.value)}
+                autoComplete="off"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  )
+                }}
+                sx={{ 
+                  minWidth: 250, 
+                  bgcolor: 'background.paper', 
+                  borderRadius: 1,
+                  boxShadow: (theme) => theme.shadows[1]
+                }}
+              />
+            </Box>
+            <Grid container spacing={3}>
+            {filteredData.map((symbol) => {
               const calls = (symbol.options || []).filter(o => o.option_type === 'CALL').sort((a, b) => b.strike - a.strike);
               const puts  = (symbol.options || []).filter(o => o.option_type === 'PUT').sort((a, b) => b.strike - a.strike);
               const sel   = selections[symbol.name] || { call: null, put: null };
@@ -332,6 +360,7 @@ function PremiumData() {
               );
             })}
           </Grid>
+          </>
         )}
       </Container>
     </>
