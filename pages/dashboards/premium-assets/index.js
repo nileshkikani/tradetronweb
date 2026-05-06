@@ -40,7 +40,6 @@ function PremiumSymbol() {
     strike_gap: 0,
     top_n: 0,
     lot_size: 0,
-    atr: 0,
     is_active: true
   });
   
@@ -92,12 +91,11 @@ function PremiumSymbol() {
   const paginatedAssets = filteredAssets.slice(page * limit, page * limit + limit);
 
   const openCreateModal = () => {
-    setFormData({ id: null, name: '', premium_range: 0, strike_gap: 0, top_n: 0, lot_size: 0, atr: 0, is_active: true });
+    setFormData({ id: null, name: '', premium_range: 0, strike_gap: 0, top_n: 0, lot_size: 0, is_active: true });
     setCreateModalOpen(true);
   };
 
   const openEditModal = (asset) => {
-    const key = asset.name;
     setFormData({
       id: asset.id,
       name: asset.name,
@@ -105,7 +103,6 @@ function PremiumSymbol() {
       strike_gap: asset.strike_gap,
       top_n: asset.top_n,
       lot_size: asset.lot_size || 0,
-      atr: atrValues[key] ?? 0,
       is_active: asset.is_active
     });
     setEditModalOpen(true);
@@ -150,13 +147,6 @@ function PremiumSymbol() {
         top_n: parseInt(formData.top_n, 10),
         lot_size: parseInt(formData.lot_size, 10)
       });
-      // Persist ATR in localStorage (not sent to API)
-      const key = formData.name;
-      setAtrValues((prev) => {
-        const next = { ...prev, [key]: parseFloat(formData.atr) || 0 };
-        try { localStorage.setItem('premiumAssetATR', JSON.stringify(next)); } catch {}
-        return next;
-      });
       showToast('Asset updated successfully', 'success');
       setEditModalOpen(false);
       fetchAssets();
@@ -181,6 +171,27 @@ function PremiumSymbol() {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleQuickAtrChange = (name, value) => {
+    setAtrValues((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleQuickAtrSave = (name, value) => {
+    const numericValue = parseFloat(value) || 0;
+    setAtrValues((prev) => {
+      const next = { ...prev, [name]: numericValue };
+      try {
+        localStorage.setItem('premiumAssetATR', JSON.stringify(next));
+      } catch (e) {
+        console.error('Error saving ATR:', e);
+      }
+      return next;
+    });
+    showToast(`ATR for ${name} updated to ${numericValue}`, 'success');
   };
 
   return (
@@ -281,7 +292,26 @@ function PremiumSymbol() {
                             <TableCell>{asset.strike_gap}</TableCell>
                             <TableCell>{asset.top_n}</TableCell>
                             <TableCell>{asset.lot_size}</TableCell>
-                            <TableCell>{atrValues[asset.name] ?? 0}</TableCell>
+                            <TableCell>
+                              <TextField
+                                size="small"
+                                type="number"
+                                variant="standard"
+                                value={atrValues[asset.name] ?? 0}
+                                onChange={(e) => handleQuickAtrChange(asset.name, e.target.value)}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    handleQuickAtrSave(asset.name, e.target.value);
+                                    e.target.blur();
+                                  }
+                                }}
+                                sx={{ width: 80 }}
+                                InputProps={{
+                                  disableUnderline: true,
+                                  sx: { fontSize: '0.875rem' }
+                                }}
+                              />
+                            </TableCell>
                             <TableCell>
                               {asset.is_active ? (
                                 <Box sx={{ display: 'inline-block', px: 1.5, py: 0.5, borderRadius: 10, bgcolor: 'success.light', color: 'success.dark', fontWeight: 'bold', fontSize: '0.75rem' }}>
@@ -400,7 +430,7 @@ function PremiumSymbol() {
         </DialogTitle>
         <DialogContent dividers>
           <Typography variant="body2" sx={{ mb: 3 }} color="text.secondary">
-            Only Premium Range, Strike Gap, Top N, Lot Size, and ATR can be updated.
+            Only Premium Range, Strike Gap, Top N, and Lot Size can be updated.
           </Typography>
           <Box display="flex" flexDirection="column" gap={3}>
             <TextField
@@ -435,16 +465,6 @@ function PremiumSymbol() {
               name="lot_size"
               value={formData.lot_size}
               onChange={handleInputChange}
-            />
-            <TextField
-              label="ATR"
-              type="number"
-              inputProps={{ step: "0.01" }}
-              fullWidth
-              name="atr"
-              value={formData.atr}
-              onChange={handleInputChange}
-              helperText="Stored locally, not synced with server"
             />
           </Box>
         </DialogContent>
