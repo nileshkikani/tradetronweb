@@ -117,9 +117,22 @@ const menuItems = [
         ]
       },
       {
-        name: 'OI Analysis',
+        name: 'Options OI Analysis',
         icon: LocalMallIcon,
-        link: '/dashboards/oi-analysis',
+        items: [
+          {
+            name: 'OI Analysis',
+            link: '/dashboards/oi-analysis',
+          },
+          {
+            name: 'Changes and Ratios',
+            link: '/dashboards/oi-changes-and-ratios',
+          },
+          {
+            name: 'Signals',
+            link: '/dashboards/signals',
+          }
+        ]
       },
       {
         name: 'Strategy',
