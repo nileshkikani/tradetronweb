@@ -117,6 +117,11 @@ const menuItems = [
         ]
       },
       {
+        name: 'OI Analysis',
+        icon: LocalMallIcon,
+        link: '/dashboards/oi-analysis',
+      },
+      {
         name: 'Strategy',
         icon: AddchartIcon,
         // link: '/dashboards/banking',
