@@ -131,6 +131,10 @@ const menuItems = [
           {
             name: 'Signals',
             link: '/dashboards/signals',
+          },
+          {
+            name: 'Participants Data',
+            link: '/dashboards/participants-data',
           }
         ]
       },
