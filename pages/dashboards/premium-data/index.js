@@ -52,21 +52,12 @@ function PremiumData() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const activeSymbolsRef = useRef('');
-  // Read ATR values set from Premium Assets page (localStorage)
-  const [atrValues, setAtrValues] = useState({});
   // Front-month futures LTP via server (expiry API + Angel master/search + Smart Stream)
   const [futQuotes, setFutQuotes] = useState({});
   const [futExpiryHint, setFutExpiryHint] = useState('');
   // Per-symbol selection: { [symbolName]: { call: optObj|null, put: optObj|null } }
   const [selections, setSelections] = useState({});
   const [localSearchTerm, setLocalSearchTerm] = useState('');
-
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem('premiumAssetATR');
-      setAtrValues(stored ? JSON.parse(stored) : {});
-    } catch {}
-  }, []);
 
   const baseURL = process.env.EMA_SCALPING_URL;
 
@@ -357,7 +348,7 @@ function PremiumData() {
                             bgcolor: 'info.lighter', color: 'info.dark',
                             fontWeight: 'bold', fontSize: '0.75rem'
                           }}>
-                            ATR:&nbsp;{atrValues[symbol.name] ?? 0}
+                            ATR:&nbsp;{symbol.atr ?? 0}
                           </Box>
                           <Box
                             title={

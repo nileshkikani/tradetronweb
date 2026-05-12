@@ -21,13 +21,9 @@ function PremiumSymbol() {
   const { showToast } = useToast();
   const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(false);
-  // ATR values keyed by asset id – persisted in localStorage
-  const [atrValues, setAtrValues] = useState(() => {
-    try {
-      const stored = localStorage.getItem('premiumAssetATR');
-      return stored ? JSON.parse(stored) : {};
-    } catch { return {}; }
-  });
+  // In-flight edits only; persisted ATR comes from GET `asset.atr`
+  const [atrDraft, setAtrDraft] = useState({});
+  const [atrSavingId, setAtrSavingId] = useState(null);
   
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -173,25 +169,37 @@ function PremiumSymbol() {
     }
   };
 
-  const handleQuickAtrChange = (name, value) => {
-    setAtrValues((prev) => ({
+  const handleQuickAtrChange = (assetId, value) => {
+    setAtrDraft((prev) => ({
       ...prev,
-      [name]: value
+      [assetId]: value
     }));
   };
 
-  const handleQuickAtrSave = (name, value) => {
+  const handleQuickAtrSave = async (asset, value) => {
+    if (asset?.id == null) {
+      showToast('Cannot update ATR: missing asset id', 'error');
+      return;
+    }
     const numericValue = parseFloat(value) || 0;
-    setAtrValues((prev) => {
-      const next = { ...prev, [name]: numericValue };
-      try {
-        localStorage.setItem('premiumAssetATR', JSON.stringify(next));
-      } catch (e) {
-        console.error('Error saving ATR:', e);
-      }
-      return next;
-    });
-    showToast(`ATR for ${name} updated to ${numericValue}`, 'success');
+    setAtrSavingId(asset.id);
+    try {
+      await axiosInstance.patch(`${baseURL}premium/symbol/update/${asset.id}/`, {
+        atr: numericValue
+      });
+      setAtrDraft((prev) => {
+        const next = { ...prev };
+        delete next[asset.id];
+        return next;
+      });
+      showToast(`ATR for ${asset.name} updated to ${numericValue}`, 'success');
+      fetchAssets();
+    } catch (error) {
+      console.error('ATR update error:', error);
+      showToast(error.response?.data?.message || 'Failed to update ATR', 'error');
+    } finally {
+      setAtrSavingId(null);
+    }
   };
 
   return (
@@ -297,11 +305,16 @@ function PremiumSymbol() {
                                 size="small"
                                 type="number"
                                 variant="standard"
-                                value={atrValues[asset.name] ?? 0}
-                                onChange={(e) => handleQuickAtrChange(asset.name, e.target.value)}
+                                disabled={atrSavingId === asset.id}
+                                value={
+                                  atrDraft[asset.id] !== undefined
+                                    ? atrDraft[asset.id]
+                                    : asset.atr ?? ''
+                                }
+                                onChange={(e) => handleQuickAtrChange(asset.id, e.target.value)}
                                 onKeyDown={(e) => {
                                   if (e.key === 'Enter') {
-                                    handleQuickAtrSave(asset.name, e.target.value);
+                                    handleQuickAtrSave(asset, e.target.value);
                                     e.target.blur();
                                   }
                                 }}
