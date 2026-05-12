@@ -48,7 +48,7 @@ export default async function handler(req, res) {
     const expiry_date = await fetchExpiryDate(clientAuth);
 
     const runQuotes = async (refreshSession) => {
-      const { jwtRaw } = await getAngelSession(refreshSession);
+      const { jwtRaw, apiKey } = await getAngelSession(refreshSession);
 
       /** Fresh session each call so reconnect picks up rotated feed/jwt tokens. */
       const getStreamerSession = async () => {
