@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { generateSync } = require('otplib');
+const { totpSixDigits } = require('./totpSha1');
 
 const ANGEL_ROOT = 'https://apiconnect.angelone.in';
 const LOGIN_PATH = '/rest/auth/angelbroking/user/v1/loginByPassword';
@@ -33,7 +33,7 @@ async function angelLoginFresh() {
     throw new Error('Angel credentials missing (ANGEL_API_KEY, ANGEL_CLIENT_CODE, ANGEL_PIN, ANGEL_TOTP_SECRET)');
   }
 
-  const totp = generateSync({ secret: totpSecret });
+  const totp = totpSixDigits(totpSecret);
   const url = `${ANGEL_ROOT}${LOGIN_PATH}`;
   const { data } = await axios.post(url, { clientcode: clientCode, password, totp }, { headers: loginHeaders(apiKey), timeout: 20000 });
 
