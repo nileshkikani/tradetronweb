@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import axios from 'axios';
 import useToast from 'src/hooks/useToast';
 import axiosInstance from 'src/utils/axios';
 
@@ -53,6 +54,9 @@ function PremiumData() {
   const activeSymbolsRef = useRef('');
   // Read ATR values set from Premium Assets page (localStorage)
   const [atrValues, setAtrValues] = useState({});
+  // Front-month futures LTP via server (expiry API + Angel master/search + Smart Stream)
+  const [futQuotes, setFutQuotes] = useState({});
+  const [futExpiryHint, setFutExpiryHint] = useState('');
   // Per-symbol selection: { [symbolName]: { call: optObj|null, put: optObj|null } }
   const [selections, setSelections] = useState({});
   const [localSearchTerm, setLocalSearchTerm] = useState('');
@@ -121,6 +125,66 @@ function PremiumData() {
 
     return () => clearInterval(intervalId);
   }, []);
+
+  useEffect(() => {
+    if (!data.length) return undefined;
+
+    const names = [...new Set(data.map((r) => r.name).filter(Boolean))];
+    let cancelled = false;
+
+    const authHeaders = () => {
+      const t = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+      return t ? { Authorization: `Bearer ${t}` } : {};
+    };
+
+    async function bootstrapFuturesHub() {
+      try {
+        const response = await axios.post(
+          '/api/premium/futures-ltp',
+          { names },
+          { headers: { ...authHeaders() } }
+        );
+        if (cancelled) return;
+        if (response.data?.ok) {
+          setFutQuotes(response.data.quotes || {});
+          setFutExpiryHint(response.data.expiry_date || '');
+        }
+      } catch (e) {
+        if (!cancelled) console.warn('futures-ltp bootstrap:', e.message);
+      }
+    }
+
+    bootstrapFuturesHub();
+
+    const POLL_MS = 60 * 1000;
+    const snapId = setInterval(async () => {
+      if (cancelled || !names.length) return;
+      try {
+        const response = await axios.post(
+          '/api/premium/futures-ltp-snapshot',
+          { names },
+          { headers: { ...authHeaders() } }
+        );
+        if (cancelled || !response.data?.ok) return;
+        const q = response.data.quotes || {};
+        if (!Object.keys(q).length) return;
+        setFutQuotes((prev) => {
+          const next = { ...prev };
+          for (const [k, v] of Object.entries(q)) {
+            next[k] = v && typeof v.ltp === 'number' ? { ...prev[k], ...v } : next[k];
+          }
+          return next;
+        });
+      } catch (_) {
+        /* keep last ticks */
+      }
+    }, POLL_MS);
+
+    return () => {
+      cancelled = true;
+      clearInterval(snapId);
+    };
+  }, [data]);
 
   const handleFilter = (searchStr) => {
     const cleanSyms = searchStr.replace(/\s+/g, '');
@@ -294,6 +358,24 @@ function PremiumData() {
                             fontWeight: 'bold', fontSize: '0.75rem'
                           }}>
                             ATR:&nbsp;{atrValues[symbol.name] ?? 0}
+                          </Box>
+                          <Box
+                            title={
+                              futQuotes[symbol.name]?.futSymbol
+                                ? `${futQuotes[symbol.name].futSymbol}${futExpiryHint ? ` · ${futExpiryHint}` : ''}`
+                                : (futExpiryHint ? `Expiry ${futExpiryHint}` : '')
+                            }
+                            sx={{
+                              display: 'inline-flex', alignItems: 'center',
+                              px: 1.5, py: 0.4, borderRadius: 10,
+                              bgcolor: 'secondary.lighter', color: 'secondary.dark',
+                              fontWeight: 'bold', fontSize: '0.75rem'
+                            }}
+                          >
+                            FUT1:&nbsp;
+                            {futQuotes[symbol.name]?.ltp != null && Number.isFinite(futQuotes[symbol.name].ltp)
+                              ? `₹${Number(futQuotes[symbol.name].ltp).toFixed(2)}`
+                              : '—'}
                           </Box>
                           <Typography variant="h4">
                             &#8377;{symbol.price}
