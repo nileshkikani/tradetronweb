@@ -135,6 +135,10 @@ const menuItems = [
           {
             name: 'Participants Data',
             link: '/dashboards/participants-data',
+          },
+          {
+            name:"Smart Money Analysis",
+            link: '/dashboards/smart-money-analysis',
           }
         ]
       },
