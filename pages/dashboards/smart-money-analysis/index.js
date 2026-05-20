@@ -112,6 +112,7 @@ function SmartMoneyAnalysis() {
     const [smData, setSmData] = useState([]);
     const [smEodData, setSmEodData] = useState([]);
     const [smCompare, setSmCompare] = useState(null);
+    const [compareError, setCompareError] = useState(null);
     const [loading, setLoading] = useState(false);
     const [eodLoading, setEodLoading] = useState(false);
     const [compareLoading, setCompareLoading] = useState(false);
@@ -174,14 +175,24 @@ function SmartMoneyAnalysis() {
     const fetchSmartMoneyCompare = async (date) => {
         try {
             setCompareLoading(true);
+            setCompareError(null);
             const response = await axiosInstance.get(
                 `/oi-data/compare/?date=${date}`
             );
-            setSmCompare(parseSmartMoneyCompare(response));
+            const { error, data } = parseSmartMoneyCompare(response);
+            setCompareError(error);
+            setSmCompare(data);
         } catch (error) {
             console.error('Error fetching smart money compare data:', error);
-            showToast('Failed to fetch SM vs FII compare data', 'error');
-            setSmCompare(null);
+            const apiError = error?.response?.data?.error;
+            if (apiError) {
+                setCompareError(String(apiError));
+                setSmCompare(null);
+            } else {
+                showToast('Failed to fetch SM vs FII compare data', 'error');
+                setCompareError(null);
+                setSmCompare(null);
+            }
         } finally {
             setCompareLoading(false);
         }
@@ -973,6 +984,14 @@ function SmartMoneyAnalysis() {
                                     >
                                         <CircularProgress />
                                     </Box>
+                                ) : compareError ? (
+                                    <Typography
+                                        variant="body1"
+                                        color="text.secondary"
+                                        sx={{ py: 4, textAlign: 'center' }}
+                                    >
+                                        {compareError}
+                                    </Typography>
                                 ) : !smCompare ? (
                                     <Typography
                                         variant="body1"

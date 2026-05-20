@@ -55,13 +55,29 @@ export function parseSmartMoneyRows(response) {
   return [];
 }
 
-/** Smart-money vs FII compare API: GET returns { date, sm_*: { sm_value, fii_value, capture_percent } }. */
+const SM_COMPARE_METRIC_KEYS = [
+  'sm_ce_oi_cum',
+  'sm_pe_oi_cum',
+  'sm_cum_call_long',
+  'sm_cum_put_short',
+  'sm_cum_call_short',
+  'sm_cum_put_long',
+];
+
+/** Smart-money vs FII compare API: GET returns { date, sm_* } or { error: string }. */
 export function parseSmartMoneyCompare(response) {
   const body = response?.data;
   if (!body || typeof body !== 'object' || Array.isArray(body)) {
-    return null;
+    return { error: null, data: null };
   }
-  return body;
+  if (body.error) {
+    return { error: String(body.error), data: null };
+  }
+  const hasMetrics = SM_COMPARE_METRIC_KEYS.some((key) => body[key] != null);
+  if (!hasMetrics) {
+    return { error: null, data: null };
+  }
+  return { error: null, data: body };
 }
 
 export function formatCapturePercent(value) {
