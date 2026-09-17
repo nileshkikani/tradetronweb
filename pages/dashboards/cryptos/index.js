@@ -47,7 +47,7 @@ function DashboardReports() {
   const fetchOrder = async () => {
     axiosInstance
       .get(
-        `${baseUrl}ema-scalping/crypto_trade/getorder?symbol=${selectedSymbol}&date=${selectedDate}`
+        `${baseUrl}crypto/orders?symbol=${selectedSymbol}&date=${selectedDate}`
       )
       .then((res) => {
         if (res?.data.length === 0) {
@@ -73,8 +73,8 @@ function DashboardReports() {
       .get(`${baseUrl}ema-scalping/getmarket?symbol=${selectedSymbol}`)
       .then((res) => {
         if (res?.data.length === 0) {
-          showToast("No orders found", "info");
-          setOrderData([]);
+          showToast("No market trend data found", "info");
+          setMarketTrend([]);
           return;
         }
         setMarketTrend(res.data);

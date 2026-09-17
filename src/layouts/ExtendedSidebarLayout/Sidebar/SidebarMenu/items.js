@@ -56,11 +56,11 @@ const menuItems = [
       //   icon: ConstructionIcon,
       //   link: '/dashboards/ema-scalping'
       // },
-      // {
-      //   name: 'Cryptos',
-      //   icon: CurrencyBitcoinIcon,
-      //   link: '/dashboards/cryptos'
-      // },
+      {
+        name: 'Cryptos',
+        icon: CurrencyBitcoinIcon,
+        link: '/dashboards/cryptos'
+      },
       //  {
       //   name: 'Volume-spike',
       //   icon: CurrencyBitcoinIcon,
